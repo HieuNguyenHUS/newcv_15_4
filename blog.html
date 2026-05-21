@@ -476,8 +476,15 @@ footer a:hover { color: white; }
 .blog-post:nth-child(4) { animation-delay: 0.34s; }
 .blog-post:nth-child(5) { animation-delay: 0.42s; }
 .blog-post:nth-child(6) { animation-delay: 0.50s; }
-.blog-post:nth-child(7) { animation-delay: 0.58s; }
-.blog-post:nth-child(8) { animation-delay: 0.66s; }
+.blog-post:nth-child(7)  { animation-delay: 0.58s; }
+.blog-post:nth-child(8)  { animation-delay: 0.66s; }
+.blog-post:nth-child(9)  { animation-delay: 0.74s; }
+.blog-post:nth-child(10) { animation-delay: 0.82s; }
+.blog-post:nth-child(11) { animation-delay: 0.90s; }
+.blog-post:nth-child(12) { animation-delay: 0.98s; }
+.blog-post:nth-child(13) { animation-delay: 1.06s; }
+.blog-post:nth-child(14) { animation-delay: 1.14s; }
+.blog-post:nth-child(15) { animation-delay: 1.22s; }
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {
@@ -549,7 +556,7 @@ footer a:hover { color: white; }
     </p>
     <div class="blog-stats">
       <div class="blog-stat">
-        <span class="blog-stat-number" id="postCount">11</span>
+        <span class="blog-stat-number" id="postCount">15</span>
         <span class="blog-stat-label">Posts</span>
       </div>
       <div class="blog-stat">
@@ -573,6 +580,102 @@ footer a:hover { color: white; }
 
 <!-- ─── BLOG LIST ─── -->
 <div class="blog-list" id="blogList">
+
+  <!-- ═══ Post: My Motivation for Scientific Research ═══ -->
+<a href="posts/why-i-do-research.html" class="blog-post" data-category="personal">
+  <div class="blog-post-thumb thumb-plum">
+    <div class="blog-post-thumb-pattern"></div>
+    <span class="blog-post-tag">Personal</span>
+  </div>
+  <div class="blog-post-content">
+    <div class="blog-post-meta">
+      <span class="blog-post-date">May 2026</span>
+      <span class="blog-post-reading">7 min read</span>
+    </div>
+    <h2 class="blog-post-title">My Motivation for Scientific Research</h2>
+    <p class="blog-post-excerpt">
+      An honest reflection on why I do research — not for the publications, not for the
+      credentials, but for the quiet click when something finally makes sense. From DFT
+      at Academia Sinica to grinding powders in a Vietnamese lab, and why the detour is not wasted.
+    </p>
+    <span class="blog-post-readmore">
+      Read full post
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
+
+  <!-- ═══ Post: XRD Peak Finding ═══ -->
+<a href="posts/xrd-peak-finding.html" class="blog-post" data-category="tutorial">
+  <div class="blog-post-thumb thumb-brown">
+    <div class="blog-post-thumb-pattern"></div>
+    <span class="blog-post-tag">Tutorial</span>
+  </div>
+  <div class="blog-post-content">
+    <div class="blog-post-meta">
+      <span class="blog-post-date">May 2026</span>
+      <span class="blog-post-reading">12 min read</span>
+    </div>
+    <h2 class="blog-post-title">XRD Peak Finding: From Raw .xy Data to Bragg Reflections</h2>
+    <p class="blog-post-excerpt">
+      A practical guide to identifying and locating peaks in raw XRD data — from noise
+      reduction and baseline correction to automated peak detection algorithms and
+      manual refinement. With worked examples on real diffractogram data.
+    </p>
+    <span class="blog-post-readmore">
+      Read full post
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
+
+  <!-- ═══ Post: XRD Peak Fitting ═══ -->
+<a href="posts/xrd-peak-fitting.html" class="blog-post" data-category="tutorial">
+  <div class="blog-post-thumb thumb-teal">
+    <div class="blog-post-thumb-pattern"></div>
+    <span class="blog-post-tag">Tutorial</span>
+  </div>
+  <div class="blog-post-content">
+    <div class="blog-post-meta">
+      <span class="blog-post-date">May 2026</span>
+      <span class="blog-post-reading">15 min read</span>
+    </div>
+    <h2 class="blog-post-title">XRD Peak Fitting: Gaussian, Lorentzian, and Voigt Profiles</h2>
+    <p class="blog-post-excerpt">
+      Understanding the physics behind diffraction peak shapes — why Gaussian, Lorentzian,
+      and pseudo-Voigt profiles arise, how to choose among them, and step-by-step fitting
+      with Python. Includes FWHM extraction and goodness-of-fit diagnostics.
+    </p>
+    <span class="blog-post-readmore">
+      Read full post
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
+
+  <!-- ═══ Post: Williamson-Hall Analysis ═══ -->
+<a href="posts/williamson-hall-analysis.html" class="blog-post" data-category="tutorial">
+  <div class="blog-post-thumb thumb-green">
+    <div class="blog-post-thumb-pattern"></div>
+    <span class="blog-post-tag">Tutorial</span>
+  </div>
+  <div class="blog-post-content">
+    <div class="blog-post-meta">
+      <span class="blog-post-date">May 2026</span>
+      <span class="blog-post-reading">14 min read</span>
+    </div>
+    <h2 class="blog-post-title">Williamson-Hall Analysis: Separating Size from Strain</h2>
+    <p class="blog-post-excerpt">
+      How to use Williamson-Hall plots to disentangle crystallite size broadening from
+      microstrain broadening in XRD data. Covers the Scherrer equation's limits, the
+      W-H linearization, and fitting strategies for nanocrystalline materials.
+    </p>
+    <span class="blog-post-readmore">
+      Read full post
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
 
   <!-- ═══ Post: PageRank Eigenvector ═══ -->
 <a href="posts/pagerank-eigenvector.html" class="blog-post" data-category="tutorial">
@@ -611,8 +714,8 @@ footer a:hover { color: white; }
     </div>
     <h2 class="blog-post-title">Neural Network Potentials: Bridging Quantum Accuracy and Classical Speed</h2>
     <p class="blog-post-excerpt">
-      From Behler–Parrinello symmetry functions to equivariant graph neural networks like 
-      NequIP and MACE — how machine learning is revolutionizing molecular simulations, with 
+      From Behler–Parrinello symmetry functions to equivariant graph neural networks like
+      NequIP and MACE — how machine learning is revolutionizing molecular simulations, with
       real examples from peptide and saccharide conformer searches.
     </p>
     <span class="blog-post-readmore">
@@ -621,6 +724,7 @@ footer a:hover { color: white; }
     </span>
   </div>
 </a>
+
   <!-- ═══ Post: DFT Beginners Guide ═══ -->
 <a href="posts/dft-beginners-guide.html" class="blog-post" data-category="research">
   <div class="blog-post-thumb thumb-blue">
@@ -634,8 +738,8 @@ footer a:hover { color: white; }
     </div>
     <h2 class="blog-post-title">Density Functional Theory: A Gentle Introduction</h2>
     <p class="blog-post-excerpt">
-      From the exponential wall of the many-body Schrödinger equation to Kohn–Sham orbitals 
-      and Jacob's Ladder of exchange-correlation functionals — a complete conceptual roadmap 
+      From the exponential wall of the many-body Schrödinger equation to Kohn–Sham orbitals
+      and Jacob's Ladder of exchange-correlation functionals — a complete conceptual roadmap
       for newcomers to DFT, with physical intuition first and equations second.
     </p>
     <span class="blog-post-readmore">
@@ -645,8 +749,7 @@ footer a:hover { color: white; }
   </div>
 </a>
 
-
-   <!-- ═══ Post: Wave diffraction reciprocal lattice vietnamese ═══ -->
+  <!-- ═══ Post: Wave diffraction reciprocal lattice vietnamese ═══ -->
   <a href="posts/wave-diffraction-reciprocal-lattice-vietnamese.html" class="blog-post" data-category="research">
   <div class="blog-post-thumb thumb-blue">
     <div class="blog-post-thumb-pattern"></div>
@@ -659,8 +762,8 @@ footer a:hover { color: white; }
     </div>
     <h2 class="blog-post-title">Wave Diffraction and the Reciprocal Lattice: The Natural Language of Crystallography Vietnamese</h2>
     <p class="blog-post-excerpt">
-      From the intuitive Bragg law to Fourier analysis, reciprocal lattice vectors, and 
-      Brillouin zones — a unified picture of diffraction built on physical intuition first, 
+      From the intuitive Bragg law to Fourier analysis, reciprocal lattice vectors, and
+      Brillouin zones — a unified picture of diffraction built on physical intuition first,
       equations second. Based on Kittel Chapter 2.
     </p>
     <span class="blog-post-readmore">
@@ -669,7 +772,6 @@ footer a:hover { color: white; }
     </span>
   </div>
 </a>
-
 
   <!-- ═══ Post: Wave diffraction reciprocal lattice ═══ -->
   <a href="posts/wave-diffraction-reciprocal-lattice.html" class="blog-post" data-category="research">
@@ -684,8 +786,8 @@ footer a:hover { color: white; }
     </div>
     <h2 class="blog-post-title">Wave Diffraction and the Reciprocal Lattice: The Natural Language of Crystallography</h2>
     <p class="blog-post-excerpt">
-      From the intuitive Bragg law to Fourier analysis, reciprocal lattice vectors, and 
-      Brillouin zones — a unified picture of diffraction built on physical intuition first, 
+      From the intuitive Bragg law to Fourier analysis, reciprocal lattice vectors, and
+      Brillouin zones — a unified picture of diffraction built on physical intuition first,
       equations second. Based on Kittel Chapter 2.
     </p>
     <span class="blog-post-readmore">

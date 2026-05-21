@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XRD Peak Finding: From Raw Data to Bragg Reflections — Minh-Hieu Nguyen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- KaTeX for professional math rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });"></script>
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+  --gold: #b8860b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent); transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 4px;
+}
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 140px 40px 0;
+}
+
+.article-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 40px; transition: color 0.25s;
+}
+.article-back:hover { color: var(--accent); }
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08); color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-meta {
+  display: flex; align-items: center; gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--border);
+}
+
+/* ─── COVER ─── */
+.article-cover {
+  max-width: 720px;
+  margin: 48px auto;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #1a2332 0%, #2c4a6e 40%, #4a7fb5 100%);
+}
+
+.article-cover-pattern {
+  position: absolute; inset: 0;
+  opacity: 0.12;
+}
+
+/* SVG XRD pattern illustration inside cover */
+.article-cover-pattern svg {
+  width: 100%; height: 100%;
+}
+
+.article-cover-text {
+  position: absolute;
+  bottom: 36px; left: 36px; right: 36px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 600; font-style: italic;
+  color: rgba(255,255,255,0.7); line-height: 1.3;
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  text-align: justify;
+}
+
+.article-body p {
+  margin-bottom: 24px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem; float: left;
+  line-height: 0.75;
+  margin-right: 10px; margin-top: 8px;
+  color: var(--accent); font-weight: 700;
+}
+
+.article-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  margin: 48px 0 20px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.article-body h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  margin: 36px 0 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: left;
+}
+
+.article-body em { color: var(--muted); font-style: italic; }
+.article-body strong { color: var(--ink); font-weight: 700; }
+
+.article-body ul, .article-body ol {
+  margin: 0 0 24px 24px;
+  text-align: left;
+}
+
+.article-body li {
+  margin-bottom: 8px;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.article-body li::marker {
+  color: var(--accent);
+}
+
+/* Highlight box */
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 36px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Separator */
+.article-separator {
+  text-align: center;
+  margin: 44px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+/* Pull quote */
+.article-pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  padding: 36px 20px;
+  margin: 44px 0;
+  line-height: 1.4;
+  position: relative;
+}
+
+.article-pullquote::before,
+.article-pullquote::after {
+  content: ''; display: block;
+  width: 60px; height: 1.5px;
+  background: var(--accent);
+  margin: 0 auto 20px; opacity: 0.4;
+}
+.article-pullquote::after { margin: 20px auto 0; }
+
+/* Code block */
+.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.code-block .comment { color: #6c7086; }
+.code-block .keyword { color: #cba6f7; }
+.code-block .string { color: #a6e3a1; }
+.code-block .function { color: #89b4fa; }
+.code-block .number { color: #fab387; }
+.code-block .operator { color: #89dceb; }
+
+.code-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Equation box — KaTeX aware */
+.equation-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 28px 0;
+  text-align: center;
+}
+
+.equation-box .eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.equation-box .katex-display {
+  margin: 0;
+}
+
+.katex { font-size: 1.05em; }
+
+/* Table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 0.95rem;
+}
+
+.article-table th {
+  background: var(--cream);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+}
+
+.article-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  text-align: center;
+}
+
+.article-table td:first-child {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.article-table tr:hover td {
+  background: rgba(243,240,232,0.4);
+}
+
+/* Step box */
+.step-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  position: relative;
+}
+
+.step-number {
+  position: absolute;
+  top: -14px; left: 24px;
+  background: var(--accent);
+  color: white;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; font-weight: 700;
+}
+
+.step-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  margin-bottom: 10px;
+  padding-top: 4px;
+}
+
+.step-box p {
+  margin-bottom: 12px !important;
+  font-size: 0.98rem;
+}
+
+/* Warning box */
+.warning-box {
+  background: #fff8f0;
+  border-left: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.warning-box strong {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.warning-box p {
+  margin-bottom: 0 !important;
+  font-size: 0.98rem;
+}
+
+/* Insight box */
+.insight-box {
+  background: rgba(74, 103, 65, 0.06);
+  border-left: 3px solid var(--sage);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.insight-box strong {
+  color: var(--sage);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.insight-box p {
+  margin-bottom: 0 !important;
+  font-size: 0.98rem;
+}
+
+/* Comparison box */
+.comparison-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 28px 0;
+}
+
+.comparison-box > div {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.comparison-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.comparison-box p {
+  font-size: 0.95rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* Inline figure placeholder */
+.figure-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 32px 0;
+  text-align: center;
+}
+
+.figure-box svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.figure-caption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ─── ARTICLE FOOTER ─── */
+.article-end {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px; background: var(--border);
+  margin-bottom: 40px;
+}
+
+.article-author {
+  display: flex; align-items: center;
+  gap: 20px; margin-bottom: 40px;
+}
+
+.article-author-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--accent); flex-shrink: 0;
+  overflow: hidden;
+}
+
+.article-author-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 700;
+}
+
+.article-author-info p {
+  font-size: 0.88rem; color: var(--muted);
+}
+
+.article-nav {
+  display: flex; justify-content: space-between;
+  gap: 20px;
+}
+
+.article-nav a {
+  padding: 16px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none; color: var(--ink);
+  transition: all 0.25s; flex: 1;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.02);
+}
+
+.article-nav-label {
+  font-size: 0.78rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; margin-bottom: 4px;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+}
+
+.article-nav .next { text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 48px 40px; text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+
+.footer-social {
+  display: flex; justify-content: center;
+  gap: 24px; margin-bottom: 24px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none; transition: all 0.3s; font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent-light); color: white;
+  background: rgba(139,37,0,0.3);
+}
+
+footer p { font-size: 0.85rem; line-height: 1.6; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer a:hover { color: white; }
+
+/* Animations */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+}
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .article-header h1 { font-size: 2.2rem; }
+  .article-cover { height: 220px; margin: 36px 20px; }
+  .article-cover-text { font-size: 1.2rem; bottom: 24px; left: 24px; right: 24px; }
+  .comparison-box { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 1.9rem; }
+  .article-cover { height: 180px; }
+  .article-cover-text { font-size: 1rem; bottom: 20px; left: 20px; right: 20px; }
+  .article-body p { font-size: 1rem; }
+  .article-body h2 { font-size: 1.5rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex; flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+  .code-block { padding: 16px; font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to all posts
+  </a>
+  <span class="article-tag">Tutorial</span>
+  <h1>XRD Peak Finding: From Raw .xy Data to Bragg Reflections</h1>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <div class="article-meta-divider"></div>
+    <!-- EDIT: update date when publishing -->
+    <span class="article-meta-item">May 2026</span>
+    <div class="article-meta-divider"></div>
+    <span class="article-meta-item">12 min read</span>
+  </div>
+</header>
+
+<!-- ─── COVER ─── -->
+<div class="article-cover fade-in fade-in-delay">
+  <div class="article-cover-pattern">
+    <!-- Stylized XRD diffraction pattern -->
+    <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg">
+      <polyline fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"
+        points="20,280 40,278 60,275 80,272 100,268 120,260 130,240 135,180 138,120 140,80 142,120 145,180 148,240 155,260 170,265 190,262 210,258 230,255 240,240 244,200 247,140 249,90 250,60 251,90 253,140 256,200 260,240 275,252 290,248 310,245 330,242 350,238 360,220 365,170 368,110 370,70 372,110 375,170 380,220 390,235 410,232 430,228 450,225 470,222 480,210 484,180 487,130 489,100 490,85 491,100 493,130 496,180 500,210 510,220 530,218 550,215 570,212 590,210 600,200 604,175 607,145 609,125 610,115 611,125 613,145 616,175 620,200 640,208 660,206 680,204 700,202" />
+    </svg>
+  </div>
+  <div class="article-cover-text">
+    Every crystallographic analysis begins with finding the right peaks.
+  </div>
+</div>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay-2">
+
+  <p>You have measured your sample, the diffractometer has done its job, and now you are staring at a .xy file — two columns of numbers stretching over thousands of rows. The first column is \(2\theta\), the second is intensity. Somewhere in that noisy signal are the Bragg reflections that encode your crystal structure. But how do you find them reliably? This is the peak-finding problem, and getting it right is the foundation of everything that follows: indexing, lattice parameter refinement, Rietveld analysis, Scherrer crystallite size estimation. If you miss a peak or mistake noise for a reflection, every downstream result is compromised.</p>
+
+  <p>I wrote this as a practical walkthrough — the kind of guide I wished I had when I first started processing XRD data for our Nd<sub>0.7</sub>Sr<sub>0.3</sub>MnO<sub>3</sub> nanoparticle samples. It covers the theory behind peak detection, the preprocessing steps that make or break your results, and a Python implementation you can adapt for your own data.</p>
+
+  <h2>1. What Lives in a .xy File</h2>
+
+  <p>A typical .xy file from a powder diffractometer contains two columns: the scattering angle \(2\theta\) (in degrees) and the measured intensity \(I\) (in counts or counts per second). The angular step size is usually 0.01° to 0.05°, and a full scan from 20° to 80° might contain 1200 to 6000 data points. Some instruments output additional columns (estimated standard deviation, for example), but the core data is always \(2\theta\) and \(I\).</p>
+
+  <p>Before doing anything else, load and visualize your raw data. This sounds obvious, but skipping this step is how you end up trusting automated routines that picked up detector glitches or missed broad peaks hiding in the baseline.</p>
+
+  <span class="code-label">Python — Loading .xy data</span>
+  <div class="code-block">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np<br>
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt<br>
+<br>
+<span class="comment"># Load the .xy file (skip header lines if any)</span><br>
+data = np.<span class="function">loadtxt</span>(<span class="string">'sample.xy'</span>, skiprows=<span class="number">1</span>)<br>
+two_theta = data[:, <span class="number">0</span>]<br>
+intensity = data[:, <span class="number">1</span>]<br>
+<br>
+fig, ax = plt.<span class="function">subplots</span>(figsize=(<span class="number">12</span>, <span class="number">4</span>))<br>
+ax.<span class="function">plot</span>(two_theta, intensity, <span class="string">'k-'</span>, linewidth=<span class="number">0.5</span>)<br>
+ax.<span class="function">set_xlabel</span>(<span class="string">r'$2\theta$ (°)'</span>)<br>
+ax.<span class="function">set_ylabel</span>(<span class="string">'Intensity (counts)'</span>)<br>
+ax.<span class="function">set_title</span>(<span class="string">'Raw XRD Pattern'</span>)<br>
+plt.<span class="function">tight_layout</span>()<br>
+plt.<span class="function">show</span>()<br>
+  </div>
+
+  <h2>2. Preprocessing: Background Subtraction and Smoothing</h2>
+
+  <p>Raw XRD data always sits on top of a background — a slowly varying baseline caused by amorphous content, air scattering, fluorescence, and thermal diffuse scattering. The background obscures weak peaks and biases the intensity of strong ones. You need to subtract it before peak finding.</p>
+
+  <h3>Background Estimation</h3>
+
+  <p>There are several approaches, from simple to sophisticated:</p>
+
+  <table class="article-table">
+    <tr>
+      <th>Method</th>
+      <th>Complexity</th>
+      <th>Best For</th>
+    </tr>
+    <tr>
+      <td>Linear interpolation between minima</td>
+      <td>Low</td>
+      <td>Clean patterns, few peaks</td>
+    </tr>
+    <tr>
+      <td>Rolling ball / SNIP algorithm</td>
+      <td>Medium</td>
+      <td>General-purpose, automated</td>
+    </tr>
+    <tr>
+      <td>Polynomial fit to non-peak regions</td>
+      <td>Medium</td>
+      <td>Smooth backgrounds</td>
+    </tr>
+    <tr>
+      <td>Asymmetric least squares (ALS)</td>
+      <td>High</td>
+      <td>Complex backgrounds, overlapping peaks</td>
+    </tr>
+  </table>
+
+  <p>For manganite samples with strong, well-separated peaks, I find that the SNIP (Statistics-sensitive Non-linear Iterative Peak-clipping) algorithm works reliably. It is implemented in many libraries and does not require you to manually select background regions. In Python, the <code>pybaselines</code> package provides a clean implementation:</p>
+
+  <span class="code-label">Python — Background subtraction (SNIP)</span>
+  <div class="code-block">
+<span class="keyword">from</span> pybaselines.morphological <span class="keyword">import</span> snip<br>
+<br>
+<span class="comment"># SNIP background estimation</span><br>
+<span class="comment"># max_half_window controls smoothness — larger = smoother baseline</span><br>
+bkg, params = <span class="function">snip</span>(intensity, max_half_window=<span class="number">40</span>)<br>
+intensity_corr = intensity - bkg<br>
+<br>
+fig, axes = plt.<span class="function">subplots</span>(<span class="number">2</span>, <span class="number">1</span>, figsize=(<span class="number">12</span>, <span class="number">7</span>), sharex=<span class="number">True</span>)<br>
+axes[<span class="number">0</span>].<span class="function">plot</span>(two_theta, intensity, <span class="string">'k-'</span>, lw=<span class="number">0.5</span>, label=<span class="string">'Raw'</span>)<br>
+axes[<span class="number">0</span>].<span class="function">plot</span>(two_theta, bkg, <span class="string">'r-'</span>, lw=<span class="number">1.5</span>, label=<span class="string">'Background'</span>)<br>
+axes[<span class="number">0</span>].<span class="function">legend</span>()<br>
+axes[<span class="number">1</span>].<span class="function">plot</span>(two_theta, intensity_corr, <span class="string">'b-'</span>, lw=<span class="number">0.5</span>)<br>
+axes[<span class="number">1</span>].<span class="function">set_xlabel</span>(<span class="string">r'$2\theta$ (°)'</span>)<br>
+axes[<span class="number">1</span>].<span class="function">set_ylabel</span>(<span class="string">'Corrected Intensity'</span>)<br>
+plt.<span class="function">tight_layout</span>()<br>
+plt.<span class="function">show</span>()<br>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Watch out: over-smoothing the background</strong>
+    <p>If <code>max_half_window</code> is too large, the SNIP baseline will follow the peaks and subtract real signal. If too small, it will be too noisy and leave residual background. Start with a value of 30–50 and visually inspect the result. The baseline should track the slow curvature of the background without cutting into any peaks.</p>
+  </div>
+
+  <h3>Noise Smoothing</h3>
+
+  <p>After background subtraction, the corrected pattern may still have high-frequency noise (especially for weakly diffracting or nanocrystalline samples with broad peaks). A light smoothing pass can help peak detection without destroying peak shape. The Savitzky-Golay filter is the standard choice because it preserves peak positions and heights better than a simple moving average:</p>
+
+  <span class="code-label">Python — Savitzky-Golay smoothing</span>
+  <div class="code-block">
+<span class="keyword">from</span> scipy.signal <span class="keyword">import</span> savgol_filter<br>
+<br>
+<span class="comment"># window_length must be odd; polyorder &lt; window_length</span><br>
+<span class="comment"># Smaller window = less smoothing = better peak preservation</span><br>
+intensity_smooth = <span class="function">savgol_filter</span>(intensity_corr, window_length=<span class="number">11</span>, polyorder=<span class="number">3</span>)<br>
+  </div>
+
+  <div class="insight-box">
+    <strong>&#128161; Rule of thumb</strong>
+    <p>For step sizes of 0.02°, a Savitzky-Golay window of 7–15 points and polynomial order 2–3 works well. For broader peaks (nanoparticles with crystallite sizes below 20 nm), you can increase the window slightly. Never smooth so aggressively that neighboring peaks merge.</p>
+  </div>
+
+  <h2>3. Peak Detection: The Algorithm</h2>
+
+  <p>With a clean, background-subtracted signal in hand, peak detection becomes a local maximum problem with constraints. The idea is simple: find points where the intensity is higher than their neighbors <em>and</em> exceeds a meaningful threshold above the noise floor.</p>
+
+  <p>SciPy's <code>find_peaks</code> is the workhorse here. It takes the 1D intensity array and returns the indices of local maxima satisfying conditions you specify:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Key parameters for find_peaks</span>
+    $$\text{height} > h_\text{min}, \quad \text{prominence} > p_\text{min}, \quad \text{distance} > d_\text{min}$$
+  </div>
+
+  <p>Let me explain each parameter and why it matters:</p>
+
+  <ul>
+    <li><strong>height:</strong> The minimum intensity a peak must have. Set this to 2–3× the noise standard deviation of the corrected pattern to reject noise spikes.</li>
+    <li><strong>prominence:</strong> How much a peak "stands out" above the surrounding signal. This is the single most useful parameter — it eliminates shoulders and noise bumps that technically are local maxima but are not real diffraction peaks. A prominence threshold of 5–10% of the maximum peak intensity is a good starting point.</li>
+    <li><strong>distance:</strong> The minimum number of data points between neighboring peaks. For step sizes of 0.02°, set this to at least 10–20 points (0.2°–0.4°) to prevent detecting the same peak twice due to noise.</li>
+  </ul>
+
+  <span class="code-label">Python — Peak detection with scipy.signal.find_peaks</span>
+  <div class="code-block">
+<span class="keyword">from</span> scipy.signal <span class="keyword">import</span> find_peaks<br>
+<br>
+<span class="comment"># Estimate noise level from a peak-free region</span><br>
+<span class="comment"># (e.g., 70–80° where your material has no peaks)</span><br>
+noise_region = intensity_corr[(two_theta > <span class="number">70</span>) & (two_theta < <span class="number">80</span>)]<br>
+noise_std = np.<span class="function">std</span>(noise_region)<br>
+<br>
+<span class="comment"># Peak detection</span><br>
+peaks, properties = <span class="function">find_peaks</span>(<br>
+    intensity_smooth,<br>
+    height=<span class="number">3</span> * noise_std,           <span class="comment"># above 3σ noise</span><br>
+    prominence=<span class="number">0.05</span> * intensity_smooth.<span class="function">max</span>(),  <span class="comment"># 5% of max</span><br>
+    distance=<span class="number">15</span>,                    <span class="comment"># ≥0.3° apart (for 0.02° step)</span><br>
+    width=<span class="number">3</span>                          <span class="comment"># at least 3 points wide</span><br>
+)<br>
+<br>
+<span class="comment"># Extract peak positions and intensities</span><br>
+peak_positions = two_theta[peaks]<br>
+peak_intensities = intensity_smooth[peaks]<br>
+<br>
+<span class="function">print</span>(<span class="string">f'Found {len(peaks)} peaks:'</span>)<br>
+<span class="keyword">for</span> pos, I <span class="keyword">in</span> <span class="function">zip</span>(peak_positions, peak_intensities):<br>
+    <span class="function">print</span>(<span class="string">f'  2θ = {pos:.2f}°, I = {I:.0f}'</span>)<br>
+  </div>
+
+  <h2>4. Visualizing the Results</h2>
+
+  <p>Always plot your detected peaks on top of the pattern. This is not optional — it is the primary quality check. You should see markers sitting cleanly at the apex of every diffraction peak, with no markers on noise bumps and no real peaks missed.</p>
+
+  <span class="code-label">Python — Plotting detected peaks</span>
+  <div class="code-block">
+fig, ax = plt.<span class="function">subplots</span>(figsize=(<span class="number">12</span>, <span class="number">5</span>))<br>
+ax.<span class="function">plot</span>(two_theta, intensity_smooth, <span class="string">'k-'</span>, lw=<span class="number">0.6</span>, label=<span class="string">'Pattern'</span>)<br>
+ax.<span class="function">plot</span>(peak_positions, peak_intensities, <span class="string">'rv'</span>,<br>
+       markersize=<span class="number">8</span>, label=<span class="string">f'{len(peaks)} peaks found'</span>)<br>
+<br>
+<span class="comment"># Annotate each peak with its 2θ value</span><br>
+<span class="keyword">for</span> pos, I <span class="keyword">in</span> <span class="function">zip</span>(peak_positions, peak_intensities):<br>
+    ax.<span class="function">annotate</span>(<span class="string">f'{pos:.1f}°'</span>,<br>
+               xy=(pos, I), xytext=(<span class="number">0</span>, <span class="number">12</span>),<br>
+               textcoords=<span class="string">'offset points'</span>,<br>
+               fontsize=<span class="number">7</span>, ha=<span class="string">'center'</span>,<br>
+               color=<span class="string">'#8b2500'</span>)<br>
+<br>
+ax.<span class="function">set_xlabel</span>(<span class="string">r'$2\theta$ (°)'</span>)<br>
+ax.<span class="function">set_ylabel</span>(<span class="string">'Intensity (a.u.)'</span>)<br>
+ax.<span class="function">legend</span>()<br>
+plt.<span class="function">tight_layout</span>()<br>
+plt.<span class="function">savefig</span>(<span class="string">'xrd_peaks.png'</span>, dpi=<span class="number">200</span>)<br>
+plt.<span class="function">show</span>()<br>
+  </div>
+
+  <div class="article-highlight">
+    <p>If you find too many peaks, increase the prominence threshold. If you miss weak peaks (like impurity phases or superlattice reflections), lower the height threshold and check manually. There is no universal set of parameters — they depend on your data quality, step size, and the material itself.</p>
+  </div>
+
+  <h2>5. From Peaks to d-spacings: Applying Bragg's Law</h2>
+
+  <p>Once you have reliable peak positions, converting to interplanar spacings is straightforward via Bragg's law:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Bragg's Law</span>
+    $$n\lambda = 2d_{hkl}\sin\theta$$
+  </div>
+
+  <p>For first-order diffraction (\(n=1\)) with Cu K\(\alpha\) radiation (\(\lambda = 1.5406\) Å):</p>
+
+  <span class="code-label">Python — Converting 2θ to d-spacing</span>
+  <div class="code-block">
+wavelength = <span class="number">1.5406</span>  <span class="comment"># Cu Kα in Å</span><br>
+<br>
+theta_rad = np.<span class="function">radians</span>(peak_positions / <span class="number">2</span>)  <span class="comment"># θ from 2θ</span><br>
+d_spacings = wavelength / (<span class="number">2</span> * np.<span class="function">sin</span>(theta_rad))<br>
+<br>
+<span class="function">print</span>(<span class="string">'Peak positions and d-spacings:'</span>)<br>
+<span class="function">print</span>(<span class="string">f'{"2θ (°)":>10} {"d (Å)":>10}'</span>)<br>
+<span class="keyword">for</span> pos, d <span class="keyword">in</span> <span class="function">zip</span>(peak_positions, d_spacings):<br>
+    <span class="function">print</span>(<span class="string">f'{pos:10.3f} {d:10.4f}'</span>)<br>
+  </div>
+
+  <p>These d-spacings are your input for peak indexing — matching each reflection to its Miller indices \((hkl)\) by comparing against the ICDD/PDF database or a calculated pattern from a known CIF file. For perovskite manganites like Nd<sub>0.7</sub>Sr<sub>0.3</sub>MnO<sub>3</sub>, the strongest peaks are typically (110)/(002) for orthorhombic <em>Pbnm</em> or (104)/(110) for rhombohedral <em>R-3c</em>, appearing around \(2\theta \approx 32\)°.</p>
+
+  <h2>6. Common Pitfalls</h2>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #1: K&alpha;<sub>2</sub> splitting</strong>
+    <p>At high angles (\(2\theta > 50\)°), the K\(\alpha_1\)/K\(\alpha_2\) doublet becomes resolved, creating shoulder peaks that your algorithm may detect as separate reflections. Either strip K\(\alpha_2\) before peak finding (using Rachinger correction) or account for it in your prominence threshold. This is not a deficiency of your sample — it is physics.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #2: Confusing peak broadening with noise</strong>
+    <p>Nanocrystalline samples (crystallite size &lt; 30 nm) produce intrinsically broad peaks. If you set your <code>width</code> parameter too narrow, you will miss these broad, real reflections. Conversely, if your sample is highly crystalline, narrow instrumental peaks might have noisy tops that create spurious double-detections — increase the <code>distance</code> parameter to fix this.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #3: Preferred orientation artifacts</strong>
+    <p>If your powder sample is not properly randomized (e.g., plate-like crystallites lying flat), some peaks will be anomalously strong and others weak or absent. Peak finding will work fine, but the relative intensities will not match the PDF reference. This is a sample preparation problem, not an algorithm problem.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #4: Not validating against a reference</strong>
+    <p>Always compare your found peaks against a known reference pattern (ICDD card, CIF simulation, or literature data). If you find peaks that do not match any expected phase, you may have an impurity phase — which is scientifically interesting, not an error to ignore.</p>
+  </div>
+
+  <div class="article-separator">&#183; &#183; &#183;</div>
+
+  <h2>7. The Complete Pipeline</h2>
+
+  <p>Putting it all together, here is the full script that takes a .xy file and produces a table of peaks with their \(2\theta\) positions, d-spacings, and relative intensities:</p>
+
+  <span class="code-label">Python — Complete XRD peak finding pipeline</span>
+  <div class="code-block">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np<br>
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt<br>
+<span class="keyword">from</span> scipy.signal <span class="keyword">import</span> find_peaks, savgol_filter<br>
+<span class="keyword">from</span> pybaselines.morphological <span class="keyword">import</span> snip<br>
+<br>
+<span class="comment"># ── 1. Load data ──</span><br>
+data = np.<span class="function">loadtxt</span>(<span class="string">'sample.xy'</span>, skiprows=<span class="number">1</span>)<br>
+two_theta, intensity = data[:, <span class="number">0</span>], data[:, <span class="number">1</span>]<br>
+<br>
+<span class="comment"># ── 2. Background subtraction ──</span><br>
+bkg, _ = <span class="function">snip</span>(intensity, max_half_window=<span class="number">40</span>)<br>
+I_corr = intensity - bkg<br>
+<br>
+<span class="comment"># ── 3. Smoothing ──</span><br>
+I_smooth = <span class="function">savgol_filter</span>(I_corr, window_length=<span class="number">11</span>, polyorder=<span class="number">3</span>)<br>
+<br>
+<span class="comment"># ── 4. Peak detection ──</span><br>
+noise = np.<span class="function">std</span>(I_corr[(two_theta > <span class="number">70</span>) & (two_theta < <span class="number">80</span>)])<br>
+peaks, props = <span class="function">find_peaks</span>(I_smooth,<br>
+    height=<span class="number">3</span>*noise,<br>
+    prominence=<span class="number">0.05</span>*I_smooth.<span class="function">max</span>(),<br>
+    distance=<span class="number">15</span>, width=<span class="number">3</span>)<br>
+<br>
+<span class="comment"># ── 5. Calculate d-spacings ──</span><br>
+lam = <span class="number">1.5406</span>  <span class="comment"># Cu Kα</span><br>
+theta = np.<span class="function">radians</span>(two_theta[peaks] / <span class="number">2</span>)<br>
+d = lam / (<span class="number">2</span> * np.<span class="function">sin</span>(theta))<br>
+I_rel = I_smooth[peaks] / I_smooth[peaks].<span class="function">max</span>() * <span class="number">100</span><br>
+<br>
+<span class="comment"># ── 6. Print results ──</span><br>
+<span class="function">print</span>(<span class="string">f'{"#":>3} {"2θ (°)":>10} {"d (Å)":>10} {"I_rel (%)":>10}'</span>)<br>
+<span class="keyword">for</span> i, (p, di, Ir) <span class="keyword">in</span> <span class="function">enumerate</span>(<span class="function">zip</span>(two_theta[peaks], d, I_rel)):<br>
+    <span class="function">print</span>(<span class="string">f'{i+1:3d} {p:10.3f} {di:10.4f} {Ir:10.1f}'</span>)<br>
+  </div>
+
+  <h2>8. What Comes Next</h2>
+
+  <p>Peak finding is only the first step in XRD analysis. Once you have your peaks, the natural next steps are:</p>
+
+  <ul>
+    <li><strong>Peak fitting</strong> — fitting Gaussian, Lorentzian, or Voigt profiles to each peak to extract precise positions, intensities, and FWHM values. This is covered in the <a href="xrd-peak-fitting.html" style="color: var(--accent);">next post in this series</a>.</li>
+    <li><strong>Williamson-Hall analysis</strong> — using the FWHM values to separate crystallite size from microstrain contributions. Also covered in a <a href="williamson-hall-analysis.html" style="color: var(--accent);">dedicated post</a>.</li>
+    <li><strong>Rietveld refinement</strong> — full-pattern fitting using FullProf, GSAS-II, or MAUD to extract structural parameters, atomic positions, and thermal factors.</li>
+  </ul>
+
+  <p>Each of these steps builds directly on the peak positions and shapes you extract here. Getting clean, reliable peaks is not glamorous work, but it is the foundation that makes everything else possible.</p>
+
+  <div class="article-pullquote">
+    In XRD, finding the peaks is easy. Finding the <em>right</em> peaks is the craft.
+  </div>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../images/profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Researcher at VNU-University of Engineering and Technology. Specializing in magnetocaloric materials, critical phenomena, and computational materials science.</p>
+    </div>
+  </div>
+
+  <!-- EDIT: update prev/next links when adding to blog -->
+  <div class="article-nav">
+    <a href="why-i-do-research.html">
+      <div class="article-nav-label">&#8592; Previous</div>
+      <div class="article-nav-title">My Motivation for Scientific Research</div>
+    </a>
+    <a href="xrd-peak-fitting.html" class="next">
+      <div class="article-nav-label">Next &#8594;</div>
+      <div class="article-nav-title">XRD Peak Fitting: Gaussian, Lorentzian, and Voigt Profiles</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=QUdAPR8AAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: May 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>

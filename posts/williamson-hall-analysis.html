@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Williamson-Hall Analysis: Separating Size from Strain — Minh-Hieu Nguyen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- KaTeX for professional math rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });"></script>
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+  --gold: #b8860b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent); transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 4px;
+}
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 140px 40px 0;
+}
+
+.article-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 40px; transition: color 0.25s;
+}
+.article-back:hover { color: var(--accent); }
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08); color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-meta {
+  display: flex; align-items: center; gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--border);
+}
+
+/* ─── COVER ─── */
+.article-cover {
+  max-width: 720px;
+  margin: 48px auto;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #2e1a0e 0%, #6b3a1f 40%, #b87333 100%);
+}
+
+.article-cover-pattern {
+  position: absolute; inset: 0;
+  opacity: 0.15;
+}
+
+.article-cover-pattern svg {
+  width: 100%; height: 100%;
+}
+
+.article-cover-text {
+  position: absolute;
+  bottom: 36px; left: 36px; right: 36px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 600; font-style: italic;
+  color: rgba(255,255,255,0.7); line-height: 1.3;
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  text-align: justify;
+}
+
+.article-body p {
+  margin-bottom: 24px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem; float: left;
+  line-height: 0.75;
+  margin-right: 10px; margin-top: 8px;
+  color: var(--accent); font-weight: 700;
+}
+
+.article-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  margin: 48px 0 20px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.article-body h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  margin: 36px 0 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: left;
+}
+
+.article-body em { color: var(--muted); font-style: italic; }
+.article-body strong { color: var(--ink); font-weight: 700; }
+
+.article-body ul, .article-body ol {
+  margin: 0 0 24px 24px;
+  text-align: left;
+}
+
+.article-body li {
+  margin-bottom: 8px;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.article-body li::marker { color: var(--accent); }
+
+/* Highlight box */
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 36px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Separator */
+.article-separator {
+  text-align: center;
+  margin: 44px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+/* Pull quote */
+.article-pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  padding: 36px 20px;
+  margin: 44px 0;
+  line-height: 1.4;
+  position: relative;
+}
+
+.article-pullquote::before,
+.article-pullquote::after {
+  content: ''; display: block;
+  width: 60px; height: 1.5px;
+  background: var(--accent);
+  margin: 0 auto 20px; opacity: 0.4;
+}
+.article-pullquote::after { margin: 20px auto 0; }
+
+/* Code block */
+.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.code-block .comment { color: #6c7086; }
+.code-block .keyword { color: #cba6f7; }
+.code-block .string { color: #a6e3a1; }
+.code-block .function { color: #89b4fa; }
+.code-block .number { color: #fab387; }
+.code-block .operator { color: #89dceb; }
+
+.code-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Equation box */
+.equation-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 28px 0;
+  text-align: center;
+}
+
+.equation-box .eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.equation-box .katex-display { margin: 0; }
+.katex { font-size: 1.05em; }
+
+/* Table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 0.95rem;
+}
+
+.article-table th {
+  background: var(--cream);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+}
+
+.article-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  text-align: center;
+}
+
+.article-table td:first-child {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.article-table tr:hover td { background: rgba(243,240,232,0.4); }
+
+/* Step box */
+.step-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  position: relative;
+}
+
+.step-number {
+  position: absolute;
+  top: -14px; left: 24px;
+  background: var(--accent);
+  color: white;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; font-weight: 700;
+}
+
+.step-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  margin-bottom: 10px;
+  padding-top: 4px;
+}
+
+.step-box p {
+  margin-bottom: 12px !important;
+  font-size: 0.98rem;
+}
+
+/* Warning box */
+.warning-box {
+  background: #fff8f0;
+  border-left: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.warning-box strong {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.warning-box p { margin-bottom: 0 !important; font-size: 0.98rem; }
+
+/* Insight box */
+.insight-box {
+  background: rgba(74, 103, 65, 0.06);
+  border-left: 3px solid var(--sage);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.insight-box strong {
+  color: var(--sage);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.insight-box p { margin-bottom: 0 !important; font-size: 0.98rem; }
+
+/* Comparison box */
+.comparison-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 28px 0;
+}
+
+.comparison-box > div {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.comparison-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.comparison-box p {
+  font-size: 0.95rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* Figure box */
+.figure-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 32px 0;
+  text-align: center;
+}
+
+.figure-box svg { max-width: 100%; height: auto; }
+
+.figure-caption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ─── ARTICLE FOOTER ─── */
+.article-end {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px; background: var(--border);
+  margin-bottom: 40px;
+}
+
+.article-author {
+  display: flex; align-items: center;
+  gap: 20px; margin-bottom: 40px;
+}
+
+.article-author-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--accent); flex-shrink: 0;
+  overflow: hidden;
+}
+
+.article-author-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 700;
+}
+
+.article-author-info p {
+  font-size: 0.88rem; color: var(--muted);
+}
+
+.article-nav {
+  display: flex; justify-content: space-between;
+  gap: 20px;
+}
+
+.article-nav a {
+  padding: 16px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none; color: var(--ink);
+  transition: all 0.25s; flex: 1;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.02);
+}
+
+.article-nav-label {
+  font-size: 0.78rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; margin-bottom: 4px;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+}
+
+.article-nav .next { text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 48px 40px; text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+
+.footer-social {
+  display: flex; justify-content: center;
+  gap: 24px; margin-bottom: 24px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none; transition: all 0.3s; font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent-light); color: white;
+  background: rgba(139,37,0,0.3);
+}
+
+footer p { font-size: 0.85rem; line-height: 1.6; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer a:hover { color: white; }
+
+/* Animations */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+}
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .article-header h1 { font-size: 2.2rem; }
+  .article-cover { height: 220px; margin: 36px 20px; }
+  .article-cover-text { font-size: 1.2rem; bottom: 24px; left: 24px; right: 24px; }
+  .comparison-box { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 1.9rem; }
+  .article-cover { height: 180px; }
+  .article-cover-text { font-size: 1rem; bottom: 20px; left: 20px; right: 20px; }
+  .article-body p { font-size: 1rem; }
+  .article-body h2 { font-size: 1.5rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex; flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+  .code-block { padding: 16px; font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to all posts
+  </a>
+  <span class="article-tag">Tutorial</span>
+  <h1>Williamson-Hall Analysis: Separating Size from Strain</h1>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <div class="article-meta-divider"></div>
+    <!-- EDIT: update date when publishing -->
+    <span class="article-meta-item">May 2026</span>
+    <div class="article-meta-divider"></div>
+    <span class="article-meta-item">14 min read</span>
+  </div>
+</header>
+
+<!-- ─── COVER ─── -->
+<div class="article-cover fade-in fade-in-delay">
+  <div class="article-cover-pattern">
+    <!-- Stylized W-H plot: scattered data points with a linear fit -->
+    <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg">
+      <!-- Axes -->
+      <line x1="100" y1="260" x2="650" y2="260" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <line x1="100" y1="260" x2="100" y2="40" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <!-- Axis labels -->
+      <text x="375" y="290" fill="rgba(255,255,255,0.4)" font-family="JetBrains Mono" font-size="11" text-anchor="middle">4 sin θ</text>
+      <text x="60" y="150" fill="rgba(255,255,255,0.4)" font-family="JetBrains Mono" font-size="11" text-anchor="middle" transform="rotate(-90, 60, 150)">β cos θ</text>
+      <!-- Linear fit line -->
+      <line x1="120" y1="220" x2="620" y2="100" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="8,4"/>
+      <!-- Data points -->
+      <circle cx="160" cy="212" r="5" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="230" cy="198" r="5" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="290" cy="178" r="5" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="370" cy="162" r="5" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="430" cy="148" r="5" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="510" cy="125" r="5" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="580" cy="108" r="5" fill="rgba(255,255,255,0.8)"/>
+      <!-- Annotations -->
+      <text x="140" y="235" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="9">intercept → Kλ/D</text>
+      <text x="480" y="88" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="9">slope → 4ε</text>
+    </svg>
+  </div>
+  <div class="article-cover-text">
+    A single FWHM cannot answer two questions. But a plot can.
+  </div>
+</div>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay-2">
+
+  <p>When you measure the FWHM of a diffraction peak and plug it into the Scherrer equation, you get a number. That number is not the crystallite size — it is the crystallite size <em>assuming zero microstrain</em>. If your sample has lattice distortions (and most real materials do), the Scherrer result underestimates the true crystallite size because part of the broadening you measured comes from strain, not from finite crystal dimensions. The Williamson-Hall (W-H) method fixes this by using the angular dependence of broadening to separate the two contributions.</p>
+
+  <p>This is the third and final post in my XRD processing series. We have covered <a href="xrd-peak-finding.html" style="color: var(--accent);">peak finding</a> and <a href="xrd-peak-fitting.html" style="color: var(--accent);">peak fitting</a> — now we use the FWHM values from those fits to extract both crystallite size \(D\) and microstrain \(\varepsilon\) simultaneously.</p>
+
+  <h2>1. The Limitation of Scherrer Alone</h2>
+
+  <p>The Scherrer equation gives the crystallite size from a single peak:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Scherrer Equation</span>
+    $$D = \frac{K\lambda}{\beta_D \cos\theta}$$
+  </div>
+
+  <p>where \(K\) is the shape factor (typically 0.9 for spherical crystallites), \(\lambda\) is the X-ray wavelength, \(\beta_D\) is the size-broadened FWHM in radians, and \(\theta\) is the Bragg angle. The problem is that the observed broadening \(\beta\) has <em>two</em> contributions:</p>
+
+  <div class="comparison-box">
+    <div>
+      <h4>Size Broadening</h4>
+      <p>Inversely proportional to crystallite size. The angular dependence follows \(\beta_D \propto 1/\cos\theta\). Dominant for nanocrystalline materials with \(D < 100\) nm.</p>
+    </div>
+    <div>
+      <h4>Strain Broadening</h4>
+      <p>Proportional to the microstrain \(\varepsilon\) and follows \(\beta_\varepsilon \propto \tan\theta\). Arises from non-uniform lattice distortions, dislocations, point defects, grain boundaries, and compositional gradients.</p>
+    </div>
+  </div>
+
+  <p>The Scherrer equation lumps both into a single \(\beta\) and attributes all broadening to size. For well-annealed bulk ceramics with negligible strain this is fine, but for nanoparticles — especially sol-gel or mechanically milled samples — the strain contribution can be substantial. Applying Scherrer naively will give you a crystallite size that is systematically too small.</p>
+
+  <h2>2. The Williamson-Hall Equation</h2>
+
+  <p>Williamson and Hall (1953) recognized that size and strain broadening have different angular dependencies. If we assume both contributions add linearly (valid for Lorentzian profiles), the total broadening is:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Total Broadening (Lorentzian assumption)</span>
+    $$\beta_\text{total} = \beta_D + \beta_\varepsilon = \frac{K\lambda}{D\cos\theta} + 4\varepsilon\tan\theta$$
+  </div>
+
+  <p>Multiplying both sides by \(\cos\theta\):</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Williamson-Hall Equation (UDM)</span>
+    $$\beta\cos\theta = \frac{K\lambda}{D} + 4\varepsilon\sin\theta$$
+  </div>
+
+  <p>This is a linear equation in the form \(y = b + mx\), where \(y = \beta\cos\theta\), \(x = 4\sin\theta\), the slope \(m = \varepsilon\), and the y-intercept \(b = K\lambda/D\). By plotting all peaks on this graph and performing a linear regression, you extract both \(D\) and \(\varepsilon\) simultaneously.</p>
+
+  <div class="insight-box">
+    <strong>&#128161; Why this works</strong>
+    <p>Size broadening scales as \(1/\cos\theta\) while strain broadening scales as \(\tan\theta\). After multiplying by \(\cos\theta\), the size term becomes a constant (independent of angle) while the strain term becomes proportional to \(\sin\theta\). The plot separates the two because they respond differently to the Bragg angle — and that is the core insight of the Williamson-Hall method.</p>
+  </div>
+
+  <h2>3. Step-by-Step Procedure</h2>
+
+  <div class="step-box">
+    <div class="step-number">1</div>
+    <h4>Collect FWHM values from peak fitting</h4>
+    <p>For each diffraction peak, you need the fitted \(2\theta_0\) (peak center) and \(\beta_\text{obs}\) (FWHM from the pseudo-Voigt fit). Convert the FWHM from degrees to radians: \(\beta_\text{rad} = \beta_\text{deg} \times \pi/180\).</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-number">2</div>
+    <h4>Subtract instrumental broadening</h4>
+    <p>Measure a standard reference (LaB<sub>6</sub>, Si, CeO<sub>2</sub>) under identical conditions to obtain \(\beta_\text{inst}\) at each \(2\theta\). For Lorentzian profiles, use \(\beta = \beta_\text{obs} - \beta_\text{inst}\). For Gaussian profiles, use \(\beta^2 = \beta_\text{obs}^2 - \beta_\text{inst}^2\). If your peak profiles are pseudo-Voigt, the Gaussian deconvolution is more commonly used.</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-number">3</div>
+    <h4>Calculate the plotting variables</h4>
+    <p>For each peak: compute \(\theta = 2\theta_0 / 2\) in radians, then \(x = 4\sin\theta\) and \(y = \beta\cos\theta\).</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-number">4</div>
+    <h4>Perform linear regression</h4>
+    <p>Fit \(y = b + mx\) using least squares. The y-intercept gives \(D = K\lambda/b\) and the slope gives \(\varepsilon = m\).</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-number">5</div>
+    <h4>Assess the quality of the fit</h4>
+    <p>Check \(R^2\) and the scatter of points around the line. Poor linearity may indicate anisotropic broadening (different crystallite sizes or strain along different crystallographic directions), which the isotropic W-H model cannot capture.</p>
+  </div>
+
+  <h2>4. Python Implementation</h2>
+
+  <span class="code-label">Python — Williamson-Hall plot and analysis</span>
+  <div class="code-block">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np<br>
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt<br>
+<span class="keyword">from</span> scipy <span class="keyword">import</span> stats<br>
+<br>
+<span class="comment"># ── Input: peak centers (2θ in degrees) and FWHM (degrees)</span><br>
+<span class="comment"># These come from your pseudo-Voigt fitting results</span><br>
+two_theta_peaks = np.<span class="function">array</span>([<span class="number">22.85</span>, <span class="number">32.52</span>, <span class="number">40.10</span>, <span class="number">46.60</span>,<br>
+                            <span class="number">52.48</span>, <span class="number">57.98</span>, <span class="number">68.10</span>])<br>
+fwhm_deg = np.<span class="function">array</span>([<span class="number">0.182</span>, <span class="number">0.195</span>, <span class="number">0.210</span>, <span class="number">0.228</span>,<br>
+                     <span class="number">0.243</span>, <span class="number">0.261</span>, <span class="number">0.295</span>])<br>
+<br>
+<span class="comment"># ── Instrumental broadening from standard (LaB6)</span><br>
+<span class="comment"># Interpolate to your peak positions if needed</span><br>
+fwhm_inst_deg = np.<span class="function">array</span>([<span class="number">0.060</span>, <span class="number">0.062</span>, <span class="number">0.065</span>, <span class="number">0.068</span>,<br>
+                          <span class="number">0.072</span>, <span class="number">0.076</span>, <span class="number">0.085</span>])<br>
+<br>
+<span class="comment"># ── Convert to radians</span><br>
+beta_obs = fwhm_deg * np.pi / <span class="number">180</span><br>
+beta_inst = fwhm_inst_deg * np.pi / <span class="number">180</span><br>
+<br>
+<span class="comment"># ── Instrumental correction (Gaussian deconvolution)</span><br>
+beta = np.<span class="function">sqrt</span>(beta_obs**<span class="number">2</span> - beta_inst**<span class="number">2</span>)<br>
+<br>
+<span class="comment"># ── Calculate W-H variables</span><br>
+theta = np.<span class="function">radians</span>(two_theta_peaks / <span class="number">2</span>)  <span class="comment"># θ in radians</span><br>
+x = <span class="number">4</span> * np.<span class="function">sin</span>(theta)                   <span class="comment"># 4sinθ</span><br>
+y = beta * np.<span class="function">cos</span>(theta)                  <span class="comment"># βcosθ</span><br>
+<br>
+<span class="comment"># ── Linear regression</span><br>
+slope, intercept, r_value, p_value, std_err = stats.<span class="function">linregress</span>(x, y)<br>
+<br>
+<span class="comment"># ── Extract physical quantities</span><br>
+K = <span class="number">0.9</span>                     <span class="comment"># Scherrer shape factor</span><br>
+lam = <span class="number">1.5406e-10</span>             <span class="comment"># Cu Kα in meters</span><br>
+<br>
+D = K * lam / intercept      <span class="comment"># crystallite size in meters</span><br>
+D_nm = D * <span class="number">1e9</span>               <span class="comment"># convert to nm</span><br>
+epsilon = slope               <span class="comment"># microstrain (dimensionless)</span><br>
+<br>
+<span class="function">print</span>(<span class="string">f'Crystallite size D = {D_nm:.1f} nm'</span>)<br>
+<span class="function">print</span>(<span class="string">f'Microstrain ε = {epsilon:.4f}'</span>)<br>
+<span class="function">print</span>(<span class="string">f'R² = {r_value**2:.4f}'</span>)<br>
+  </div>
+
+  <span class="code-label">Python — Plotting the W-H diagram</span>
+  <div class="code-block">
+fig, ax = plt.<span class="function">subplots</span>(figsize=(<span class="number">8</span>, <span class="number">5</span>))<br>
+<br>
+<span class="comment"># Data points</span><br>
+ax.<span class="function">plot</span>(x, y, <span class="string">'ko'</span>, markersize=<span class="number">8</span>, label=<span class="string">'Experimental'</span>)<br>
+<br>
+<span class="comment"># Linear fit</span><br>
+x_fit = np.<span class="function">linspace</span>(<span class="number">0</span>, x.<span class="function">max</span>() * <span class="number">1.1</span>, <span class="number">100</span>)<br>
+y_fit = slope * x_fit + intercept<br>
+ax.<span class="function">plot</span>(x_fit, y_fit, <span class="string">'r--'</span>, lw=<span class="number">1.5</span>,<br>
+       label=<span class="string">f'Linear fit (R² = {r_value**2:.3f})'</span>)<br>
+<br>
+<span class="comment"># Annotate</span><br>
+ax.<span class="function">annotate</span>(<span class="string">f'D = {D_nm:.1f} nm\nε = {epsilon:.4f}'</span>,<br>
+            xy=(<span class="number">0.05</span>, <span class="number">0.95</span>), xycoords=<span class="string">'axes fraction'</span>,<br>
+            fontsize=<span class="number">11</span>, va=<span class="string">'top'</span>,<br>
+            bbox=<span class="function">dict</span>(boxstyle=<span class="string">'round'</span>, fc=<span class="string">'wheat'</span>, alpha=<span class="number">0.5</span>))<br>
+<br>
+ax.<span class="function">set_xlabel</span>(<span class="string">r'$4\sin\theta$'</span>, fontsize=<span class="number">13</span>)<br>
+ax.<span class="function">set_ylabel</span>(<span class="string">r'$\beta\cos\theta$ (rad)'</span>, fontsize=<span class="number">13</span>)<br>
+ax.<span class="function">set_title</span>(<span class="string">'Williamson-Hall Plot'</span>)<br>
+ax.<span class="function">legend</span>(fontsize=<span class="number">10</span>)<br>
+ax.<span class="function">set_xlim</span>(left=<span class="number">0</span>)<br>
+ax.<span class="function">set_ylim</span>(bottom=<span class="number">0</span>)<br>
+plt.<span class="function">tight_layout</span>()<br>
+plt.<span class="function">savefig</span>(<span class="string">'williamson_hall.png'</span>, dpi=<span class="number">200</span>)<br>
+plt.<span class="function">show</span>()<br>
+  </div>
+
+  <h2>5. Scherrer vs. Williamson-Hall: When Does It Matter?</h2>
+
+  <table class="article-table">
+    <tr>
+      <th>Criterion</th>
+      <th>Scherrer</th>
+      <th>Williamson-Hall</th>
+    </tr>
+    <tr>
+      <td>Peaks used</td>
+      <td>Single peak</td>
+      <td>All peaks simultaneously</td>
+    </tr>
+    <tr>
+      <td>Strain included?</td>
+      <td>No — assumed zero</td>
+      <td>Yes — separated from size</td>
+    </tr>
+    <tr>
+      <td>Anisotropy?</td>
+      <td>Per-peak values possible</td>
+      <td>Isotropic assumption (UDM)</td>
+    </tr>
+    <tr>
+      <td>When adequate</td>
+      <td>Well-annealed, strain-free</td>
+      <td>Nanocrystalline, strained samples</td>
+    </tr>
+    <tr>
+      <td>Reliability</td>
+      <td>Overestimates broadening → underestimates size</td>
+      <td>More accurate if assumptions hold</td>
+    </tr>
+  </table>
+
+  <div class="article-highlight">
+    <p>A quick diagnostic: if you apply Scherrer to each peak individually and the resulting "sizes" vary systematically with \(2\theta\) (increasing at higher angles), then strain is contributing significantly and you need the W-H method. If all peaks give roughly the same size, strain is negligible and Scherrer is sufficient.</p>
+  </div>
+
+  <div class="article-separator">&#183; &#183; &#183;</div>
+
+  <h2>6. Modified Williamson-Hall Methods</h2>
+
+  <p>The standard W-H equation (Section 2) is called the <strong>Uniform Deformation Model (UDM)</strong> because it assumes the strain is uniform in all crystallographic directions. In real materials — especially anisotropic structures like orthorhombic perovskites — this assumption often fails, producing poor \(R^2\) values and scattered W-H plots. Several modifications address this:</p>
+
+  <h3>Uniform Stress Deformation Model (USDM)</h3>
+
+  <p>If the lattice strain follows Hooke's law, the stress \(\sigma\) and strain \(\varepsilon\) are related by the Young's modulus \(E_{hkl}\) along each crystallographic direction: \(\sigma = E_{hkl}\varepsilon_{hkl}\). The modified equation becomes:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">USDM Williamson-Hall</span>
+    $$\beta\cos\theta = \frac{K\lambda}{D} + \frac{4\sigma\sin\theta}{E_{hkl}}$$
+  </div>
+
+  <p>Here the x-axis becomes \(4\sin\theta / E_{hkl}\) and the slope gives the stress \(\sigma\) directly. This requires knowing the elastic constants of your material. For perovskite manganites, these can be estimated from first-principles calculations or taken from literature for the parent compound (e.g., LaMnO<sub>3</sub>).</p>
+
+  <h3>Uniform Deformation Energy Density Model (UDEDM)</h3>
+
+  <p>This model uses the strain energy density \(u\) rather than stress or strain:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">UDEDM Williamson-Hall</span>
+    $$\beta\cos\theta = \frac{K\lambda}{D} + 4\sin\theta \sqrt{\frac{2u}{E_{hkl}}}$$
+  </div>
+
+  <p>The advantage of UDEDM is that it does not assume a particular stress state. The x-axis is \(4\sin\theta / \sqrt{E_{hkl}}\) and the slope squared divided by 2 gives the energy density \(u\).</p>
+
+  <div class="insight-box">
+    <strong>&#128161; Practical guidance</strong>
+    <p>Start with UDM. If \(R^2 < 0.9\) and the points scatter without a clear trend, try USDM or UDEDM — the anisotropy correction often dramatically improves the linearity. For cubic or nearly cubic structures, UDM is usually sufficient. For orthorhombic Nd<sub>0.7</sub>Sr<sub>0.3</sub>MnO<sub>3</sub>, we have found that the scatter in UDM plots is noticeable, and USDM gives more consistent results across different synthesis conditions.</p>
+  </div>
+
+  <h2>7. Interpreting the Results</h2>
+
+  <p>A few rules of thumb for interpreting W-H output:</p>
+
+  <ul>
+    <li><strong>Positive slope:</strong> Tensile microstrain. The lattice is stretched on average. Common in nanoparticles due to surface tension effects.</li>
+    <li><strong>Negative slope:</strong> Compressive microstrain. Less common but possible in thin films under substrate-induced stress or in core-shell nanostructures.</li>
+    <li><strong>Near-zero slope:</strong> Negligible strain. Scherrer alone would have been fine.</li>
+    <li><strong>Negative intercept:</strong> Unphysical — indicates a problem with your data (wrong instrumental correction, insufficient number of peaks, or dominant anisotropy). Do not report a negative intercept as a valid result.</li>
+    <li><strong>Large scatter (low \(R^2\)):</strong> Either your FWHM values have large uncertainties (weak peaks, poor fits) or the isotropic strain assumption is violated. Try the modified models or report results with appropriate caveats.</li>
+  </ul>
+
+  <h2>8. Comparison with Rietveld Refinement</h2>
+
+  <p>Rietveld refinement extracts crystallite size and strain from full-pattern fitting rather than individual peak widths. In FullProf or GSAS-II, size and strain parameters enter through the Thompson-Cox-Hastings profile function, and the refinement simultaneously handles overlapping peaks, preferred orientation, and asymmetry. The W-H method is simpler, more transparent, and requires no structural model — but Rietveld results are generally more reliable because they use all the information in the pattern, not just peak widths.</p>
+
+  <p>In practice, I use W-H as a quick sanity check before investing time in a full Rietveld refinement. If the W-H size and strain agree with the Rietveld values (within 10–20%), I am confident that the peak broadening analysis is consistent. If they disagree significantly, it usually points to anisotropic broadening that the isotropic W-H model cannot capture but Rietveld handles through anisotropic strain parameters.</p>
+
+  <h2>9. Common Pitfalls</h2>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #1: Using too few peaks</strong>
+    <p>A linear fit with 3 data points is not meaningful. You need at least 5–6 peaks spanning a wide \(2\theta\) range to produce a reliable W-H plot. If your phase has fewer visible peaks, the W-H method may not be applicable — fall back on Scherrer with an explicit caveat about strain.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #2: Mixing phases</strong>
+    <p>If your sample contains an impurity phase, do not include its peaks in the W-H plot for the main phase. Each phase has its own size and strain, and mixing them will produce nonsensical results. Identify and exclude impurity peaks before plotting.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #3: Forgetting the instrumental correction</strong>
+    <p>The W-H method is even more sensitive to instrumental broadening than Scherrer, because the strain information lives in the <em>variation</em> of FWHM with angle. If you do not subtract the instrumental contribution, the trend of \(\beta\cos\theta\) vs. \(4\sin\theta\) will be biased by the angle-dependent instrumental function, and both \(D\) and \(\varepsilon\) will be wrong.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #4: Over-interpreting anisotropic scatter</strong>
+    <p>If your W-H plot shows systematic deviations (e.g., some families of reflections above the line and others below), this is evidence of anisotropic strain or anisotropic crystallite shape — not noise. Do not force a line through the data and report the slope and intercept as if the isotropic model is valid. Either switch to the modified models (USDM/UDEDM) or report the anisotropy explicitly.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #5: Confusing FWHM with integral breadth</strong>
+    <p>The Williamson-Hall equation as written above uses the FWHM (\(\beta\)). Some formulations use the integral breadth \(\beta_\text{int}\) (= area/height) instead, which gives slightly different numerical results. Make sure you are consistent: if your fitting code outputs integral breadth, the Scherrer constant \(K\) should be adjusted accordingly (typically \(K = 1.0\) for integral breadth vs. \(K = 0.9\) for FWHM).</p>
+  </div>
+
+  <div class="article-separator">&#183; &#183; &#183;</div>
+
+  <h2>10. Complete Pipeline: From FWHM to Size and Strain</h2>
+
+  <span class="code-label">Python — Full Williamson-Hall analysis pipeline</span>
+  <div class="code-block">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np<br>
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt<br>
+<span class="keyword">from</span> scipy <span class="keyword">import</span> stats<br>
+<br>
+<span class="keyword">def</span> <span class="function">williamson_hall</span>(two_theta_deg, fwhm_deg,<br>
+                      fwhm_inst_deg=<span class="number">None</span>,<br>
+                      wavelength=<span class="number">1.5406e-10</span>,<br>
+                      K=<span class="number">0.9</span>,<br>
+                      deconv=<span class="string">'gaussian'</span>):<br>
+    <span class="string">"""</span><br>
+<span class="string">    Williamson-Hall analysis (UDM).</span><br>
+<span class="string">    </span><br>
+<span class="string">    Parameters</span><br>
+<span class="string">    ----------</span><br>
+<span class="string">    two_theta_deg : array, peak positions in degrees</span><br>
+<span class="string">    fwhm_deg : array, observed FWHM in degrees</span><br>
+<span class="string">    fwhm_inst_deg : array or None, instrumental FWHM</span><br>
+<span class="string">    wavelength : float, X-ray wavelength in meters</span><br>
+<span class="string">    K : float, Scherrer shape factor</span><br>
+<span class="string">    deconv : str, 'gaussian' or 'lorentzian'</span><br>
+<span class="string">    </span><br>
+<span class="string">    Returns</span><br>
+<span class="string">    -------</span><br>
+<span class="string">    dict with D_nm, epsilon, R2, and plot data</span><br>
+<span class="string">    """</span><br>
+    <span class="comment"># Convert to radians</span><br>
+    beta_obs = np.<span class="function">radians</span>(fwhm_deg)<br>
+    theta = np.<span class="function">radians</span>(two_theta_deg / <span class="number">2</span>)<br>
+    <br>
+    <span class="comment"># Instrumental correction</span><br>
+    <span class="keyword">if</span> fwhm_inst_deg <span class="keyword">is not</span> <span class="number">None</span>:<br>
+        beta_inst = np.<span class="function">radians</span>(fwhm_inst_deg)<br>
+        <span class="keyword">if</span> deconv == <span class="string">'gaussian'</span>:<br>
+            beta = np.<span class="function">sqrt</span>(beta_obs**<span class="number">2</span> - beta_inst**<span class="number">2</span>)<br>
+        <span class="keyword">else</span>:  <span class="comment"># lorentzian</span><br>
+            beta = beta_obs - beta_inst<br>
+    <span class="keyword">else</span>:<br>
+        beta = beta_obs<br>
+    <br>
+    <span class="comment"># W-H variables</span><br>
+    x = <span class="number">4</span> * np.<span class="function">sin</span>(theta)<br>
+    y = beta * np.<span class="function">cos</span>(theta)<br>
+    <br>
+    <span class="comment"># Linear regression</span><br>
+    res = stats.<span class="function">linregress</span>(x, y)<br>
+    <br>
+    <span class="comment"># Extract quantities</span><br>
+    D = K * wavelength / res.intercept<br>
+    D_nm = D * <span class="number">1e9</span><br>
+    epsilon = res.slope<br>
+    <br>
+    <span class="keyword">return</span> {<br>
+        <span class="string">'D_nm'</span>: D_nm,<br>
+        <span class="string">'epsilon'</span>: epsilon,<br>
+        <span class="string">'R2'</span>: res.rvalue**<span class="number">2</span>,<br>
+        <span class="string">'intercept'</span>: res.intercept,<br>
+        <span class="string">'slope'</span>: res.slope,<br>
+        <span class="string">'slope_err'</span>: res.stderr,<br>
+        <span class="string">'intercept_err'</span>: res.intercept_stderr,<br>
+        <span class="string">'x'</span>: x, <span class="string">'y'</span>: y<br>
+    }<br>
+<br>
+<span class="comment"># ── Example usage ──</span><br>
+two_theta = np.<span class="function">array</span>([<span class="number">22.85</span>, <span class="number">32.52</span>, <span class="number">40.10</span>, <span class="number">46.60</span>,<br>
+                      <span class="number">52.48</span>, <span class="number">57.98</span>, <span class="number">68.10</span>])<br>
+fwhm = np.<span class="function">array</span>([<span class="number">0.182</span>, <span class="number">0.195</span>, <span class="number">0.210</span>, <span class="number">0.228</span>,<br>
+                 <span class="number">0.243</span>, <span class="number">0.261</span>, <span class="number">0.295</span>])<br>
+fwhm_inst = np.<span class="function">array</span>([<span class="number">0.060</span>, <span class="number">0.062</span>, <span class="number">0.065</span>, <span class="number">0.068</span>,<br>
+                      <span class="number">0.072</span>, <span class="number">0.076</span>, <span class="number">0.085</span>])<br>
+<br>
+wh = <span class="function">williamson_hall</span>(two_theta, fwhm, fwhm_inst)<br>
+<br>
+<span class="function">print</span>(<span class="string">f'Crystallite size: {wh["D_nm"]:.1f} nm'</span>)<br>
+<span class="function">print</span>(<span class="string">f'Microstrain: {wh["epsilon"]:.5f}'</span>)<br>
+<span class="function">print</span>(<span class="string">f'R²: {wh["R2"]:.4f}'</span>)<br>
+<br>
+<span class="comment"># ── Also run Scherrer for comparison ──</span><br>
+theta_rad = np.<span class="function">radians</span>(two_theta / <span class="number">2</span>)<br>
+beta_corr = np.<span class="function">sqrt</span>(np.<span class="function">radians</span>(fwhm)**<span class="number">2</span> - np.<span class="function">radians</span>(fwhm_inst)**<span class="number">2</span>)<br>
+D_scherrer = <span class="number">0.9</span> * <span class="number">1.5406e-10</span> / (beta_corr * np.<span class="function">cos</span>(theta_rad)) * <span class="number">1e9</span><br>
+<br>
+<span class="function">print</span>(<span class="string">f'\nScherrer sizes per peak:'</span>)<br>
+<span class="keyword">for</span> tt, d <span class="keyword">in</span> <span class="function">zip</span>(two_theta, D_scherrer):<br>
+    <span class="function">print</span>(<span class="string">f'  2θ = {tt:.1f}° → D = {d:.1f} nm'</span>)<br>
+<span class="function">print</span>(<span class="string">f'  Mean Scherrer: {D_scherrer.mean():.1f} ± {D_scherrer.std():.1f} nm'</span>)<br>
+  </div>
+
+  <h2>11. Summary: The XRD Processing Pipeline</h2>
+
+  <p>Across these three posts, we have built a complete workflow from raw diffractometer output to quantitative microstructural parameters:</p>
+
+  <ol>
+    <li><a href="xrd-peak-finding.html" style="color: var(--accent);"><strong>Peak Finding</strong></a> — load data, subtract background, smooth, detect peaks, convert to d-spacings.</li>
+    <li><a href="xrd-peak-fitting.html" style="color: var(--accent);"><strong>Peak Fitting</strong></a> — fit Gaussian/Lorentzian/pseudo-Voigt profiles to extract precise positions, FWHM, and integrated intensities.</li>
+    <li><strong>Williamson-Hall</strong> — plot \(\beta\cos\theta\) vs. \(4\sin\theta\) to separate crystallite size from microstrain.</li>
+  </ol>
+
+  <p>Each step feeds into the next, and errors propagate forward. A missed peak in step 1 means a missing data point in the W-H plot. A poorly fitted FWHM in step 2 means a scattered W-H plot with low \(R^2\). Getting the early steps right is not just good practice — it is the foundation that makes the final analysis meaningful.</p>
+
+  <div class="article-pullquote">
+    The Scherrer equation gives you a number. Williamson-Hall gives you understanding.
+  </div>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../images/profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Researcher at VNU-University of Engineering and Technology. Specializing in magnetocaloric materials, critical phenomena, and computational materials science.</p>
+    </div>
+  </div>
+
+  <!-- EDIT: update prev/next links when adding to blog -->
+  <div class="article-nav">
+    <a href="xrd-peak-fitting.html">
+      <div class="article-nav-label">&#8592; Previous</div>
+      <div class="article-nav-title">XRD Peak Fitting: Gaussian, Lorentzian, and Voigt Profiles</div>
+    </a>
+    <a href="pagerank-eigenvector.html" class="next">
+      <div class="article-nav-label">Next &#8594;</div>
+      <div class="article-nav-title">The $25,000,000,000 Eigenvector: The Linear Algebra Behind Google</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=QUdAPR8AAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: May 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>
