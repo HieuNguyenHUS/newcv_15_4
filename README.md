@@ -15,8 +15,6 @@
 7. [Thêm bài báo mới](#7-thêm-bài-báo-mới)
 8. [Thêm bài blog mới](#8-thêm-bài-blog-mới)
 9. [Workflow làm việc](#9-workflow-làm-việc)
-10. [Đưa lên web (khi sẵn sàng)](#10-đưa-lên-web-khi-sẵn-sàng)
-
 ---
 
 ## 1. Cài đặt môi trường
@@ -356,91 +354,10 @@ Tìm `<div class="blog-grid">` → thêm block:
 └─────────────────────────────────────────────────┘
 ```
 
-### Checklist trước khi hoàn thành
-
-- [ ] Đã thay tên, chức danh, trường viện
-- [ ] Đã thay ảnh đại diện
-- [ ] Đã cập nhật email và ORCID thật
-- [ ] Đã thêm đầy đủ bài báo (publications)
-- [ ] Đã sửa CV timeline (học vấn, kinh nghiệm)
-- [ ] Đã cập nhật research interests
-- [ ] Đã viết/sửa các bài blog
-- [ ] Đã thêm link Google Scholar, ResearchGate
-- [ ] Đã upload file CV PDF
-- [ ] Đã kiểm tra trên điện thoại (thu nhỏ trình duyệt)
-- [ ] Đã kiểm tra tất cả các link hoạt động
-
-### Phím tắt VS Code hữu ích
-
-| Phím tắt | Tác dụng |
-|----------|----------|
-| `Ctrl+F` | Tìm kiếm trong file |
-| `Ctrl+H` | Tìm và thay thế |
-| `Ctrl+S` | Lưu file |
-| `Ctrl+Z` | Undo (hoàn tác) |
-| `Ctrl+Shift+Z` | Redo |
-| `Alt+Shift+↓` | Nhân đôi dòng hiện tại |
-| `Ctrl+/` | Comment/Uncomment code |
-| `Alt+Z` | Bật/tắt word wrap |
-| `Ctrl+D` | Chọn từ giống nhau tiếp theo |
 
 ---
 
-## 10. Đưa lên web (khi sẵn sàng)
-
-### Lựa chọn 1: GitHub Pages (Miễn phí — Khuyến nghị)
-
-```bash
-# 1. Cài Git (nếu chưa có): https://git-scm.com
-
-# 2. Tạo tài khoản GitHub: https://github.com
-
-# 3. Tạo repository mới tên: username.github.io
-
-# 4. Trong thư mục my-website, mở terminal:
-git init
-git add .
-git commit -m "First commit - personal website"
-git remote add origin https://github.com/username/username.github.io.git
-git push -u origin main
-
-# 5. Truy cập: https://username.github.io
-```
-
-**Cập nhật sau này:**
-```bash
-git add .
-git commit -m "Mô tả thay đổi"
-git push
-```
-
-### Lựa chọn 2: Netlify (Miễn phí — Kéo thả)
-
-1. Vào [netlify.com](https://www.netlify.com)
-2. Đăng ký → "Add new site" → "Deploy manually"
-3. **Kéo thả thư mục `my-website`** vào trang
-4. Xong! Netlify tự tạo link cho bạn
-5. Có thể đổi tên thành `harrynguyen.netlify.app`
-
-### Lựa chọn 3: Vercel (Miễn phí)
-
-1. Vào [vercel.com](https://vercel.com)
-2. Kết nối GitHub repository
-3. Tự động deploy mỗi khi push code mới
-
-### So sánh nhanh
-
-| Tiêu chí | GitHub Pages | Netlify | Vercel |
-|----------|-------------|---------|--------|
-| Giá | Miễn phí | Miễn phí | Miễn phí |
-| Độ khó | Cần biết Git | Kéo thả | Cần GitHub |
-| Tên miền riêng | ✅ | ✅ | ✅ |
-| HTTPS | ✅ Tự động | ✅ Tự động | ✅ Tự động |
-| Tốc độ deploy | ~1 phút | ~30 giây | ~30 giây |
-
----
-
-## 💡 Mẹo & Lưu ý
+## Lưu ý
 
 1. **Backup thường xuyên:** Copy thư mục `my-website` ra nơi khác trước khi sửa lớn
 2. **Test responsive:** Nhấn `F12` → click icon điện thoại (hoặc `Ctrl+Shift+M`) để xem trên mobile
@@ -451,4 +368,4 @@ git push
 
 ---
 
-> 📝 *Tài liệu tạo bởi Claude — Cập nhật: Tháng 4/2026*
+>  Cập nhật: Tháng 4/2026*
