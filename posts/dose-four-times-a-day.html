@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Dose, Four Times a Day — Minh-Hieu Nguyen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.25s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  padding: 140px 40px 0;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.article-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 40px;
+  transition: color 0.25s;
+}
+
+.article-back:hover { color: var(--accent); }
+
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08);
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+/* ─── ARTICLE COVER ─── */
+.article-cover {
+  max-width: 760px;
+  margin: 48px auto;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #1a1a2e 0%, #2e1a1a 30%, #3d1810 60%, #8b2500 100%);
+}
+
+.article-cover-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image: 
+    radial-gradient(circle at 15% 40%, white 1px, transparent 1px),
+    radial-gradient(circle at 85% 25%, white 1px, transparent 1px),
+    radial-gradient(circle at 50% 75%, white 1px, transparent 1px),
+    radial-gradient(circle at 30% 90%, white 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.article-cover-text {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  right: 40px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  font-style: italic;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.3;
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-body p {
+  margin-bottom: 28px;
+  font-size: 1.08rem;
+  line-height: 1.9;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  float: left;
+  line-height: 0.75;
+  margin-right: 10px;
+  margin-top: 8px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.article-body p em {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.article-body p strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 40px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.05rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+.article-separator {
+  text-align: center;
+  margin: 48px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+.article-pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  padding: 40px 20px;
+  margin: 48px 0;
+  line-height: 1.4;
+  position: relative;
+}
+
+.article-pullquote::before,
+.article-pullquote::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 1.5px;
+  background: var(--accent);
+  margin: 0 auto 20px;
+  opacity: 0.4;
+}
+
+.article-pullquote::after { margin: 20px auto 0; }
+
+/* ─── ARTICLE FOOTER ─── */
+.article-end {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 40px;
+}
+
+.article-author {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.article-author-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.article-author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.article-author-info p {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.article-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.article-nav a {
+  padding: 16px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: all 0.25s;
+  flex: 1;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.02);
+}
+
+.article-nav-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.article-nav .next { text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 48px 40px;
+  text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+
+.footer-social {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent-light);
+  color: white;
+  background: rgba(139,37,0,0.3);
+}
+
+footer p { font-size: 0.85rem; line-height: 1.6; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer a:hover { color: white; }
+
+/* ─── ANIMATIONS ─── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+}
+
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── DOSE SECTION HEADING ─── */
+.dose-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+  margin: 56px 0 36px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dose-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4.5rem;
+  font-weight: 700;
+  line-height: 0.7;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.dose-heading-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dose-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+}
+
+.dose-phrase {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+@media (max-width: 640px) {
+  .dose-letter { font-size: 3.2rem; }
+  .dose-phrase { font-size: 1.45rem; }
+  .dose-heading { gap: 16px; margin: 44px 0 28px; }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .article-header h1 { font-size: 2.4rem; }
+  .article-cover { height: 240px; margin: 36px 20px; }
+  .article-cover-text { font-size: 1.3rem; bottom: 24px; left: 24px; right: 24px; }
+  .article-pullquote { font-size: 1.3rem; }
+}
+
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 2rem; }
+  .article-cover { height: 200px; }
+  .article-cover-text { font-size: 1.1rem; bottom: 20px; left: 20px; right: 20px; }
+  .article-body p { font-size: 1rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to all posts
+  </a>
+  <span class="article-tag">Personal</span>
+  <h1>A Dose, Four Times a Day</h1>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">June 2026</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">7 min read</span>
+  </div>
+</header>
+
+<!-- ─── COVER IMAGE ─── -->
+<div class="article-cover fade-in fade-in-delay">
+  <div class="article-cover-pattern"></div>
+  <div class="article-cover-text">"I'm not chasing the big things. I'm chasing the moments my body whispers — that I'm alive, not just getting by."</div>
+</div>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay-2">
+
+  <p>Some days pass and I remember nothing of them. Not a single thing. They blur into the days before and the days after, and at the end of a month I find myself wondering where all that time went — and worse, who I was while it slipped by. For a long time this scared me. Then I learned four letters: <strong>D.O.S.E.</strong> Four small ways my body has of leaning in close and saying: <em>hey, this one matters, hold onto it.</em></p>
+
+  <p>I'm not talking about chemistry here, even though that's where the letters come from. I'm talking about four feelings I kept missing — four moments that were quietly trying to tell me I was alive.</p>
+
+  <div class="article-pullquote">
+    I'm not looking for the grand things. I'm looking for the moments my body whispers — that I'm alive, not just getting by.
+  </div>
+
+  <div class="dose-heading">
+    <span class="dose-letter">D</span>
+    <div class="dose-heading-text">
+      <span class="dose-label">Dopamine</span>
+      <span class="dose-phrase">the moment just before</span>
+    </div>
+  </div>
+
+  <p>The night before a trip, I can never sleep. Everything is already packed. The alarm is set. There's nothing left to do, and still I lie awake, turning over the morning in my head — the road, the light, the people I'll see. And here is the strange part I only understood later: that restless night was often better than the trip itself.</p>
+
+  <p>The wanting was sweeter than the having. The waiting at the gate, the small countdown, the not-yet — that's where the feeling lived. Not at the destination. By the time I arrived, the thing I'd been reaching for had already half-evaporated, and I'd be standing somewhere beautiful, faintly puzzled, asking myself why I didn't feel more.</p>
+
+  <p>I think this is why so many people feel hollow right after they finally get what they wanted. The job, the grade, the yes they'd been waiting on. We spend so long aimed at a point on the horizon that we forget the aiming was the living part. We cross the line and the line is just a line. <em>Now what.</em> The feeling we thought lived at the finish was back there, the whole time, in the chase.</p>
+
+  <div class="dose-heading">
+    <span class="dose-letter">O</span>
+    <div class="dose-heading-text">
+      <span class="dose-label">Oxytocin</span>
+      <span class="dose-phrase">when someone is simply there</span>
+    </div>
+  </div>
+
+  <p>There was a day that went badly in every small way a day can. Nothing dramatic. Just a slow accumulation of things going slightly wrong until I felt scraped thin. I didn't want to talk about it. I didn't want advice. I didn't want to be cheered up.</p>
+
+  <p>Someone sat down beside me. They didn't ask what was wrong. They didn't try to fix anything. They just stayed — close enough that I could feel they were there — and after a while something in my chest loosened, and I realized the thing I'd needed wasn't a solution. It was the plain fact of <em>not being alone with it.</em></p>
+
+  <div class="article-highlight">
+    <p>I can't remember anymore what went wrong that day. I only remember the feeling of someone sitting next to me — and that they aren't here anymore.</p>
+  </div>
+
+  <p>That's the thing about these moments. While they're happening, you have no idea how much they're worth. They feel ordinary. Two people, one couch, a quiet that doesn't need filling. It's only later, when the moment can't be repeated — when the person is gone, or distant, or changed — that you understand you were holding something rare in your hands and didn't even close your fingers around it.</p>
+
+  <div class="dose-heading">
+    <span class="dose-letter">S</span>
+    <div class="dose-heading-text">
+      <span class="dose-label">Serotonin</span>
+      <span class="dose-phrase">when you know you belong somewhere</span>
+    </div>
+  </div>
+
+  <p>For a long time I confused being praised with being seen. They're not the same. Praise comes from outside and lands on the surface — <em>good job, well done, impressive.</em> It's nice. It fades by morning. Being seen is something else. It's the feeling of sitting in a room and knowing, without anyone saying it, that you are one of the people in it. That you fit. That if you didn't show up, there'd be a shape missing.</p>
+
+  <p>I've felt it with a research group, with a handful of friends, with my family on an unremarkable evening. It never arrives with fireworks. It's more like warm water rising slowly — you don't notice the exact moment it covers you, only that at some point you're warm all the way through.</p>
+
+  <p>We're taught to want the loud, bright feelings. But I've come to think <em>okay</em> is one of the most valuable things a person can feel. Not ecstatic. Not soaring. Just okay — held, accounted for, at home somewhere. There were whole years I would have traded for one ordinary evening of that, and I didn't know it at the time.</p>
+
+  <div class="dose-heading">
+    <span class="dose-letter">E</span>
+    <div class="dose-heading-text">
+      <span class="dose-label">Endorphins</span>
+      <span class="dose-phrase">when the pain has just passed</span>
+    </div>
+  </div>
+
+  <p>You know the breath. The long one you let out when something hard is finally over. The exam handed in, the conversation survived, the stretch of weeks you white-knuckled through and weren't sure you would. Your shoulders, which you didn't even notice you'd been holding up near your ears, come down. The air goes out of you slowly.</p>
+
+  <p>That breath is the body's quiet way of saying: <em>you did everything you could. Rest now, just for a little while.</em></p>
+
+  <p>It's a strange kind of happiness, because it's made of relief rather than joy. It only exists on the far side of something difficult. You can't manufacture it; you have to have come through. And maybe that's why it feels so honest — there's no performance in it, nothing to prove. Just a body that endured, finally allowed to set the weight down.</p>
+
+  <div class="article-separator">· · ·</div>
+
+  <p>D.O.S.E isn't a formula. I don't go around trying to engineer four feelings a day like a checklist. It's more like a small map — one that shows me the places happiness has already passed through, the places I walked right by without looking up.</p>
+
+  <p>There are moments I missed because I was too busy staring at what came next. There are people who live only in memory now, who I'd give a great deal to sit beside again. There were times I was proud of how much I could endure, and forgot that enduring is not the same as being well — that I was allowed to stop.</p>
+
+  <div class="article-highlight">
+    <p>I've stopped trying to chase all four feelings every day. Now I just try not to let them pass without noticing.</p>
+  </div>
+
+  <p>Because the moments were never the problem. They were always there, whispering. I just wasn't listening. And the days I remember — the ones that don't blur — are simply the days I finally heard them.</p>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../images/profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Researcher at VNU-University of Engineering and Technology. Writing about physics, work-life balance, and the human side of science.</p>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="../blog.html">
+      <div class="article-nav-label">← All Posts</div>
+      <div class="article-nav-title">Back to Blog</div>
+    </a>
+    <a href="why-i-do-research.html" class="next">
+      <div class="article-nav-label">Next →</div>
+      <div class="article-nav-title">My Motivation for Scientific Research</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=QUdAPR8AAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: June 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>
