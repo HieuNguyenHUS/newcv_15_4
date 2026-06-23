@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A Dose, Four Times a Day — Minh-Hieu Nguyen</title>
+<title>My Motivation for Scientific Research — Minh-Hieu Nguyen</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -178,19 +178,33 @@ nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
   border-radius: 12px;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(135deg, #1a1a2e 0%, #2e1a1a 30%, #3d1810 60%, #8b2500 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #2e1a2e 30%, #1a2e3d 60%, #2e3d1a 100%);
 }
 
 .article-cover-pattern {
   position: absolute;
   inset: 0;
-  opacity: 0.08;
+  opacity: 0.06;
   background-image: 
-    radial-gradient(circle at 15% 40%, white 1px, transparent 1px),
-    radial-gradient(circle at 85% 25%, white 1px, transparent 1px),
-    radial-gradient(circle at 50% 75%, white 1px, transparent 1px),
-    radial-gradient(circle at 30% 90%, white 1px, transparent 1px);
-  background-size: 60px 60px;
+    radial-gradient(circle at 20% 30%, white 1.5px, transparent 1.5px),
+    radial-gradient(circle at 70% 60%, white 1px, transparent 1px),
+    radial-gradient(circle at 40% 80%, white 0.8px, transparent 0.8px),
+    radial-gradient(circle at 90% 20%, white 1.2px, transparent 1.2px),
+    radial-gradient(circle at 55% 45%, white 0.6px, transparent 0.6px);
+  background-size: 80px 80px;
+}
+
+.article-cover-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.03) 2px,
+    rgba(255,255,255,0.03) 4px
+  );
 }
 
 .article-cover-text {
@@ -211,6 +225,7 @@ nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
   max-width: 680px;
   margin: 0 auto;
   padding: 0 40px 80px;
+  text-align: justify;
 }
 
 .article-body p {
@@ -437,55 +452,6 @@ footer a:hover { color: white; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── DOSE SECTION HEADING ─── */
-.dose-heading {
-  display: flex;
-  align-items: baseline;
-  gap: 22px;
-  margin: 56px 0 36px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--border);
-}
-
-.dose-letter {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 4.5rem;
-  font-weight: 700;
-  line-height: 0.7;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-
-.dose-heading-text {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.dose-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.76rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent-light);
-}
-
-.dose-phrase {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.9rem;
-  font-weight: 600;
-  font-style: italic;
-  color: var(--ink);
-  line-height: 1.2;
-}
-
-@media (max-width: 640px) {
-  .dose-letter { font-size: 3.2rem; }
-  .dose-phrase { font-size: 1.45rem; }
-  .dose-heading { gap: 16px; margin: 44px 0 28px; }
-}
-
 /* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {
   .article-header h1 { font-size: 2.4rem; }
@@ -558,12 +524,14 @@ footer a:hover { color: white; }
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
     Back to all posts
   </a>
+  <!-- EDIT: Change tag if needed -->
   <span class="article-tag">Personal</span>
-  <h1>A Dose, Four Times a Day</h1>
+  <h1>My Motivation for Scientific Research</h1>
   <div class="article-meta">
     <span class="article-meta-item">Minh-Hieu Nguyen</span>
     <span class="article-meta-divider"></span>
-    <span class="article-meta-item">June 2026</span>
+    <!-- EDIT: Update date -->
+    <span class="article-meta-item">May 2026</span>
     <span class="article-meta-divider"></span>
     <span class="article-meta-item">7 min read</span>
   </div>
@@ -572,91 +540,76 @@ footer a:hover { color: white; }
 <!-- ─── COVER IMAGE ─── -->
 <div class="article-cover fade-in fade-in-delay">
   <div class="article-cover-pattern"></div>
-  <div class="article-cover-text">"I'm not chasing the big things. I'm chasing the moments my body whispers — that I'm alive, not just getting by."</div>
+  <div class="article-cover-overlay"></div>
+  <div class="article-cover-text">"The detour is not wasted if it teaches you what the shortcut never could."</div>
 </div>
 
 <!-- ─── ARTICLE BODY ─── -->
 <article class="article-body fade-in fade-in-delay-2">
 
-  <p>Some days pass and I remember nothing of them. Not a single thing. They blur into the days before and the days after, and at the end of a month I find myself wondering where all that time went — and worse, who I was while it slipped by. For a long time this scared me. Then I learned four letters: <strong>D.O.S.E.</strong> Four small ways my body has of leaning in close and saying: <em>hey, this one matters, hold onto it.</em></p>
+  <p>Someone once asked me: <em>"Why do you do research?"</em> — and I realized I had never really sat down to answer that question properly. Not for a grant application, not for a thesis introduction, but for myself. So here I am, trying to figure it out in writing.</p>
 
-  <p>I'm not talking about chemistry here, even though that's where the letters come from. I'm talking about four feelings I kept missing — four moments that were quietly trying to tell me I was alive.</p>
-
-  <div class="article-pullquote">
-    I'm not looking for the grand things. I'm looking for the moments my body whispers — that I'm alive, not just getting by.
-  </div>
-
-  <div class="dose-heading">
-    <span class="dose-letter">D</span>
-    <div class="dose-heading-text">
-      <span class="dose-label">Dopamine</span>
-      <span class="dose-phrase">the moment just before</span>
-    </div>
-  </div>
-
-  <p>The night before a trip, I can never sleep. Everything is already packed. The alarm is set. There's nothing left to do, and still I lie awake, turning over the morning in my head — the road, the light, the people I'll see. And here is the strange part I only understood later: that restless night was often better than the trip itself.</p>
-
-  <p>The wanting was sweeter than the having. The waiting at the gate, the small countdown, the not-yet — that's where the feeling lived. Not at the destination. By the time I arrived, the thing I'd been reaching for had already half-evaporated, and I'd be standing somewhere beautiful, faintly puzzled, asking myself why I didn't feel more.</p>
-
-  <p>I think this is why so many people feel hollow right after they finally get what they wanted. The job, the grade, the yes they'd been waiting on. We spend so long aimed at a point on the horizon that we forget the aiming was the living part. We cross the line and the line is just a line. <em>Now what.</em> The feeling we thought lived at the finish was back there, the whole time, in the chase.</p>
-
-  <div class="dose-heading">
-    <span class="dose-letter">O</span>
-    <div class="dose-heading-text">
-      <span class="dose-label">Oxytocin</span>
-      <span class="dose-phrase">when someone is simply there</span>
-    </div>
-  </div>
-
-  <p>There was a day that went badly in every small way a day can. Nothing dramatic. Just a slow accumulation of things going slightly wrong until I felt scraped thin. I didn't want to talk about it. I didn't want advice. I didn't want to be cheered up.</p>
-
-  <p>Someone sat down beside me. They didn't ask what was wrong. They didn't try to fix anything. They just stayed — close enough that I could feel they were there — and after a while something in my chest loosened, and I realized the thing I'd needed wasn't a solution. It was the plain fact of <em>not being alone with it.</em></p>
-
-  <div class="article-highlight">
-    <p>I can't remember anymore what went wrong that day. I only remember the feeling of someone sitting next to me — and that they aren't here anymore.</p>
-  </div>
-
-  <p>That's the thing about these moments. While they're happening, you have no idea how much they're worth. They feel ordinary. Two people, one couch, a quiet that doesn't need filling. It's only later, when the moment can't be repeated — when the person is gone, or distant, or changed — that you understand you were holding something rare in your hands and didn't even close your fingers around it.</p>
-
-  <div class="dose-heading">
-    <span class="dose-letter">S</span>
-    <div class="dose-heading-text">
-      <span class="dose-label">Serotonin</span>
-      <span class="dose-phrase">when you know you belong somewhere</span>
-    </div>
-  </div>
-
-  <p>For a long time I confused being praised with being seen. They're not the same. Praise comes from outside and lands on the surface — <em>good job, well done, impressive.</em> It's nice. It fades by morning. Being seen is something else. It's the feeling of sitting in a room and knowing, without anyone saying it, that you are one of the people in it. That you fit. That if you didn't show up, there'd be a shape missing.</p>
-
-  <p>I've felt it with a research group, with a handful of friends, with my family on an unremarkable evening. It never arrives with fireworks. It's more like warm water rising slowly — you don't notice the exact moment it covers you, only that at some point you're warm all the way through.</p>
-
-  <p>We're taught to want the loud, bright feelings. But I've come to think <em>okay</em> is one of the most valuable things a person can feel. Not ecstatic. Not soaring. Just okay — held, accounted for, at home somewhere. There were whole years I would have traded for one ordinary evening of that, and I didn't know it at the time.</p>
-
-  <div class="dose-heading">
-    <span class="dose-letter">E</span>
-    <div class="dose-heading-text">
-      <span class="dose-label">Endorphins</span>
-      <span class="dose-phrase">when the pain has just passed</span>
-    </div>
-  </div>
-
-  <p>You know the breath. The long one you let out when something hard is finally over. The exam handed in, the conversation survived, the stretch of weeks you white-knuckled through and weren't sure you would. Your shoulders, which you didn't even notice you'd been holding up near your ears, come down. The air goes out of you slowly.</p>
-
-  <p>That breath is the body's quiet way of saying: <em>you did everything you could. Rest now, just for a little while.</em></p>
-
-  <p>It's a strange kind of happiness, because it's made of relief rather than joy. It only exists on the far side of something difficult. You can't manufacture it; you have to have come through. And maybe that's why it feels so honest — there's no performance in it, nothing to prove. Just a body that endured, finally allowed to set the weight down.</p>
+  <p>The honest answer is that I don't fully know. What I do know is that I've always been drawn to the process of <strong>understanding</strong> — not just getting results, but understanding <em>why</em> things work the way they do. That feeling when a concept suddenly clicks, when a messy equation collapses into something elegant, when a graph starts to make sense — that's what keeps me going. Not the publications, not the credentials. The click.</p>
 
   <div class="article-separator">· · ·</div>
 
-  <p>D.O.S.E isn't a formula. I don't go around trying to engineer four feelings a day like a checklist. It's more like a small map — one that shows me the places happiness has already passed through, the places I walked right by without looking up.</p>
+  <p>I fell in love with computational physics early on. The idea that you could model reality inside a computer, predict how atoms move, simulate how materials behave — it felt like the closest thing to magic I'd ever encountered. So when I got the chance to work at Academia Sinica in Taiwan, doing DFT calculations and neural network potentials under Prof. Jer-Lai Kuo, I thought I'd found my path.</p>
 
-  <p>There are moments I missed because I was too busy staring at what came next. There are people who live only in memory now, who I'd give a great deal to sit beside again. There were times I was proud of how much I could endure, and forgot that enduring is not the same as being well — that I was allowed to stop.</p>
+  <p>I was wrong. Or rather — I was right about the destination but wrong about how ready I was for it.</p>
+
+  <p>The truth is, I struggled. The gap between what I knew and what the work demanded was enormous. The codebase was complex, the theory was deep, and everyone around me seemed to move at a speed I couldn't match. I didn't fail spectacularly — I just felt like I was constantly drowning in shallow water. Close enough to the surface to breathe, but never able to stand.</p>
 
   <div class="article-highlight">
-    <p>I've stopped trying to chase all four feelings every day. Now I just try not to let them pass without noticing.</p>
+    <p>There's a particular kind of exhaustion that comes not from working too hard, but from feeling like you're not good enough for the work you love. That's what I carried back to Vietnam.</p>
   </div>
 
-  <p>Because the moments were never the problem. They were always there, whispering. I just wasn't listening. And the days I remember — the ones that don't blur — are simply the days I finally heard them.</p>
+  <p>So I came home. Not as a retreat, but as a reset. I told myself I needed to build a stronger foundation — to fill the gaps that had left me gasping at Sinica. I needed to understand the experimental side of the physics I wanted to compute.</p>
+
+  <div class="article-separator">· · ·</div>
+
+  <p>That's how I ended up in Assoc. Prof. Phan Thế Long's group at VNU-UET, working on magnetocaloric effects in manganite nanoparticles. A completely different world from computational chemistry. Instead of writing code, I was weighing powders on a precision balance. Instead of debugging simulations, I was grinding samples in an agate mortar — by hand, for hours, until my arms ached and the powder was fine enough.</p>
+
+  <p>The solid-state reaction process became my daily life: weigh the precursors in the right molar ratios, grind them, calcine, grind again, press into pellets, sinter at high temperature, then characterize with XRD. Each step takes time. Each mistake costs days, not seconds. There's no <em>"undo"</em> button in a lab.</p>
+
+  <p>And I'll be honest — I felt lost again. Not because the work was bad. Prof. Long is an excellent researcher, and the science is fascinating. Tricritical behavior, the boundary between first-order and second-order phase transitions, Arrott plot analysis — these are beautiful problems. But every day, I was working in a field I hadn't trained for, using techniques I was still learning, and the old familiar feeling crept back in: <strong>I'm not enough for this.</strong></p>
+
+  <div class="article-pullquote">
+    The fear wasn't about breaking a sample. It was about spending years on a detour that leads nowhere.
+  </div>
+
+  <p>When you're in a lab and you don't yet have intuition — when you don't know by feel how long to grind, what a good XRD pattern looks like at a glance, whether the sintering temperature needs adjusting — every step feels like walking on thin ice. You follow the protocol, but you can't <em>feel</em> it yet. And that gap between knowing the steps and owning them? That's where the anxiety lives.</p>
+
+  <div class="article-separator">· · ·</div>
+
+  <p>Here's what I've started to realize, though. And I want to write this down before I forget it, because on bad days I will need to read it again.</p>
+
+  <p>I didn't leave computational physics. <strong>I'm building the foundation to come back to it stronger.</strong></p>
+
+  <p>Every scientist dreams of bridging theory and experiment. I knew this even as an undergraduate — that the best computational work is grounded in experimental reality. The people who write the most impactful simulations are the ones who have held the materials in their hands, who know what the data looks like before the computer touches it, who can smell when a result is physically unreasonable.</p>
+
+  <div class="article-highlight">
+    <p>The agate mortar isn't a detour. It's tuition. Every hour I spend grinding Nd₀.₇Sr₀.₃MnO₃ powder is an hour that future-me will be grateful for — the version of me who writes Monte Carlo simulations of phase transitions and actually knows what the experimental curves are supposed to look like.</p>
+  </div>
+
+  <p>The magnetocaloric effect sits right at the intersection I've always been drawn to: condensed matter physics, statistical mechanics, materials science, and real-world applications like magnetic refrigeration. The tricritical point — where the phase transition changes its fundamental nature — is the kind of problem that doesn't yield to simple formulas. You have to really <em>understand</em> it. And understanding it from both sides, experiment and computation, is rare. That's the researcher I want to become.</p>
+
+  <div class="article-separator">· · ·</div>
+
+  <p>So why do I do research?</p>
+
+  <p>Not because I'm good at it. Most days, I feel like I'm not. Not because it's easy — it's the hardest thing I've ever done. Not because I have a clear five-year plan — I barely have a clear five-month plan.</p>
+
+  <p>I do research because I can't stop wanting to understand things. Because when I read a paper about critical exponents and something shifts in my brain, that feeling is worth all the hours of grinding powder and debugging code and staring at XRD patterns I can't yet interpret. Because I believe — maybe naively, maybe stubbornly — that the detour I'm on right now is not wasted. That every experiment teaches me something no textbook could. That one day, I'll sit in front of a simulation and know, in my bones, whether the result makes physical sense.</p>
+
+  <div class="article-pullquote">
+    I do research because I can't stop wanting to understand. That's the whole answer. Everything else is just logistics.
+  </div>
+
+  <p>If you're reading this and you're in a similar place — feeling lost in your own field, wondering if you chose wrong, scared that you're not enough — I don't have a solution for you. I'm still looking for mine. But I think the fact that we're still here, still showing up to the lab or the desk or the terminal, still asking <em>"why?"</em> when we could have stopped — that has to count for something.</p>
+
+  <p>The mortar and pestle is heavy. But my hands are getting stronger.</p>
+
+  <p>Like swinging a badminton racket, every motion makes me stronger.</p>
 
 </article>
 
@@ -677,12 +630,12 @@ footer a:hover { color: white; }
 
   <div class="article-nav">
     <a href="../blog.html">
-      <div class="article-nav-label">← All Posts</div>
+      <div class="article-nav-label">&#8592; All Posts</div>
       <div class="article-nav-title">Back to Blog</div>
     </a>
-    <a href="why-i-do-research.html" class="next">
+    <a href="xrd-peak-finding.html" class="next">
       <div class="article-nav-label">Next →</div>
-      <div class="article-nav-title">My Motivation for Scientific Research</div>
+      <div class="article-nav-title">XRD Peak Finding: From Raw .xy Data to Bragg Reflections</div>
     </a>
   </div>
 </div>
@@ -698,7 +651,7 @@ footer a:hover { color: white; }
       <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
     </div>
     <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
-    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: June 2026</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: May 2026</p>
   </div>
 </footer>
 
