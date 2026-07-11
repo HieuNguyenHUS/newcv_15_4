@@ -248,33 +248,27 @@ nav.scrolled {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 40px 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
 }
 
 .blog-post {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 40px;
-  align-items: start;
-  padding: 40px 0;
-  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper);
   text-decoration: none;
   color: inherit;
   transition: all 0.3s;
 }
 
-.blog-post:first-child {
-  padding-top: 0;
-}
-
 .blog-post:hover {
-  background: rgba(243,240,232,0.4);
-  margin: 0 -24px;
-  padding-left: 24px;
-  padding-right: 24px;
-  border-radius: 12px;
+  border-color: var(--accent-light);
+  box-shadow: 0 16px 40px var(--shadow);
+  transform: translateY(-4px);
 }
 
 .blog-post:hover .blog-post-title {
@@ -282,14 +276,13 @@ nav.scrolled {
 }
 
 .blog-post:hover .blog-post-thumb {
-  transform: scale(1.02);
-  box-shadow: 0 8px 32px var(--shadow);
+  transform: scale(1.03);
 }
 
 /* Thumbnail */
 .blog-post-thumb {
-  height: 180px;
-  border-radius: 10px;
+  height: 190px;
+  flex-shrink: 0;
   overflow: hidden;
   position: relative;
   transition: all 0.35s;
@@ -332,8 +325,8 @@ nav.scrolled {
 .blog-post-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-height: 180px;
+  flex: 1;
+  padding: 20px 22px 22px;
 }
 
 .blog-post-meta {
@@ -365,18 +358,40 @@ nav.scrolled {
 
 .blog-post-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.3;
   margin-bottom: 12px;
   transition: color 0.25s;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .blog-post-excerpt {
   color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.75;
+  font-size: 0.92rem;
+  line-height: 1.6;
   margin-bottom: 16px;
+}
+
+.blog-post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.blog-post-tag-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 .blog-post-readmore {
@@ -386,6 +401,7 @@ nav.scrolled {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  margin-top: auto;
 }
 
 .blog-post-readmore svg {
@@ -405,6 +421,41 @@ nav.scrolled {
 
 .blog-empty p {
   font-size: 1.05rem;
+}
+
+/* ─── PAGINATION ─── */
+.blog-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0 40px 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.blog-page-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.blog-page-btn:hover {
+  border-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.blog-page-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
 }
 
 /* ─── FOOTER ─── */
@@ -489,12 +540,11 @@ footer a:hover { color: white; }
 /* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {
   .blog-hero h1 { font-size: 2.4rem; }
-  .blog-post {
-    grid-template-columns: 1fr;
-    gap: 20px;
+  .blog-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
-  .blog-post-content { min-height: auto; }
-  .blog-post-thumb { height: 200px; }
+  .blog-post-thumb { height: 180px; }
 }
 
 @media (max-width: 640px) {
@@ -521,7 +571,11 @@ footer a:hover { color: white; }
   .blog-hero h1 { font-size: 2rem; }
   .blog-stats { gap: 20px; }
   .blog-stat-number { font-size: 1.6rem; }
-  .blog-post-thumb { height: 160px; }
+  .blog-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .blog-post-thumb { height: 180px; }
 }
 </style>
 
@@ -565,7 +619,7 @@ footer a:hover { color: white; }
     </p>
     <div class="blog-stats">
       <div class="blog-stat">
-        <span class="blog-stat-number" id="postCount">16</span>
+        <span class="blog-stat-number" id="postCount">20</span>
         <span class="blog-stat-label">Posts</span>
       </div>
       <div class="blog-stat">
@@ -590,8 +644,116 @@ footer a:hover { color: white; }
 <!-- ─── BLOG LIST ─── -->
 <div class="blog-list" id="blogList">
 
+  <!-- ═══ Post: Single Point Energy Calculations ═══ -->
+<a href="posts/19-single-point-energy.html" class="blog-post" data-category="tutorial">
+  <div class="blog-post-thumb thumb-teal">
+    <div class="blog-post-thumb-pattern"></div>
+    <span class="blog-post-tag">Tutorial</span>
+  </div>
+  <div class="blog-post-content">
+    <div class="blog-post-meta">
+      <span class="blog-post-date">July 2026</span>
+      <span class="blog-post-reading">15 min read</span>
+    </div>
+    <h2 class="blog-post-title">Single Point Energy Calculations: What They Are and Why You Run Them First</h2>
+    <p class="blog-post-excerpt">
+      Before you can optimize a geometry, simulate dynamics, or train a neural network potential,
+      you need one thing: a single point energy. From the electronic Schrödinger equation and the
+      SCF loop to lessons learned running thousands of Gaussian jobs at Academia Sinica.
+    </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
+    <span class="blog-post-readmore">
+      Read full post
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
+
+  <!-- ═══ Post: Finite-Size Scaling ═══ -->
+<a href="posts/18-finite-size-scaling.html" class="blog-post" data-category="research">
+  <div class="blog-post-thumb thumb-green">
+    <div class="blog-post-thumb-pattern"></div>
+    <span class="blog-post-tag">Research</span>
+  </div>
+  <div class="blog-post-content">
+    <div class="blog-post-meta">
+      <span class="blog-post-date">July 2026</span>
+      <span class="blog-post-reading">14 min read</span>
+    </div>
+    <h2 class="blog-post-title">What Happens to a Phase Transition When You Make Everything Smaller?</h2>
+    <p class="blog-post-excerpt">
+      Four identical powder batches, four different grain sizes — same compound, but the magnetocaloric
+      curves refuse to agree. Finite-size scaling is built to answer whether a nanoparticle sample is
+      truly undergoing a phase transition in the thermodynamic sense, or something that merely resembles one.
+    </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Research</span>
+    </div>
+    <span class="blog-post-readmore">
+      Read full post
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
+
+  <!-- ═══ Post: Mean-Field Theory and Renormalization Group ═══ -->
+<a href="posts/17-mean-field-rg.html" class="blog-post" data-category="research">
+  <div class="blog-post-thumb thumb-teal">
+    <div class="blog-post-thumb-pattern"></div>
+    <span class="blog-post-tag">Tutorial</span>
+  </div>
+  <div class="blog-post-content">
+    <div class="blog-post-meta">
+      <span class="blog-post-date">July 2026</span>
+      <span class="blog-post-reading">16 min read</span>
+    </div>
+    <h2 class="blog-post-title">When Physics Stops Caring About Details: Mean-Field Theory and the Renormalization Group</h2>
+    <p class="blog-post-excerpt">
+      Why do universality classes exist at all? Why should iron losing its magnetism and water
+      approaching its critical pressure obey the same critical exponents? A journey from the comfortable
+      lie of mean-field theory to the strange and beautiful machinery of the renormalization group.
+    </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
+    <span class="blog-post-readmore">
+      Read full post
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
+
+  <!-- ═══ Post: Landau Theory of Phase Transitions ═══ -->
+<a href="posts/16-landau-theory.html" class="blog-post" data-category="tutorial">
+  <div class="blog-post-thumb thumb-blue">
+    <div class="blog-post-thumb-pattern"></div>
+    <span class="blog-post-tag">Tutorial</span>
+  </div>
+  <div class="blog-post-content">
+    <div class="blog-post-meta">
+      <span class="blog-post-date">July 2026</span>
+      <span class="blog-post-reading">13 min read</span>
+    </div>
+    <h2 class="blog-post-title">Order, Symmetry, and the Art of Knowing Nothing: Landau Theory of Phase Transitions</h2>
+    <p class="blog-post-excerpt">
+      Arrott plots, modified Arrott plots, the Banerjee criterion — all of it is Landau theory in
+      disguise. This post builds the theory from the ground up, starting from the question of why
+      M² vs H/M produces straight lines at all, and ends at spontaneous symmetry breaking.
+    </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
+    <span class="blog-post-readmore">
+      Read full post
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </span>
+  </div>
+</a>
+
   <!-- ═══ Post: A Dose, Four Times a Day ═══ -->
-<a href="posts/dose-four-times-a-day.html" class="blog-post" data-category="personal">
+<a href="posts/14-dose-four-times-a-day.html" class="blog-post" data-category="personal">
   <div class="blog-post-thumb thumb-plum">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Personal</span>
@@ -607,6 +769,9 @@ footer a:hover { color: white; }
       A reflection on D.O.S.E. — dopamine, oxytocin, serotonin, endorphins — and the quiet moments
       of being alive that we so often walk right past.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Personal</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -615,7 +780,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: My Motivation for Scientific Research ═══ -->
-<a href="posts/why-i-do-research.html" class="blog-post" data-category="personal">
+<a href="posts/13-why-i-do-research.html" class="blog-post" data-category="personal">
   <div class="blog-post-thumb thumb-plum">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Personal</span>
@@ -631,6 +796,9 @@ footer a:hover { color: white; }
       credentials, but for the quiet click when something finally makes sense. From DFT
       at Academia Sinica to grinding powders in a Vietnamese lab, and why the detour is not wasted.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Personal</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -639,7 +807,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: XRD Peak Finding ═══ -->
-<a href="posts/xrd-peak-finding.html" class="blog-post" data-category="tutorial">
+<a href="posts/12-xrd-peak-finding.html" class="blog-post" data-category="tutorial">
   <div class="blog-post-thumb thumb-brown">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Tutorial</span>
@@ -655,6 +823,9 @@ footer a:hover { color: white; }
       reduction and baseline correction to automated peak detection algorithms and
       manual refinement. With worked examples on real diffractogram data.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -663,7 +834,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: XRD Peak Fitting ═══ -->
-<a href="posts/xrd-peak-fitting.html" class="blog-post" data-category="tutorial">
+<a href="posts/11-xrd-peak-fitting.html" class="blog-post" data-category="tutorial">
   <div class="blog-post-thumb thumb-teal">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Tutorial</span>
@@ -679,6 +850,9 @@ footer a:hover { color: white; }
       and pseudo-Voigt profiles arise, how to choose among them, and step-by-step fitting
       with Python. Includes FWHM extraction and goodness-of-fit diagnostics.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -687,7 +861,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: Williamson-Hall Analysis ═══ -->
-<a href="posts/williamson-hall-analysis.html" class="blog-post" data-category="tutorial">
+<a href="posts/10-williamson-hall-analysis.html" class="blog-post" data-category="tutorial">
   <div class="blog-post-thumb thumb-green">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Tutorial</span>
@@ -703,6 +877,9 @@ footer a:hover { color: white; }
       microstrain broadening in XRD data. Covers the Scherrer equation's limits, the
       W-H linearization, and fitting strategies for nanocrystalline materials.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -711,7 +888,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: PageRank Eigenvector ═══ -->
-<a href="posts/pagerank-eigenvector.html" class="blog-post" data-category="tutorial">
+<a href="posts/9-pagerank-eigenvector.html" class="blog-post" data-category="tutorial">
   <div class="blog-post-thumb thumb-teal">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Tutorial</span>
@@ -727,6 +904,9 @@ footer a:hover { color: white; }
       From hyperlinks as votes and the random surfer model to the Perron–Frobenius theorem,
       power iteration, and why PageRank is really just finding a dominant eigenvector.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -735,7 +915,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: Neural Network Potentials Guide ═══ -->
-<a href="posts/nnp-guide.html" class="blog-post" data-category="research">
+<a href="posts/8-nnp-guide.html" class="blog-post" data-category="research">
   <div class="blog-post-thumb thumb-green">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Tutorial</span>
@@ -751,6 +931,9 @@ footer a:hover { color: white; }
       NequIP and MACE — how machine learning is revolutionizing molecular simulations, with
       real examples from peptide and saccharide conformer searches.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -759,7 +942,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: DFT Beginners Guide ═══ -->
-<a href="posts/dft-beginners-guide.html" class="blog-post" data-category="research">
+<a href="posts/7-dft-beginners-guide.html" class="blog-post" data-category="research">
   <div class="blog-post-thumb thumb-blue">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Tutorial</span>
@@ -775,6 +958,9 @@ footer a:hover { color: white; }
       and Jacob's Ladder of exchange-correlation functionals — a complete conceptual roadmap
       for newcomers to DFT, with physical intuition first and equations second.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Tutorial</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -783,7 +969,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: Wave diffraction reciprocal lattice vietnamese ═══ -->
-  <a href="posts/wave-diffraction-reciprocal-lattice-vietnamese.html" class="blog-post" data-category="research">
+  <a href="posts/6-wave-diffraction-reciprocal-lattice-vietnamese.html" class="blog-post" data-category="research">
   <div class="blog-post-thumb thumb-blue">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Research</span>
@@ -799,6 +985,9 @@ footer a:hover { color: white; }
       Brillouin zones — a unified picture of diffraction built on physical intuition first,
       equations second. Based on Kittel Chapter 2.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Research</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -807,7 +996,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ Post: Wave diffraction reciprocal lattice ═══ -->
-  <a href="posts/wave-diffraction-reciprocal-lattice.html" class="blog-post" data-category="research">
+  <a href="posts/5-wave-diffraction-reciprocal-lattice.html" class="blog-post" data-category="research">
   <div class="blog-post-thumb thumb-blue">
     <div class="blog-post-thumb-pattern"></div>
     <span class="blog-post-tag">Research</span>
@@ -823,6 +1012,9 @@ footer a:hover { color: white; }
       Brillouin zones — a unified picture of diffraction built on physical intuition first,
       equations second. Based on Kittel Chapter 2.
     </p>
+    <div class="blog-post-tags">
+      <span class="blog-post-tag-pill">Research</span>
+    </div>
     <span class="blog-post-readmore">
       Read full post
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -831,7 +1023,7 @@ footer a:hover { color: white; }
 </a>
 
   <!-- ═══ NEW: Burnout post ═══ -->
-  <a href="posts/your-body-has-been-screaming.html" class="blog-post" data-category="personal">
+  <a href="posts/4-your-body-has-been-screaming.html" class="blog-post" data-category="personal">
     <div class="blog-post-thumb thumb-plum">
       <div class="blog-post-thumb-pattern"></div>
       <span class="blog-post-tag">Personal</span>
@@ -847,6 +1039,9 @@ footer a:hover { color: white; }
         I realized no success is worth it if you're no longer healthy enough to enjoy it. 
         This isn't about slowing down — it's about survival.
       </p>
+      <div class="blog-post-tags">
+        <span class="blog-post-tag-pill">Personal</span>
+      </div>
       <span class="blog-post-readmore">
         Read full post
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -855,7 +1050,7 @@ footer a:hover { color: white; }
   </a>
 
   <!-- ═══ POST 1 ═══ -->
-  <a href="posts/arrott-plots-guide.html" class="blog-post" data-category="tutorial">
+  <a href="posts/3-arrott-plots-guide.html" class="blog-post" data-category="tutorial">
     <div class="blog-post-thumb thumb-brown">
       <div class="blog-post-thumb-pattern"></div>
       <span class="blog-post-tag">Tutorial</span>
@@ -871,6 +1066,9 @@ footer a:hover { color: white; }
         magnetic phase transitions and extracting critical exponents. Includes worked examples 
         from real manganite data and common pitfalls to avoid.
       </p>
+      <div class="blog-post-tags">
+        <span class="blog-post-tag-pill">Tutorial</span>
+      </div>
       <span class="blog-post-readmore">
         Read full post
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -895,6 +1093,9 @@ footer a:hover { color: white; }
         behavior of perovskite manganites. From dead magnetic layers to core-shell models — 
         what the latest research tells us about finite-size effects.
       </p>
+      <div class="blog-post-tags">
+        <span class="blog-post-tag-pill">Research</span>
+      </div>
       <span class="blog-post-readmore">
         Read full post
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -903,7 +1104,7 @@ footer a:hover { color: white; }
   </a>
 
   <!-- ═══ POST 3 ═══ -->
-  <a href="#" class="blog-post" data-category="opinion">
+  <a href="posts/2-future-magnetic-refrigeration.html" class="blog-post" data-category="opinion">
     <div class="blog-post-thumb thumb-blue">
       <div class="blog-post-thumb-pattern"></div>
       <span class="blog-post-tag">Opinion</span>
@@ -919,6 +1120,9 @@ footer a:hover { color: white; }
         before practical magnetic cooling becomes a reality. A look at where the field stands 
         and what breakthroughs are still needed.
       </p>
+      <div class="blog-post-tags">
+        <span class="blog-post-tag-pill">Opinion</span>
+      </div>
       <span class="blog-post-readmore">
         Read full post
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -927,7 +1131,7 @@ footer a:hover { color: white; }
   </a>
 
   <!-- ═══ POST 4 ═══ -->
-  <a href="posts/building-a-nest.html" class="blog-post" data-category="personal">
+  <a href="posts/1-building-a-nest.html" class="blog-post" data-category="personal">
     <div class="blog-post-thumb thumb-gold">
       <div class="blog-post-thumb-pattern"></div>
       <span class="blog-post-tag">Personal</span>
@@ -943,6 +1147,9 @@ footer a:hover { color: white; }
         something behind — not just material wealth, but values, stories, and love passed on to the
         next generation.
       </p>
+      <div class="blog-post-tags">
+        <span class="blog-post-tag-pill">Personal</span>
+      </div>
       <span class="blog-post-readmore">
         Read full post
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -967,6 +1174,9 @@ footer a:hover { color: white; }
         and calculate the magnetic entropy change using Maxwell's relation. Complete with 
         Python code, visualization tips, and error analysis.
       </p>
+      <div class="blog-post-tags">
+        <span class="blog-post-tag-pill">Tutorial</span>
+      </div>
       <span class="blog-post-readmore">
         Read full post
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -980,7 +1190,7 @@ footer a:hover { color: white; }
   ══════════════════════════════════════════════════
   
   Copy block bên dưới, paste VÀO ĐẦU danh sách (ngay sau <div class="blog-list">),
-  rồi sửa 6 chỗ được đánh dấu [SỬA]:
+  rồi sửa các chỗ được đánh dấu [SỬA]:
 
   <a href="#" class="blog-post" data-category="[SỬA: tutorial / research / opinion]">
     <div class="blog-post-thumb [SỬA: thumb-brown / thumb-green / thumb-blue / thumb-teal / thumb-gold / thumb-plum]">
@@ -994,6 +1204,9 @@ footer a:hover { color: white; }
       </div>
       <h2 class="blog-post-title">[SỬA: Tiêu đề bài viết]</h2>
       <p class="blog-post-excerpt">[SỬA: Mô tả ngắn 2-3 câu]</p>
+      <div class="blog-post-tags">
+        <span class="blog-post-tag-pill">[SỬA: Thể loại]</span>
+      </div>
       <span class="blog-post-readmore">
         Read full post
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -1007,11 +1220,13 @@ footer a:hover { color: white; }
 
 </div>
 
+<div class="blog-pagination" id="blogPagination"></div>
+
 <!-- ─── FOOTER ─── -->
 <footer>
   <div class="footer-inner">
     <div class="footer-social">
-      <a href="https://scholar.google.com/citations?user=QUdAPR8AAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://scholar.google.com/citations?user=bewbBNgAAAAJ&hl=vi" title="Google Scholar">GS</a>
       <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
       <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
       <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
@@ -1039,31 +1254,67 @@ document.querySelectorAll('.nav-links a').forEach(link => {
   link.addEventListener('click', () => nav.classList.remove('menu-open'));
 });
 
-// ─── Blog filter
-function filterBlog(category, btn) {
-  // Update active button
-  document.querySelectorAll('.blog-filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+// ─── Blog filter + pagination
+const POSTS_PER_PAGE = 15;
+let currentCategory = 'all';
+let currentPage = 1;
 
-  // Filter posts
-  const posts = document.querySelectorAll('.blog-post');
-  let visibleCount = 0;
+function getFilteredPosts() {
+  return Array.from(document.querySelectorAll('.blog-post')).filter(post =>
+    currentCategory === 'all' || post.dataset.category === currentCategory
+  );
+}
 
-  posts.forEach((post, i) => {
-    if (category === 'all' || post.dataset.category === category) {
-      post.style.display = 'grid';
-      post.style.animation = 'none';
-      post.offsetHeight; // trigger reflow
-      post.style.animation = `fadeUp 0.5s ease forwards ${i * 0.08}s`;
-      visibleCount++;
-    } else {
-      post.style.display = 'none';
-    }
+function renderBlogList() {
+  const allPosts = Array.from(document.querySelectorAll('.blog-post'));
+  const filtered = getFilteredPosts();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / POSTS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const start = (currentPage - 1) * POSTS_PER_PAGE;
+  const pageSlice = filtered.slice(start, start + POSTS_PER_PAGE);
+
+  allPosts.forEach(post => {
+    post.style.display = pageSlice.includes(post) ? 'flex' : 'none';
   });
 
-  // Update post count
-  document.getElementById('postCount').textContent = visibleCount;
+  pageSlice.forEach((post, i) => {
+    post.style.animation = 'none';
+    post.offsetHeight; // trigger reflow
+    post.style.animation = `fadeUp 0.5s ease forwards ${i * 0.08}s`;
+  });
+
+  document.getElementById('postCount').textContent = filtered.length;
+  renderPagination(totalPages);
 }
+
+function renderPagination(totalPages) {
+  const container = document.getElementById('blogPagination');
+  container.innerHTML = '';
+  if (totalPages <= 1) return;
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'blog-page-btn' + (i === currentPage ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => {
+      currentPage = i;
+      renderBlogList();
+      document.querySelector('.blog-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    container.appendChild(btn);
+  }
+}
+
+function filterBlog(category, btn) {
+  document.querySelectorAll('.blog-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentCategory = category;
+  currentPage = 1;
+  renderBlogList();
+}
+
+document.addEventListener('DOMContentLoaded', renderBlogList);
 </script>
 </body>
 </html>

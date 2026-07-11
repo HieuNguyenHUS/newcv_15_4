@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order, Symmetry, and the Art of Knowing Nothing — Minh-Hieu Nguyen</title>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HYB8TEF6MT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HYB8TEF6MT');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- KaTeX for professional math rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });"></script>
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+  --gold: #b8860b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent); transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 4px;
+}
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 140px 40px 0;
+}
+
+.article-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 40px; transition: color 0.25s;
+}
+.article-back:hover { color: var(--accent); }
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08); color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-meta {
+  display: flex; align-items: center; gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--border);
+}
+
+/* ─── COVER ─── */
+.article-cover {
+  max-width: 720px;
+  margin: 48px auto;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #16162e 0%, #3a2145 45%, #6e2a3c 100%);
+}
+
+.article-cover-pattern {
+  position: absolute; inset: 0;
+  opacity: 0.08;
+  background-image:
+    radial-gradient(circle at 15% 40%, white 1px, transparent 1px),
+    radial-gradient(circle at 85% 25%, white 1px, transparent 1px),
+    radial-gradient(circle at 50% 75%, white 1px, transparent 1px),
+    radial-gradient(circle at 30% 90%, white 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.article-cover-text {
+  position: absolute;
+  bottom: 36px; left: 36px; right: 36px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 600; font-style: italic;
+  color: rgba(255,255,255,0.7); line-height: 1.3;
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  text-align: justify;
+}
+
+.article-body p {
+  margin-bottom: 24px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem; float: left;
+  line-height: 0.75;
+  margin-right: 10px; margin-top: 8px;
+  color: var(--accent); font-weight: 700;
+}
+
+.article-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  margin: 48px 0 20px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.article-body h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  margin: 36px 0 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: left;
+}
+
+.article-body em { color: var(--muted); font-style: italic; }
+.article-body strong { color: var(--ink); font-weight: 700; }
+
+.article-body ul, .article-body ol {
+  margin: 0 0 24px 24px;
+  text-align: left;
+}
+
+.article-body li {
+  margin-bottom: 8px;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.article-body li::marker {
+  color: var(--accent);
+}
+
+/* Highlight box */
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 36px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Separator */
+.article-separator {
+  text-align: center;
+  margin: 44px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+/* Pull quote */
+.article-pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  padding: 36px 20px;
+  margin: 44px 0;
+  line-height: 1.4;
+  position: relative;
+}
+
+.article-pullquote::before,
+.article-pullquote::after {
+  content: ''; display: block;
+  width: 60px; height: 1.5px;
+  background: var(--accent);
+  margin: 0 auto 20px; opacity: 0.4;
+}
+.article-pullquote::after { margin: 20px auto 0; }
+
+/* Code block */
+.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.code-block .comment { color: #6c7086; }
+.code-block .keyword { color: #cba6f7; }
+.code-block .string { color: #a6e3a1; }
+.code-block .function { color: #89b4fa; }
+.code-block .number { color: #fab387; }
+.code-block .operator { color: #89dceb; }
+
+.code-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Equation box — KaTeX aware */
+.equation-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 28px 0;
+  text-align: center;
+}
+
+.equation-box .eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+/* KaTeX display output inside equation-box */
+.equation-box .katex-display {
+  margin: 0;
+}
+
+/* Inline KaTeX — ensure it doesn't disrupt line-height */
+.katex { font-size: 1.05em; }
+
+/* Table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 0.95rem;
+}
+
+.article-table th {
+  background: var(--cream);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+}
+
+.article-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  text-align: center;
+}
+
+.article-table td:first-child {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.article-table tr:hover td {
+  background: rgba(243,240,232,0.4);
+}
+
+/* Step box */
+.step-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  position: relative;
+}
+
+.step-number {
+  position: absolute;
+  top: -14px; left: 24px;
+  background: var(--accent);
+  color: white;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; font-weight: 700;
+}
+
+.step-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  margin-bottom: 10px;
+  padding-top: 4px;
+}
+
+.step-box p {
+  margin-bottom: 12px !important;
+  font-size: 0.98rem;
+}
+
+/* Warning box */
+.warning-box {
+  background: #fff8f0;
+  border-left: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.warning-box strong {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.warning-box p {
+  margin-bottom: 0 !important;
+  font-size: 0.98rem;
+}
+
+/* Figure — free energy landscapes */
+.article-figure {
+  margin: 28px 0;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px 16px 12px;
+}
+
+.article-figure svg { width: 100%; height: auto; display: block; }
+
+.article-figure-caption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 12px 16px 8px;
+  line-height: 1.6;
+}
+
+/* ─── ARTICLE FOOTER ─── */
+.article-end {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px; background: var(--border);
+  margin-bottom: 40px;
+}
+
+.article-author {
+  display: flex; align-items: center;
+  gap: 20px; margin-bottom: 40px;
+}
+
+.article-author-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--accent); flex-shrink: 0;
+  overflow: hidden;
+}
+
+.article-author-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 700;
+}
+
+.article-author-info p {
+  font-size: 0.88rem; color: var(--muted);
+}
+
+.article-nav {
+  display: flex; justify-content: space-between;
+  gap: 20px;
+}
+
+.article-nav a {
+  padding: 16px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none; color: var(--ink);
+  transition: all 0.25s; flex: 1;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.02);
+}
+
+.article-nav-label {
+  font-size: 0.78rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; margin-bottom: 4px;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+}
+
+.article-nav .next { text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 48px 40px; text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+
+.footer-social {
+  display: flex; justify-content: center;
+  gap: 24px; margin-bottom: 24px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none; transition: all 0.3s; font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent-light); color: white;
+  background: rgba(139,37,0,0.3);
+}
+
+footer p { font-size: 0.85rem; line-height: 1.6; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer a:hover { color: white; }
+
+/* Animations */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+}
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .article-header h1 { font-size: 2.2rem; }
+  .article-cover { height: 220px; margin: 36px 20px; }
+  .article-cover-text { font-size: 1.2rem; bottom: 24px; left: 24px; right: 24px; }
+}
+
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 1.9rem; }
+  .article-cover { height: 180px; }
+  .article-cover-text { font-size: 1rem; bottom: 20px; left: 20px; right: 20px; }
+  .article-body p { font-size: 1rem; }
+  .article-body h2 { font-size: 1.5rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex; flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+  .code-block { padding: 16px; font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to all posts
+  </a>
+  <span class="article-tag">Tutorial</span>
+  <h1>Order, Symmetry, and the Art of Knowing Nothing: Landau Theory of Phase Transitions</h1>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">July 2026</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">13 min read</span>
+  </div>
+</header>
+
+<!-- ─── COVER ─── -->
+<div class="article-cover fade-in fade-in-delay">
+  <div class="article-cover-pattern"></div>
+  <div class="article-cover-text">"You don't need to know what the atoms are doing. You only need to know what the symmetry allows."</div>
+</div>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay-2">
+
+  <p>There is a moment in my workflow that I have repeated so many times it has become muscle memory. I sit down with a fresh set of \(M(H)\) isotherms from the VSM, construct the Arrott plot, and draw a straight line through the high-field region of the isotherm closest to \(T_C\). The y-intercept tells me about the spontaneous magnetization; the isotherm passing through the origin marks the Curie temperature. I have done this for every batch of my \(\text{Nd}_{0.7}\text{Sr}_{0.3}\text{MnO}_3\) nanoparticles. But for a long time, I did the procedure without asking the obvious question: why does plotting \(M^2\) against \(H/M\) produce straight lines at all? Who decided that these particular axes are the right ones, and where does the prescription come from?</p>
+
+  <p>The answer is Landau theory. And once you understand it, you realize something slightly unsettling: most of what an experimentalist does near a phase transition — Arrott plots, modified Arrott plots, the Banerjee criterion, even the classification into first- and second-order transitions — is just Landau theory in disguise. This post is my attempt to work through that theory from the ground up, the way I wish someone had explained it to me before I ever touched a magnetometer.</p>
+
+  <h2>1. What Is a Phase Transition, Really?</h2>
+
+  <p>Start with ice melting. The naive description is "water gets warmer and the solid becomes a liquid," but that misses the point entirely. What actually changes at 0&nbsp;°C is the <em>symmetry</em> of how molecules arrange themselves. In ice, molecules sit on a crystal lattice — the system looks the same only if you shift it by specific lattice vectors. In liquid water, molecules are disordered, and the system looks the same under <em>any</em> translation. Melting is not primarily about energy; it is about the sudden loss of a preferred arrangement.</p>
+
+  <p>The same thing happens when iron loses its magnetism at the Curie temperature. Below \(T_C\), the atomic spins align along a common direction — there is a collective order. Above \(T_C\), thermal agitation wins and the spins point in random directions. But what does "random" mean precisely? It means that if you average the magnetic moment over the whole sample, you get zero: for every spin pointing up, there is, statistically, one pointing down.</p>
+
+  <p>This suggests the key observation that underlies everything else in this post. In every phase transition, there is a quantity that is exactly zero in one phase and nonzero in the other. We call it the <strong>order parameter</strong>. For a ferromagnet, the natural choice is the reduced magnetization \(m = \langle M \rangle / M_\text{sat}\): zero in the paramagnetic phase, finite below \(T_C\). For the liquid–gas transition, it is the density difference \(\rho_L - \rho_G\) between the coexisting liquid and gas. For a superconductor, it is the density of Cooper pairs (a more subtle, complex-valued object I will not develop here). The details differ wildly between systems, but the logical role is identical.</p>
+
+  <div class="article-pullquote">
+    The order parameter is physics's way of asking: how much order is there, and in which direction?
+  </div>
+
+  <p>The "which direction" part deserves attention, because it hides the deepest idea in this whole subject: <strong>spontaneous symmetry breaking</strong>. Above \(T_C\), a ferromagnet in zero field has no reason to prefer spin-up over spin-down. The underlying physics — the Hamiltonian, the interactions between spins — treats \(m\) and \(-m\) identically. Below \(T_C\), however, the material must magnetize in <em>some</em> direction, and it picks one. The equations remain perfectly symmetric; the state of the system does not. This is not a mathematical trick or a philosophical curiosity. It is what physically happens inside the material: a tiny fluctuation, an impurity, a stray field of a few millioersted decides which of the equivalent states the sample falls into, and once it has fallen, it stays.</p>
+
+  <h2>2. Writing Down the Free Energy — Without Knowing the Microscopic Physics</h2>
+
+  <p>Here is Landau's genius, and it takes a while to appreciate how audacious it is. To describe a phase transition, you do <em>not</em> need to know what the atoms are doing. You do not need the Hamiltonian, the exchange integrals, the band structure, or the crystal field. You only need to know one thing: the <strong>symmetry</strong> of the order parameter. Everything else follows from writing down the most general free energy that symmetry allows.</p>
+
+  <div class="step-box">
+    <span class="step-number">1</span>
+    <h4>Expand the Free Energy in Powers of \(m\)</h4>
+    <p>Near \(T_C\), the order parameter is small — the system is barely ordered, hovering close to the disordered phase. Whenever a quantity is small, a physicist's reflex is to expand in a power series. So we write the free energy density as</p>
+    <p>$$\mathcal{F}(m, T) = \mathcal{F}_0 + a_1\,m + a_2(T)\,m^2 + a_3\,m^3 + a_4(T)\,m^4 + \cdots - \mu_0 H\,m$$</p>
+    <p>where the last term is the coupling to an external magnetic field \(H\), which always favors alignment. At this point we know nothing about the coefficients. That is fine — symmetry will do the work.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">2</span>
+    <h4>Kill the Odd Powers with Symmetry</h4>
+    <p>For a ferromagnet in zero field, flipping every spin in the sample (\(m \to -m\)) must leave the free energy unchanged, because there is no a priori reason to prefer up over down — nothing in the material distinguishes the two directions. But a term like \(a_1 m\) or \(a_3 m^3\) changes sign under this flip. The only way the free energy can respect the symmetry is if every odd coefficient vanishes identically: \(a_1 = a_3 = a_5 = \cdots = 0\). We are left with</p>
+    <p>$$\mathcal{F}(m, T) = \mathcal{F}_0 + a_2(T)\,m^2 + a_4(T)\,m^4 + a_6(T)\,m^6 + \cdots - \mu_0 H\,m$$</p>
+    <p>Notice what just happened: we discarded half the terms in the expansion using a physical argument, without a single calculation about atoms.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">3</span>
+    <h4>Give \(a_2\) Its Temperature Dependence</h4>
+    <p>The coefficient \(a_2(T)\) controls whether the disordered state \(m = 0\) is stable. If \(a_2 &gt; 0\), the free energy curves upward at the origin and \(m = 0\) is a minimum — the paramagnetic phase. If \(a_2 &lt; 0\), the origin becomes a local <em>maximum</em>, and the system must roll away into an ordered state. The transition happens exactly where \(a_2\) changes sign, so the simplest assumption is a linear zero-crossing: \(a_2(T) = a_0\,(T - T_C)\) with \(a_0 &gt; 0\). Keeping terms up to fourth order with a constant \(b &gt; 0\) (needed so the free energy does not run off to \(-\infty\) at large \(m\)), we arrive at the canonical Landau free energy.</p>
+  </div>
+
+  <div class="equation-box">
+    <span class="eq-label">Landau Free Energy (Ferromagnet)</span>
+    $$\mathcal{F}(m, T) = \mathcal{F}_0 + a_0(T - T_C)\,m^2 + b\,m^4 - \mu_0 H\,m$$
+  </div>
+
+  <p>It helps enormously to picture what this function looks like. Above \(T_C\), the quadratic term is positive and \(\mathcal{F}(m)\) is a single well centered at \(m = 0\): the system sits at the bottom, disordered. Exactly at \(T_C\), the quadratic term vanishes and the well becomes anomalously flat near the origin — the system barely knows where to sit, which is the microscopic origin of the giant response functions at criticality. Below \(T_C\), the origin puckers upward into a local maximum and two symmetric minima appear at \(\pm m_s\). The free energy landscape becomes the famous double well — the one-dimensional slice of the "Mexican hat" that appears everywhere from magnetism to the Higgs mechanism. The system must choose one of the two equivalent minima, and in choosing, it breaks the symmetry.</p>
+
+  <h2>3. Deriving Critical Exponents from the Free Energy</h2>
+
+  <p>So far this might look like formal bookkeeping. This section is where Landau theory earns its place: from that one polynomial, we can <em>derive</em> how the magnetization, the susceptibility, and the critical isotherm behave near \(T_C\). The recipe is always the same — the equilibrium state minimizes the free energy, so we set \(\partial \mathcal{F}/\partial m = 0\) and see what comes out.</p>
+
+  <h3>Finding \(\beta\): how order grows below \(T_C\)</h3>
+
+  <p>Set \(H = 0\) and minimize:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Minimization Condition (H = 0)</span>
+    $$\frac{\partial \mathcal{F}}{\partial m} = 2a_0(T - T_C)\,m + 4b\,m^3 = 0$$
+  </div>
+
+  <p>One solution is always \(m = 0\). For \(T &lt; T_C\), where that solution is unstable, dividing through by \(m\) gives the spontaneous magnetization:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Spontaneous Magnetization</span>
+    $$m_s = \sqrt{\frac{a_0(T_C - T)}{2b}} \;\propto\; (T_C - T)^{1/2}$$
+  </div>
+
+  <p>The order parameter grows as a square root of the distance from \(T_C\). Comparing with the standard definition \(m_s \propto (T_C - T)^{\beta}\), we read off <strong>\(\beta = 1/2\)</strong>. Note how the specific values of \(a_0\) and \(b\) only affect the prefactor — the <em>exponent</em> is universal within the theory.</p>
+
+  <h3>Finding \(\gamma\): how the susceptibility diverges</h3>
+
+  <p>The susceptibility measures how eagerly the system responds to a small field: \(\chi = \partial m/\partial H\big|_{H \to 0}\). The cleanest way to get it is to note that the inverse susceptibility is the curvature of the free energy at its minimum:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Inverse Susceptibility</span>
+    $$\chi^{-1} \propto \frac{\partial^2 \mathcal{F}}{\partial m^2} = 2a_0(T - T_C) + 12b\,m^2$$
+  </div>
+
+  <p>Above \(T_C\), where \(m = 0\), this gives \(\chi \propto (T - T_C)^{-1}\) — the familiar Curie–Weiss law, with <strong>\(\gamma = 1\)</strong>. Below \(T_C\), substituting \(m_s^2 = a_0(T_C - T)/2b\) gives \(\chi^{-1} = 4a_0(T_C - T)\): the same exponent \(\gamma = 1\), just a different prefactor. The physical picture is the flattening well I described above: as \(T \to T_C\), the curvature at the minimum vanishes, so an infinitesimal field produces an enormous response. Divergence of \(\chi\) is not a mystery — it is geometry.</p>
+
+  <h3>Finding \(\delta\): the shape of the critical isotherm</h3>
+
+  <p>Exactly at \(T = T_C\), the quadratic term is gone, and the equation of state \(\partial\mathcal{F}/\partial m = 0\) with the field term included reduces to</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Critical Isotherm</span>
+    $$\mu_0 H = 4b\,m^3 \;\implies\; m \propto H^{1/\delta}, \quad \delta = 3$$
+  </div>
+
+  <p>So at the critical temperature, magnetization grows as the cube root of the field. Three exponents, all from one polynomial and one minimization. Here is the scorecard against reality:</p>
+
+  <table class="article-table">
+    <thead>
+      <tr>
+        <th>Exponent</th>
+        <th>Physical meaning</th>
+        <th>Landau prediction</th>
+        <th>Real 3D ferromagnet</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>\(\beta\)</td>
+        <td>How fast order grows below \(T_C\)</td>
+        <td>0.500</td>
+        <td>&asymp; 0.326</td>
+      </tr>
+      <tr>
+        <td>\(\gamma\)</td>
+        <td>How fast \(\chi\) diverges</td>
+        <td>1.000</td>
+        <td>&asymp; 1.241</td>
+      </tr>
+      <tr>
+        <td>\(\delta\)</td>
+        <td>Shape of the critical isotherm</td>
+        <td>3.000</td>
+        <td>&asymp; 4.82</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="article-pullquote">
+    Landau theory predicts universal exponents. The universe, unfortunately, disagrees — and that disagreement turned out to be one of the most productive failures in the history of physics.
+  </div>
+
+  <p>The mismatch is not experimental error. It is real, systematic, and it eventually forced physicists to invent the renormalization group. But hold that thought — because there is one special case where Landau's mean-field predictions in three dimensions are not approximately right but <em>exactly</em> right, and it happens to be the case my thesis lives in.</p>
+
+  <h2>4. First-Order vs. Second-Order: The Role of \(b\)</h2>
+
+  <p>Everything above assumed \(b &gt; 0\). But nothing in the symmetry argument forces that — \(b\) is a material-dependent coefficient, and materials are allowed to make it small, zero, or negative. Whenever \(b\) can go negative, we must keep the next term in the expansion, \(c\,m^6\) with \(c &gt; 0\), to keep the free energy bounded. Three qualitatively different worlds open up:</p>
+
+  <ul>
+    <li><strong>\(b &gt; 0\): second-order (continuous) transition.</strong> The story of the previous sections. The order parameter grows smoothly from zero, the susceptibility diverges, and there is no latent heat.</li>
+    <li><strong>\(b = 0\): the tricritical point.</strong> The \(m^4\) term disappears and the \(m^6\) term takes over the job of stabilizing the free energy. The well bottom near \(T_C\) becomes even flatter than in the ordinary case. Redoing the minimization with \(\mathcal{F} = a_0(T - T_C)m^2 + c\,m^6\) gives \(m_s \propto (T_C - T)^{1/4}\), and the critical isotherm becomes \(\mu_0 H = 6c\,m^5\). The tricritical exponents are <strong>\(\beta = 1/4\), \(\gamma = 1\), \(\delta = 5\)</strong>.</li>
+    <li><strong>\(b &lt; 0\): first-order (discontinuous) transition.</strong> The negative quartic term carves side minima into the free energy at finite \(m\) while the origin is still a minimum. As temperature drops, the side minima deepen until they become degenerate with the central one — at that point the system jumps discontinuously from \(m = 0\) to a finite magnetization. The order parameter is born with a finite value; there is latent heat, hysteresis, phase coexistence.</li>
+  </ul>
+
+  <div class="article-figure">
+    <svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Free energy landscapes for b greater than zero, b equal to zero, and b less than zero">
+      <!-- Panel 1: b > 0, double well -->
+      <g>
+        <line x1="30" y1="200" x2="230" y2="200" stroke="#d4d0c8" stroke-width="1"/>
+        <line x1="130" y1="40" x2="130" y2="205" stroke="#d4d0c8" stroke-width="1"/>
+        <path d="M 40 55 C 60 150, 75 175, 92 175 C 110 175, 118 140, 130 140 C 142 140, 150 175, 168 175 C 185 175, 200 150, 220 55"
+              fill="none" stroke="#8b2500" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="92" cy="175" r="4" fill="#8b2500"/>
+        <circle cx="168" cy="175" r="4" fill="#8b2500"/>
+        <text x="130" y="228" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="#6b6b7b">b &gt; 0 &#8226; second-order</text>
+        <text x="222" y="215" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="#6b6b7b">m</text>
+      </g>
+      <!-- Panel 2: b = 0, flat tricritical well -->
+      <g>
+        <line x1="270" y1="200" x2="470" y2="200" stroke="#d4d0c8" stroke-width="1"/>
+        <line x1="370" y1="40" x2="370" y2="205" stroke="#d4d0c8" stroke-width="1"/>
+        <path d="M 280 50 C 300 165, 320 178, 370 178 C 420 178, 440 165, 460 50"
+              fill="none" stroke="#b8860b" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="370" y="228" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="#6b6b7b">b = 0 &#8226; tricritical</text>
+        <text x="462" y="215" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="#6b6b7b">m</text>
+      </g>
+      <!-- Panel 3: b < 0, three minima -->
+      <g>
+        <line x1="510" y1="200" x2="710" y2="200" stroke="#d4d0c8" stroke-width="1"/>
+        <line x1="610" y1="40" x2="610" y2="205" stroke="#d4d0c8" stroke-width="1"/>
+        <path d="M 520 55 C 532 130, 540 172, 555 172 C 570 172, 574 128, 588 128 C 600 128, 602 168, 610 168 C 618 168, 620 128, 632 128 C 646 128, 650 172, 665 172 C 680 172, 688 130, 700 55"
+              fill="none" stroke="#4a6741" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="555" cy="172" r="4" fill="#4a6741"/>
+        <circle cx="610" cy="168" r="4" fill="#4a6741"/>
+        <circle cx="665" cy="172" r="4" fill="#4a6741"/>
+        <text x="610" y="228" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="#6b6b7b">b &lt; 0 &#8226; first-order</text>
+        <text x="702" y="215" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="#6b6b7b">m</text>
+      </g>
+    </svg>
+    <div class="article-figure-caption">Free energy \(\mathcal{F}(m)\) below the transition for the three regimes of the quartic coefficient. The sign of one number decides the entire character of the transition.</div>
+  </div>
+
+  <div class="article-pullquote">
+    When b = 0, something special happens. Mean-field theory changes its predictions — and in three dimensions, it turns out to be exactly right.
+  </div>
+
+  <p>Why exactly right? For ordinary critical points, fluctuations invalidate mean-field theory below four dimensions. But at a tricritical point, the upper critical dimension — the dimension above which fluctuations become harmless — drops from four to <em>three</em>. Our world sits precisely at the boundary, so the tricritical mean-field exponents \(\beta = 1/4\), \(\gamma = 1\), \(\delta = 5\) hold in real 3D materials, up to logarithmic corrections. Landau theory, wrong almost everywhere, is vindicated at this one strange point.</p>
+
+  <p>This is not an abstract curiosity for me. My entire master's thesis lives at this point. In \(\text{Nd}_{0.7}\text{Sr}_{0.3}\text{MnO}_3\) nanoparticles, the transition sits at the crossover between first- and second-order behavior — the competition between double-exchange ferromagnetism and the phase-separation tendencies of manganites drives the effective \(b\) toward zero. When I first constructed the modified Arrott plot of my sample with \(\beta = 0.25\) instead of the mean-field 0.5, the isotherms snapped into straight parallel lines. That was the moment I knew the tricritical Landau free energy was the right description of my material — not the Heisenberg class, not the Ising class, but the singular point in between where \(b\) vanishes.</p>
+
+  <h2>5. The Equation of State and the Origin of Arrott Plots</h2>
+
+  <p>Now I can close the loop back to the bench, and answer the question from the opening paragraph. Take the standard Landau free energy (\(b &gt; 0\)) and minimize it <em>with</em> the field term. The result is the magnetic equation of state:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Landau Equation of State</span>
+    $$\mu_0 H = 2a_0(T - T_C)\,m + 4b\,m^3$$
+  </div>
+
+  <p>Divide both sides by \(m\):</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Arrott Form</span>
+    $$\frac{\mu_0 H}{m} = 2a_0(T - T_C) + 4b\,m^2$$
+  </div>
+
+  <p>Look at what this says. If you plot \(m^2\) on one axis and \(H/m\) on the other, each isotherm is a <em>straight line</em>. The slope is \(1/4b\) — the same for every isotherm, which is why the lines are parallel. The intercept is proportional to \(T - T_C\), which is why it changes sign exactly at the Curie temperature: the isotherm passing through the origin <em>is</em> \(T_C\). Every rule of thumb I learned as a recipe — parallel lines, origin-crossing isotherm, positive slopes for second order — is a line-by-line transcription of this one equation.</p>
+
+  <div class="article-highlight">
+    <p>Arrott plots are not an empirical trick. They are a direct visualization of the Landau free energy landscape: each straight line is the equation of state at fixed temperature, and the geometry of the plot — slopes, intercepts, sign changes — maps one-to-one onto the coefficients of the free energy expansion.</p>
+  </div>
+
+  <p>The tricritical case follows the same logic with the \(m^6\) term. Setting \(b = 0\) and minimizing \(\mathcal{F} = a_0(T - T_C)m^2 + c\,m^6 - \mu_0 H m\) gives</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Tricritical Equation of State</span>
+    $$\frac{\mu_0 H}{M} = 2a_0(T - T_C) + 6c\,M^4$$
+  </div>
+
+  <p>Straight lines now require plotting \(M^4\) — not \(M^2\) — against \(H/M\). This is precisely the modified Arrott plot with \(\beta = 1/4\), \(\gamma = 1\), and it is why my NSMO isotherms refuse to straighten in the standard plot but become beautifully linear in the modified one. The plot is telling me, in geometric language, which term stabilizes the free energy of my material.</p>
+
+  <h2>6. What Landau Theory Cannot Do (And Why That's Okay)</h2>
+
+  <p>Honesty requires listing the failures, because they are severe. Landau theory ignores fluctuations entirely: it assumes the order parameter takes a single, uniform value, when in reality it fluctuates in space and time, and near \(T_C\) those fluctuations become correlated over enormous distances. Above four dimensions this is harmless; in our three-dimensional world it is catastrophic for ordinary critical points — which is exactly why the measured \(\beta \approx 0.326\) of a 3D Heisenberg-like ferromagnet disagrees with the predicted 0.5. The theory also cannot predict \(T_C\), \(a_0\), or \(b\) from microscopic physics; it <em>parametrizes</em> the transition rather than explaining it. And the closer you approach the critical point, where the correlation length diverges, the worse the theory gets — it fails precisely where a theory of critical phenomena should be at its best.</p>
+
+  <p>And yet. It provides a single universal framework that applies to every phase transition ever discovered — magnets, superconductors, liquid crystals, the electroweak vacuum. It correctly identifies the order of a transition from the sign of one coefficient. It becomes exact at the tricritical point in three dimensions. And every practical tool I use in the lab — every modified Arrott plot, every Kouvel–Fisher fit, every scaling collapse of \(\Delta S_M\) — is scaffolding built directly on Landau's expansion. The renormalization group did not discard Landau theory; it explained where the theory's boundaries lie and then built on top of it, using the same free-energy functional as its starting point.</p>
+
+  <div class="article-pullquote">
+    Landau theory is not wrong. It is approximate — and knowing exactly where and why it fails is what makes it useful.
+  </div>
+
+  <div class="article-separator">&#183; &#183; &#183;</div>
+
+  <h2>7. What I Still Don't Fully Understand</h2>
+
+  <p>In the spirit of learning in public, here are the gaps I am aware of in my own understanding — the places where I have used the machinery without being able to rebuild it from scratch.</p>
+
+  <p><strong>Where do \(a_0\) and \(b\) actually come from?</strong> I know, in outline, that one can start from a Heisenberg Hamiltonian, apply a mean-field decoupling, and expand the resulting free energy to recover the Landau form with microscopic expressions for the coefficients. I have seen this done on a blackboard. I have never sat down and pushed the algebra through myself, term by term, and until I do, my understanding of what \(b\) "is" physically — and why manganites can drive it to zero — remains secondhand.</p>
+
+  <p><strong>Anisotropy terms that break the \(m \to -m\) symmetry.</strong> My entire even-powers argument in Section 2 rests on the up–down symmetry of an idealized ferromagnet. Real manganites have crystal fields and magnetocrystalline anisotropy, and in some symmetry classes cubic invariants sneak into the expansion. How exactly those terms modify the transition — and whether they matter for my nanoparticles, where surface anisotropy is amplified — is something I can hand-wave about but not calculate.</p>
+
+  <p><strong>Does the Landau expansion even converge?</strong> Goldenfeld remarks that the expansion should be understood as an asymptotic series rather than a convergent one. I have read the sentence several times. I have not tracked down the actual argument, and I suspect that understanding it properly would change how I think about the whole construction. It is on the list.</p>
+
+  <h2>8. Further Reading</h2>
+
+  <p>The references below are the ones I keep coming back to, in roughly the order I would recommend reading them.</p>
+
+  <ul>
+    <li><strong>Landau &amp; Lifshitz</strong>, <em>Statistical Physics, Part 1</em>, Chapter 14 — the original source. Concise to the point of being terse, but every sentence is load-bearing. Read it after you already understand the material, and it becomes beautiful.</li>
+    <li><strong>Goldenfeld</strong>, <em>Lectures on Phase Transitions and the Renormalization Group</em> (1992) — the best graduate-level pedagogical treatment I know. Chapters 2–4 cover Landau theory thoroughly, including the honest discussion of its limitations that most textbooks skip.</li>
+    <li><strong>Chaikin &amp; Lubensky</strong>, <em>Principles of Condensed Matter Physics</em> — Chapters 4–5 give the more general symmetry-based treatment, showing how the same construction applies to liquid crystals, superfluids, and beyond.</li>
+    <li><strong>Arrott (1957)</strong>, Phys. Rev. <strong>108</strong>, 1394 — the original paper introducing the Arrott plot. Short, and derivable line by line from the Landau free energy in Section 5 of this post. Reading it after working through the theory feels like meeting an old friend.</li>
+  </ul>
+
+  <p>When I started writing this post, I intended it to be a quick summary of a textbook chapter. It turned into something else: a realization that the plots I make every week are a seventy-year-old theory speaking to me in the language of straight lines. The details of my material — the double exchange, the phase separation, the nanoparticle surfaces — remain complicated and partially mysterious. But near the transition, none of that matters. Symmetry takes over, the free energy simplifies into a short polynomial, and knowing almost nothing turns out to be enough. That, I think, is the real lesson of Landau theory: it is the art of knowing exactly which details you are allowed to ignore.</p>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../images/profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Researcher at VNU-University of Engineering and Technology. Specializing in magnetocaloric materials, critical phenomena, and computational materials science.</p>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="3-arrott-plots-guide.html">
+      <div class="article-nav-label">&#8592; Previous</div>
+      <div class="article-nav-title">Understanding Arrott Plots</div>
+    </a>
+    <a href="17-mean-field-rg.html" class="next">
+      <div class="article-nav-label">Next &#8594;</div>
+      <div class="article-nav-title">Mean-Field Theory &amp; the Renormalization Group</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=QUdAPR8AAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: July 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XRD Peak Fitting: Gaussian, Lorentzian, and Voigt Profiles — Minh-Hieu Nguyen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- KaTeX for professional math rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });"></script>
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+  --gold: #b8860b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent); transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 4px;
+}
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 140px 40px 0;
+}
+
+.article-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 40px; transition: color 0.25s;
+}
+.article-back:hover { color: var(--accent); }
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08); color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-meta {
+  display: flex; align-items: center; gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--border);
+}
+
+/* ─── COVER ─── */
+.article-cover {
+  max-width: 720px;
+  margin: 48px auto;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #1a2e1a 0%, #2e5a3a 40%, #4a8b5a 100%);
+}
+
+.article-cover-pattern {
+  position: absolute; inset: 0;
+  opacity: 0.15;
+}
+
+.article-cover-pattern svg {
+  width: 100%; height: 100%;
+}
+
+.article-cover-text {
+  position: absolute;
+  bottom: 36px; left: 36px; right: 36px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 600; font-style: italic;
+  color: rgba(255,255,255,0.7); line-height: 1.3;
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  text-align: justify;
+}
+
+.article-body p {
+  margin-bottom: 24px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem; float: left;
+  line-height: 0.75;
+  margin-right: 10px; margin-top: 8px;
+  color: var(--accent); font-weight: 700;
+}
+
+.article-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  margin: 48px 0 20px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.article-body h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  margin: 36px 0 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: left;
+}
+
+.article-body em { color: var(--muted); font-style: italic; }
+.article-body strong { color: var(--ink); font-weight: 700; }
+
+.article-body ul, .article-body ol {
+  margin: 0 0 24px 24px;
+  text-align: left;
+}
+
+.article-body li {
+  margin-bottom: 8px;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.article-body li::marker { color: var(--accent); }
+
+/* Highlight box */
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 36px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Separator */
+.article-separator {
+  text-align: center;
+  margin: 44px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+/* Pull quote */
+.article-pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  padding: 36px 20px;
+  margin: 44px 0;
+  line-height: 1.4;
+  position: relative;
+}
+
+.article-pullquote::before,
+.article-pullquote::after {
+  content: ''; display: block;
+  width: 60px; height: 1.5px;
+  background: var(--accent);
+  margin: 0 auto 20px; opacity: 0.4;
+}
+.article-pullquote::after { margin: 20px auto 0; }
+
+/* Code block */
+.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.code-block .comment { color: #6c7086; }
+.code-block .keyword { color: #cba6f7; }
+.code-block .string { color: #a6e3a1; }
+.code-block .function { color: #89b4fa; }
+.code-block .number { color: #fab387; }
+.code-block .operator { color: #89dceb; }
+
+.code-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Equation box */
+.equation-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 28px 0;
+  text-align: center;
+}
+
+.equation-box .eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.equation-box .katex-display { margin: 0; }
+.katex { font-size: 1.05em; }
+
+/* Table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 0.95rem;
+}
+
+.article-table th {
+  background: var(--cream);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+}
+
+.article-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  text-align: center;
+}
+
+.article-table td:first-child {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.article-table tr:hover td { background: rgba(243,240,232,0.4); }
+
+/* Step box */
+.step-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  position: relative;
+}
+
+.step-number {
+  position: absolute;
+  top: -14px; left: 24px;
+  background: var(--accent);
+  color: white;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; font-weight: 700;
+}
+
+.step-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  margin-bottom: 10px;
+  padding-top: 4px;
+}
+
+.step-box p {
+  margin-bottom: 12px !important;
+  font-size: 0.98rem;
+}
+
+/* Warning box */
+.warning-box {
+  background: #fff8f0;
+  border-left: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.warning-box strong {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.warning-box p { margin-bottom: 0 !important; font-size: 0.98rem; }
+
+/* Insight box */
+.insight-box {
+  background: rgba(74, 103, 65, 0.06);
+  border-left: 3px solid var(--sage);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.insight-box strong {
+  color: var(--sage);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.insight-box p { margin-bottom: 0 !important; font-size: 0.98rem; }
+
+/* Comparison box */
+.comparison-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 28px 0;
+}
+
+.comparison-box > div {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.comparison-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.comparison-box p {
+  font-size: 0.95rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* Figure box */
+.figure-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 32px 0;
+  text-align: center;
+}
+
+.figure-box svg { max-width: 100%; height: auto; }
+
+.figure-caption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ─── ARTICLE FOOTER ─── */
+.article-end {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px; background: var(--border);
+  margin-bottom: 40px;
+}
+
+.article-author {
+  display: flex; align-items: center;
+  gap: 20px; margin-bottom: 40px;
+}
+
+.article-author-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--accent); flex-shrink: 0;
+  overflow: hidden;
+}
+
+.article-author-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 700;
+}
+
+.article-author-info p {
+  font-size: 0.88rem; color: var(--muted);
+}
+
+.article-nav {
+  display: flex; justify-content: space-between;
+  gap: 20px;
+}
+
+.article-nav a {
+  padding: 16px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none; color: var(--ink);
+  transition: all 0.25s; flex: 1;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.02);
+}
+
+.article-nav-label {
+  font-size: 0.78rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; margin-bottom: 4px;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+}
+
+.article-nav .next { text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 48px 40px; text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+
+.footer-social {
+  display: flex; justify-content: center;
+  gap: 24px; margin-bottom: 24px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none; transition: all 0.3s; font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent-light); color: white;
+  background: rgba(139,37,0,0.3);
+}
+
+footer p { font-size: 0.85rem; line-height: 1.6; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer a:hover { color: white; }
+
+/* Animations */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+}
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .article-header h1 { font-size: 2.2rem; }
+  .article-cover { height: 220px; margin: 36px 20px; }
+  .article-cover-text { font-size: 1.2rem; bottom: 24px; left: 24px; right: 24px; }
+  .comparison-box { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 1.9rem; }
+  .article-cover { height: 180px; }
+  .article-cover-text { font-size: 1rem; bottom: 20px; left: 20px; right: 20px; }
+  .article-body p { font-size: 1rem; }
+  .article-body h2 { font-size: 1.5rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex; flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+  .code-block { padding: 16px; font-size: 0.78rem; }
+}
+</style>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HYB8TEF6MT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HYB8TEF6MT');
+</script>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to all posts
+  </a>
+  <span class="article-tag">Tutorial</span>
+  <h1>XRD Peak Fitting: Gaussian, Lorentzian, and Voigt Profiles</h1>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <div class="article-meta-divider"></div>
+    <!-- EDIT: update date when publishing -->
+    <span class="article-meta-item">May 2026</span>
+    <div class="article-meta-divider"></div>
+    <span class="article-meta-item">15 min read</span>
+  </div>
+</header>
+
+<!-- ─── COVER ─── -->
+<div class="article-cover fade-in fade-in-delay">
+  <div class="article-cover-pattern">
+    <!-- Stylized overlapping peak profiles -->
+    <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg">
+      <!-- Gaussian (wider, shorter) -->
+      <path d="M 160,280 Q 200,280 240,260 Q 280,220 310,140 Q 330,80 350,50 Q 370,80 390,140 Q 420,220 460,260 Q 500,280 540,280" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <!-- Lorentzian (narrower peak, fatter tails) -->
+      <path d="M 100,275 Q 180,270 250,260 Q 300,240 330,180 Q 345,100 350,50 Q 355,100 370,180 Q 400,240 450,260 Q 520,270 600,275" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+      <!-- Voigt (intermediate) -->
+      <path d="M 130,278 Q 190,275 250,262 Q 300,235 325,165 Q 340,95 350,50 Q 360,95 375,165 Q 400,235 450,262 Q 510,275 570,278" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"/>
+      <!-- Labels -->
+      <text x="490" y="252" fill="rgba(255,255,255,0.3)" font-family="JetBrains Mono" font-size="11">Gaussian</text>
+      <text x="530" y="268" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="11">Lorentzian</text>
+      <text x="510" y="236" fill="rgba(255,255,255,0.8)" font-family="JetBrains Mono" font-size="11">Voigt</text>
+    </svg>
+  </div>
+  <div class="article-cover-text">
+    The shape of a diffraction peak tells you more than its position ever could.
+  </div>
+</div>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay-2">
+
+  <p>Peak finding tells you <em>where</em> the diffraction peaks are. Peak fitting tells you <em>everything else</em>: the precise position (to better than 0.01°), the full width at half maximum (FWHM) that encodes crystallite size and strain, the integrated intensity for quantitative phase analysis, and the profile shape that reveals the relative contributions of instrumental broadening versus sample effects. If peak finding is the reconnaissance, peak fitting is the measurement.</p>
+
+  <p>This is the second post in my XRD processing series. I am assuming you have already found your peak positions using the methods from the <a href="12-xrd-peak-finding.html" style="color: var(--accent);">previous post</a> and now want to extract quantitative information from each reflection. We will cover the three standard profile functions — Gaussian, Lorentzian, and Voigt — understand when each is appropriate, and implement the fitting in Python.</p>
+
+  <h2>1. Why Profile Shape Matters</h2>
+
+  <p>A diffraction peak is never a delta function. It is broadened by two fundamentally different mechanisms:</p>
+
+  <div class="comparison-box">
+    <div>
+      <h4>Instrumental Broadening</h4>
+      <p>Caused by the finite width of the X-ray source, axial divergence, slit geometry, and detector response. This contribution is approximately <strong>Gaussian</strong> in shape. It is a property of your diffractometer, not your sample, and can be measured using a standard reference material (LaB<sub>6</sub>, Si, or CeO<sub>2</sub>).</p>
+    </div>
+    <div>
+      <h4>Sample Broadening</h4>
+      <p>Caused by finite crystallite size (Scherrer broadening) and microstrain (non-uniform lattice distortions). Size broadening produces a <strong>Lorentzian</strong> profile shape, while strain broadening is typically <strong>Gaussian</strong>. Real samples usually have both, so the sample contribution is a mixture.</p>
+    </div>
+  </div>
+
+  <p>The observed peak profile is the <em>convolution</em> of these contributions. Since the convolution of a Gaussian with a Lorentzian is a Voigt function, the Voigt profile (or its computationally cheaper approximation, the pseudo-Voigt) is the physically motivated choice for XRD peak fitting.</p>
+
+  <h2>2. The Three Profile Functions</h2>
+
+  <h3>Gaussian</h3>
+
+  <div class="equation-box">
+    <span class="eq-label">Gaussian Profile</span>
+    $$G(2\theta) = I_0 \exp\left[-4\ln 2 \left(\frac{2\theta - 2\theta_0}{w_G}\right)^2\right]$$
+  </div>
+
+  <p>where \(I_0\) is the peak amplitude, \(2\theta_0\) is the peak center, and \(w_G\) is the FWHM. The Gaussian drops off quickly — by the time you are 2× the FWHM away from center, the intensity is essentially zero. This makes Gaussians easy to fit but poor at capturing the extended tails of real diffraction peaks.</p>
+
+  <h3>Lorentzian (Cauchy)</h3>
+
+  <div class="equation-box">
+    <span class="eq-label">Lorentzian Profile</span>
+    $$L(2\theta) = \frac{I_0}{1 + 4\left(\dfrac{2\theta - 2\theta_0}{w_L}\right)^2}$$
+  </div>
+
+  <p>The Lorentzian has the same three parameters but much heavier tails — it decays as \(1/(2\theta)^2\) rather than exponentially. This means peaks overlap more, and fitting becomes sensitive to how much of the tail region you include. Lorentzians are physically appropriate for size broadening of very small crystallites.</p>
+
+  <h3>Voigt and Pseudo-Voigt</h3>
+
+  <p>The true Voigt function is the convolution \(V = G \otimes L\), which has no closed-form expression (it involves the Faddeeva function). In practice, most XRD software uses the <strong>pseudo-Voigt</strong> approximation — a linear combination rather than a convolution:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Pseudo-Voigt Approximation</span>
+    $$pV(2\theta) = \eta \cdot L(2\theta) + (1 - \eta) \cdot G(2\theta)$$
+  </div>
+
+  <p>where \(\eta\) is the mixing parameter (\(0 \leq \eta \leq 1\)). When \(\eta = 0\), the profile is pure Gaussian; when \(\eta = 1\), pure Lorentzian. For most powder diffraction data, \(\eta\) falls between 0.3 and 0.7. The pseudo-Voigt is remarkably accurate — the maximum error relative to a true Voigt is less than 1% for typical XRD line shapes.</p>
+
+  <div class="insight-box">
+    <strong>&#128161; Physical meaning of &eta;</strong>
+    <p>A low \(\eta\) (closer to Gaussian) suggests the broadening is dominated by strain and instrumental effects. A high \(\eta\) (closer to Lorentzian) indicates dominant size broadening from small crystallites. For our Nd<sub>0.7</sub>Sr<sub>0.3</sub>MnO<sub>3</sub> nanoparticles (crystallite size ~20–40 nm), we typically see \(\eta \approx 0.5\text{–}0.6\), reflecting the balance between size and strain contributions.</p>
+  </div>
+
+  <h2>3. Fitting Parameters Summary</h2>
+
+  <table class="article-table">
+    <tr>
+      <th>Parameter</th>
+      <th>Symbol</th>
+      <th>Physical Meaning</th>
+    </tr>
+    <tr>
+      <td>Peak center</td>
+      <td>\(2\theta_0\)</td>
+      <td>Bragg angle → d-spacing via Bragg's law</td>
+    </tr>
+    <tr>
+      <td>Amplitude</td>
+      <td>\(I_0\)</td>
+      <td>Peak height above baseline</td>
+    </tr>
+    <tr>
+      <td>FWHM</td>
+      <td>\(w\)</td>
+      <td>Full width at half maximum → size &amp; strain via Scherrer/W-H</td>
+    </tr>
+    <tr>
+      <td>Mixing parameter</td>
+      <td>\(\eta\)</td>
+      <td>Lorentzian fraction (pseudo-Voigt only)</td>
+    </tr>
+    <tr>
+      <td>Integrated intensity</td>
+      <td>\(A\)</td>
+      <td>Area under peak → phase fraction, structure factor</td>
+    </tr>
+  </table>
+
+  <h2>4. Python Implementation</h2>
+
+  <p>Here is a complete implementation that fits each detected peak with a pseudo-Voigt profile using <code>scipy.optimize.curve_fit</code>. The key insight is to fit each peak individually within a local window (typically ±5× the estimated FWHM) rather than trying to fit the entire pattern at once.</p>
+
+  <span class="code-label">Python — Define profile functions</span>
+  <div class="code-block">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np<br>
+<span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> curve_fit<br>
+<span class="keyword">from</span> scipy.signal <span class="keyword">import</span> peak_widths<br>
+<br>
+<span class="keyword">def</span> <span class="function">gaussian</span>(x, amp, cen, wid):<br>
+    <span class="string">"""Gaussian profile. wid = FWHM."""</span><br>
+    <span class="keyword">return</span> amp * np.<span class="function">exp</span>(-<span class="number">4</span> * np.<span class="function">log</span>(<span class="number">2</span>) * ((x - cen) / wid)**<span class="number">2</span>)<br>
+<br>
+<span class="keyword">def</span> <span class="function">lorentzian</span>(x, amp, cen, wid):<br>
+    <span class="string">"""Lorentzian profile. wid = FWHM."""</span><br>
+    <span class="keyword">return</span> amp / (<span class="number">1</span> + <span class="number">4</span> * ((x - cen) / wid)**<span class="number">2</span>)<br>
+<br>
+<span class="keyword">def</span> <span class="function">pseudo_voigt</span>(x, amp, cen, wid, eta):<br>
+    <span class="string">"""Pseudo-Voigt: eta*Lorentzian + (1-eta)*Gaussian."""</span><br>
+    <span class="keyword">return</span> eta * <span class="function">lorentzian</span>(x, amp, cen, wid) + \<br>
+           (<span class="number">1</span> - eta) * <span class="function">gaussian</span>(x, amp, cen, wid)<br>
+  </div>
+
+  <span class="code-label">Python — Fit each peak individually</span>
+  <div class="code-block">
+<span class="keyword">def</span> <span class="function">fit_peaks</span>(two_theta, intensity, peak_indices, window_deg=<span class="number">1.0</span>):<br>
+    <span class="string">"""Fit pseudo-Voigt to each detected peak.</span><br>
+<span class="string">    </span><br>
+<span class="string">    Parameters</span><br>
+<span class="string">    ----------</span><br>
+<span class="string">    two_theta : array, 2θ values</span><br>
+<span class="string">    intensity : array, background-subtracted intensity</span><br>
+<span class="string">    peak_indices : array, indices of detected peaks</span><br>
+<span class="string">    window_deg : float, half-width of fitting window in degrees</span><br>
+<span class="string">    """</span><br>
+    results = []<br>
+    <br>
+    <span class="keyword">for</span> idx <span class="keyword">in</span> peak_indices:<br>
+        cen0 = two_theta[idx]<br>
+        amp0 = intensity[idx]<br>
+        <br>
+        <span class="comment"># Select local window around peak</span><br>
+        mask = (two_theta > cen0 - window_deg) & \<br>
+               (two_theta < cen0 + window_deg)<br>
+        x = two_theta[mask]<br>
+        y = intensity[mask]<br>
+        <br>
+        <span class="comment"># Initial guess: [amplitude, center, FWHM, eta]</span><br>
+        p0 = [amp0, cen0, <span class="number">0.15</span>, <span class="number">0.5</span>]<br>
+        <br>
+        <span class="comment"># Bounds: amp>0, center within window,</span><br>
+        <span class="comment">#         FWHM between 0.01° and 2°, 0≤eta≤1</span><br>
+        bounds = ([<span class="number">0</span>, cen0-<span class="number">0.5</span>, <span class="number">0.01</span>, <span class="number">0</span>],<br>
+                  [amp0*<span class="number">2</span>, cen0+<span class="number">0.5</span>, <span class="number">2.0</span>, <span class="number">1</span>])<br>
+        <br>
+        <span class="keyword">try</span>:<br>
+            popt, pcov = <span class="function">curve_fit</span>(pseudo_voigt, x, y,<br>
+                                   p0=p0, bounds=bounds,<br>
+                                   maxfev=<span class="number">5000</span>)<br>
+            perr = np.<span class="function">sqrt</span>(np.<span class="function">diag</span>(pcov))<br>
+            <br>
+            <span class="comment"># Calculate integrated intensity (area)</span><br>
+            x_fine = np.<span class="function">linspace</span>(x[<span class="number">0</span>], x[-<span class="number">1</span>], <span class="number">1000</span>)<br>
+            area = np.<span class="function">trapz</span>(<span class="function">pseudo_voigt</span>(x_fine, *popt), x_fine)<br>
+            <br>
+            results.<span class="function">append</span>({<br>
+                <span class="string">'center'</span>: popt[<span class="number">1</span>],<br>
+                <span class="string">'center_err'</span>: perr[<span class="number">1</span>],<br>
+                <span class="string">'amplitude'</span>: popt[<span class="number">0</span>],<br>
+                <span class="string">'fwhm'</span>: popt[<span class="number">2</span>],<br>
+                <span class="string">'fwhm_err'</span>: perr[<span class="number">2</span>],<br>
+                <span class="string">'eta'</span>: popt[<span class="number">3</span>],<br>
+                <span class="string">'area'</span>: area,<br>
+                <span class="string">'popt'</span>: popt,<br>
+                <span class="string">'x_data'</span>: x,<br>
+                <span class="string">'y_data'</span>: y<br>
+            })<br>
+        <span class="keyword">except</span> RuntimeError:<br>
+            <span class="function">print</span>(<span class="string">f'  Fit failed for peak at {cen0:.2f}°'</span>)<br>
+    <br>
+    <span class="keyword">return</span> results<br>
+  </div>
+
+  <h2>5. Evaluating Fit Quality</h2>
+
+  <p>A fit is only as good as its residuals. After fitting, always compute and plot the difference between the data and the fitted profile. Systematic patterns in the residuals — oscillations, asymmetric deviations, or trends — indicate a poor model choice or an overlapping peak that was not accounted for.</p>
+
+  <span class="code-label">Python — Plotting fits with residuals</span>
+  <div class="code-block">
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt<br>
+<br>
+<span class="keyword">def</span> <span class="function">plot_fit</span>(result, idx):<br>
+    x, y = result[<span class="string">'x_data'</span>], result[<span class="string">'y_data'</span>]<br>
+    x_fine = np.<span class="function">linspace</span>(x[<span class="number">0</span>], x[-<span class="number">1</span>], <span class="number">500</span>)<br>
+    y_fit = <span class="function">pseudo_voigt</span>(x_fine, *result[<span class="string">'popt'</span>])<br>
+    y_calc = <span class="function">pseudo_voigt</span>(x, *result[<span class="string">'popt'</span>])<br>
+    residual = y - y_calc<br>
+    <br>
+    fig, (ax1, ax2) = plt.<span class="function">subplots</span>(<span class="number">2</span>, <span class="number">1</span>,<br>
+        figsize=(<span class="number">8</span>, <span class="number">5</span>), height_ratios=[<span class="number">3</span>, <span class="number">1</span>],<br>
+        sharex=<span class="number">True</span>, gridspec_kw={<span class="string">'hspace'</span>: <span class="number">0.05</span>})<br>
+    <br>
+    <span class="comment"># Main plot</span><br>
+    ax1.<span class="function">plot</span>(x, y, <span class="string">'ko'</span>, ms=<span class="number">3</span>, label=<span class="string">'Data'</span>)<br>
+    ax1.<span class="function">plot</span>(x_fine, y_fit, <span class="string">'r-'</span>, lw=<span class="number">1.5</span>,<br>
+            label=<span class="string">f'pV fit (η={result["eta"]:.2f})'</span>)<br>
+    ax1.<span class="function">set_ylabel</span>(<span class="string">'Intensity'</span>)<br>
+    ax1.<span class="function">legend</span>()<br>
+    ax1.<span class="function">set_title</span>(<span class="string">f'Peak #{idx+1}: 2θ = {result["center"]:.3f}°, '</span><br>
+                <span class="string">f'FWHM = {result["fwhm"]:.4f}°'</span>)<br>
+    <br>
+    <span class="comment"># Residual plot</span><br>
+    ax2.<span class="function">plot</span>(x, residual, <span class="string">'b-'</span>, lw=<span class="number">0.8</span>)<br>
+    ax2.<span class="function">axhline</span>(<span class="number">0</span>, color=<span class="string">'gray'</span>, ls=<span class="string">'--'</span>, lw=<span class="number">0.5</span>)<br>
+    ax2.<span class="function">set_xlabel</span>(<span class="string">r'$2\theta$ (°)'</span>)<br>
+    ax2.<span class="function">set_ylabel</span>(<span class="string">'Residual'</span>)<br>
+    <br>
+    plt.<span class="function">tight_layout</span>()<br>
+    plt.<span class="function">show</span>()<br>
+  </div>
+
+  <div class="article-highlight">
+    <p>Good residuals look like random noise centered on zero. If you see a W-shape (positive-negative-positive), the peak tails are not captured well — try increasing \(\eta\) or switching to a true Voigt function. If you see asymmetry, your peak may have intrinsic asymmetry from axial divergence (common at low \(2\theta\)) that requires a more complex profile function.</p>
+  </div>
+
+  <h2>6. Handling Overlapping Peaks</h2>
+
+  <p>In many materials — especially lower-symmetry structures like orthorhombic perovskites — some reflections overlap. For example, in <em>Pbnm</em> Nd<sub>0.7</sub>Sr<sub>0.3</sub>MnO<sub>3</sub>, the (200) and (112) reflections near \(2\theta \approx 46\)° often partially overlap. In these cases, you need to fit multiple peaks simultaneously within the same window:</p>
+
+  <span class="code-label">Python — Fitting two overlapping peaks</span>
+  <div class="code-block">
+<span class="keyword">def</span> <span class="function">double_pseudo_voigt</span>(x, a1, c1, w1, eta1, a2, c2, w2, eta2):<br>
+    <span class="string">"""Sum of two pseudo-Voigt profiles."""</span><br>
+    <span class="keyword">return</span> <span class="function">pseudo_voigt</span>(x, a1, c1, w1, eta1) + \<br>
+           <span class="function">pseudo_voigt</span>(x, a2, c2, w2, eta2)<br>
+<br>
+<span class="comment"># Example: fitting a doublet near 46°</span><br>
+mask = (two_theta > <span class="number">44.5</span>) & (two_theta < <span class="number">47.5</span>)<br>
+x, y = two_theta[mask], I_smooth[mask]<br>
+<br>
+<span class="comment"># Initial guesses for two peaks</span><br>
+p0 = [<span class="number">500</span>, <span class="number">45.8</span>, <span class="number">0.2</span>, <span class="number">0.5</span>,   <span class="comment"># peak 1</span><br>
+      <span class="number">400</span>, <span class="number">46.5</span>, <span class="number">0.2</span>, <span class="number">0.5</span>]   <span class="comment"># peak 2</span><br>
+<br>
+popt, pcov = <span class="function">curve_fit</span>(double_pseudo_voigt, x, y, p0=p0)<br>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Be honest about resolution limits</strong>
+    <p>If two peaks are separated by less than about 0.5× their individual FWHM, the deconvolution becomes unreliable — the fit parameters are strongly correlated, and small changes in initial guesses produce very different results. In such cases, it is better to report a single blended peak and note the overlap, rather than forcing a dubious decomposition. Rietveld refinement handles this more robustly because it constrains peak positions through the crystal structure model.</p>
+  </div>
+
+  <div class="article-separator">&#183; &#183; &#183;</div>
+
+  <h2>7. Extracting the FWHM: Input for Size-Strain Analysis</h2>
+
+  <p>The primary output of peak fitting for crystallographic analysis is the FWHM as a function of \(2\theta\). This table becomes the input for Williamson-Hall analysis (covered in the <a href="10-williamson-hall-analysis.html" style="color: var(--accent);">next post</a>) and Scherrer size estimation.</p>
+
+  <p>Before using the FWHM values, you must subtract the instrumental contribution. If you have measured a standard reference material under identical conditions, the instrumental FWHM (\(\beta_\text{inst}\)) at each \(2\theta\) can be interpolated from that measurement. The sample broadening is then:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Instrumental correction</span>
+    $$\beta_\text{sample}^2 = \beta_\text{obs}^2 - \beta_\text{inst}^2 \quad \text{(Gaussian assumption)}$$
+    $$\beta_\text{sample} = \beta_\text{obs} - \beta_\text{inst} \quad \text{(Lorentzian assumption)}$$
+  </div>
+
+  <p>For a pseudo-Voigt profile, you can use the Thompson-Cox-Hastings approximation to separate the Gaussian and Lorentzian FWHM components and correct each one appropriately. In practice, for nanocrystalline samples where the sample broadening dominates, the simpler Gaussian deconvolution is usually sufficient.</p>
+
+  <span class="code-label">Python — Collecting FWHM values for Williamson-Hall</span>
+  <div class="code-block">
+<span class="comment"># After fitting all peaks, collect results</span><br>
+<span class="function">print</span>(<span class="string">f'{"Peak":>5} {"2θ (°)":>10} {"FWHM (°)":>10} {"η":>6} {"Area":>10}'</span>)<br>
+<span class="keyword">for</span> i, r <span class="keyword">in</span> <span class="function">enumerate</span>(results):<br>
+    <span class="function">print</span>(<span class="string">f'{i+1:5d} {r["center"]:10.3f} {r["fwhm"]:10.4f} '</span><br>
+          <span class="string">f'{r["eta"]:6.2f} {r["area"]:10.1f}'</span>)<br>
+<br>
+<span class="comment"># Convert FWHM from degrees to radians for W-H analysis</span><br>
+fwhm_rad = np.<span class="function">array</span>([r[<span class="string">'fwhm'</span>] <span class="keyword">for</span> r <span class="keyword">in</span> results]) * np.pi / <span class="number">180</span><br>
+centers_rad = np.<span class="function">array</span>([r[<span class="string">'center'</span>] <span class="keyword">for</span> r <span class="keyword">in</span> results]) * np.pi / <span class="number">360</span>  <span class="comment"># θ, not 2θ</span><br>
+  </div>
+
+  <h2>8. Which Profile Should You Use?</h2>
+
+  <p>Here is a practical decision tree:</p>
+
+  <ul>
+    <li><strong>Quick look / exploratory analysis:</strong> Gaussian fits are fast, converge easily, and give you approximate FWHM values. Good enough for a first pass.</li>
+    <li><strong>Publication-quality single-peak analysis:</strong> Pseudo-Voigt. It captures both the peak shape and the mixing parameter \(\eta\), which is itself physically meaningful.</li>
+    <li><strong>Rietveld refinement:</strong> The refinement software (FullProf, GSAS-II) handles profile functions internally — typically Thompson-Cox-Hastings pseudo-Voigt. You do not need to fit peaks manually.</li>
+    <li><strong>Very asymmetric peaks:</strong> At low \(2\theta\) (< 30°), axial divergence causes pronounced asymmetry. Consider the split pseudo-Voigt or Finger-Cox-Jephcoat correction, both available in Rietveld codes.</li>
+  </ul>
+
+  <div class="article-pullquote">
+    The Gaussian tells you the width. The Lorentzian tells you the tails. The Voigt tells you the truth.
+  </div>
+
+  <h2>9. Common Pitfalls</h2>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #1: Fitting the FWHM in degrees when you need radians</strong>
+    <p>The Scherrer equation and Williamson-Hall plot require \(\beta\) in radians, but fitting always gives you FWHM in degrees. Forgetting to convert is the most common source of crystallite sizes that are off by a factor of 57.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #2: Not subtracting instrumental broadening</strong>
+    <p>If you skip the instrumental correction, your crystallite sizes will be systematically too small. For well-crystallized samples (narrow peaks), the instrumental contribution can be a significant fraction of the observed width. Always measure a standard or use the instrument's known broadening function.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #3: Fitting too narrow a window</strong>
+    <p>The Lorentzian and Voigt tails extend far from the peak center. If your fitting window is too narrow, the tail contribution is cut off and the FWHM is underestimated. A good rule: the window should extend at least 5× the expected FWHM on each side of the peak center.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Pitfall #4: Ignoring K&alpha;<sub>2</sub></strong>
+    <p>If you did not strip K\(\alpha_2\) during preprocessing, each peak is actually a doublet. Fitting a single profile to a doublet will give you a systematically broadened FWHM and a distorted shape. Either strip K\(\alpha_2\) first (Rachinger correction) or fit each peak as a doublet with a fixed intensity ratio of 0.5 and a fixed splitting from the known \(\lambda_{\alpha_1}\)/\(\lambda_{\alpha_2}\) wavelengths.</p>
+  </div>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../images/profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Researcher at VNU-University of Engineering and Technology. Specializing in magnetocaloric materials, critical phenomena, and computational materials science.</p>
+    </div>
+  </div>
+
+  <!-- EDIT: update prev/next links when adding to blog -->
+  <div class="article-nav">
+    <a href="12-xrd-peak-finding.html">
+      <div class="article-nav-label">&#8592; Previous</div>
+      <div class="article-nav-title">XRD Peak Finding: From Raw Data to Bragg Reflections</div>
+    </a>
+    <a href="10-williamson-hall-analysis.html" class="next">
+      <div class="article-nav-label">Next &#8594;</div>
+      <div class="article-nav-title">Williamson-Hall Analysis: Separating Size from Strain</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=bewbBNgAAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: May 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>

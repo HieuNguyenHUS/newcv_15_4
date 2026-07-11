@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Saddle Point Approximation — Minh-Hieu Nguyen</title>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HYB8TEF6MT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HYB8TEF6MT');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- KaTeX for professional math rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });"></script>
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+  --gold: #b8860b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent); transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 4px;
+}
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 140px 40px 0;
+}
+
+.article-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 40px; transition: color 0.25s;
+}
+.article-back:hover { color: var(--accent); }
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08); color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-subtitle {
+  font-size: 1.08rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.article-meta {
+  display: flex; align-items: center; gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--border);
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 720px;
+  margin: 48px auto 0;
+  padding: 0 40px 80px;
+  text-align: justify;
+}
+
+.article-body p {
+  margin-bottom: 24px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.article-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  margin: 48px 0 20px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.article-body h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  margin: 36px 0 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: left;
+}
+
+.article-body em { color: var(--muted); font-style: italic; }
+.article-body strong { color: var(--ink); font-weight: 700; }
+
+.article-body ul, .article-body ol {
+  margin: 0 0 24px 24px;
+  text-align: left;
+}
+
+.article-body li {
+  margin-bottom: 8px;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.article-body li::marker {
+  color: var(--accent);
+}
+
+/* Highlight box */
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 36px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Separator */
+.article-separator {
+  text-align: center;
+  margin: 44px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+/* Equation box — KaTeX aware */
+.equation-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 28px 0;
+  text-align: center;
+}
+
+.equation-box .eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+/* KaTeX display output inside equation-box */
+.equation-box .katex-display {
+  margin: 0;
+}
+
+/* Multiple display equations inside one box (reference card) */
+.equation-box .katex-display + .katex-display {
+  margin-top: 18px;
+}
+
+/* Inline KaTeX — ensure it doesn't disrupt line-height */
+.katex { font-size: 1.05em; }
+
+/* Table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 0.95rem;
+}
+
+.article-table th {
+  background: var(--cream);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+}
+
+.article-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  text-align: center;
+}
+
+.article-table td:first-child {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.article-table tr:hover td {
+  background: rgba(243,240,232,0.4);
+}
+
+/* Step box */
+.step-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  position: relative;
+}
+
+.step-number {
+  position: absolute;
+  top: -14px; left: 24px;
+  background: var(--accent);
+  color: white;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; font-weight: 700;
+}
+
+.step-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  margin-bottom: 10px;
+  padding-top: 4px;
+}
+
+.step-box p {
+  margin-bottom: 12px !important;
+  font-size: 0.98rem;
+}
+
+/* Warning box */
+.warning-box {
+  background: #fff8f0;
+  border-left: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.warning-box strong {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.warning-box p {
+  margin-bottom: 0 !important;
+  font-size: 0.98rem;
+}
+
+/* Figure */
+.article-figure {
+  margin: 36px 0;
+  text-align: center;
+}
+
+.article-figure svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.article-figure figcaption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 12px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ─── ARTICLE FOOTER ─── */
+.article-end {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px; background: var(--border);
+  margin-bottom: 40px;
+}
+
+.article-author {
+  display: flex; align-items: center;
+  gap: 20px; margin-bottom: 40px;
+}
+
+.article-author-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--accent); flex-shrink: 0;
+  overflow: hidden;
+}
+
+.article-author-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 700;
+}
+
+.article-author-info p {
+  font-size: 0.88rem; color: var(--muted);
+}
+
+.article-nav {
+  display: flex; justify-content: space-between;
+  gap: 20px;
+}
+
+.article-nav a {
+  padding: 16px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none; color: var(--ink);
+  transition: all 0.25s; flex: 1;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.02);
+}
+
+.article-nav-label {
+  font-size: 0.78rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; margin-bottom: 4px;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+}
+
+.article-nav .next { text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 48px 40px; text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+
+.footer-social {
+  display: flex; justify-content: center;
+  gap: 24px; margin-bottom: 24px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none; transition: all 0.3s; font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent-light); color: white;
+  background: rgba(139,37,0,0.3);
+}
+
+footer p { font-size: 0.85rem; line-height: 1.6; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer a:hover { color: white; }
+
+/* Animations */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+}
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .article-header h1 { font-size: 2.2rem; }
+}
+
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 1.9rem; }
+  .article-body p { font-size: 1rem; }
+  .article-body h2 { font-size: 1.5rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex; flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to all posts
+  </a>
+  <span class="article-tag">Study Notes</span>
+  <h1>The Saddle Point Approximation: A Complete Derivation</h1>
+  <p class="article-subtitle">Study notes on the method of steepest descent for asymptotic evaluation of complex integrals of the form \(\int e^{N f(z)}\,dz\) as \(N \to \infty\).</p>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">July 2026</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">20 min read</span>
+  </div>
+</header>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay">
+
+  <h2>0. Motivation</h2>
+
+  <p>Many integrals in physics cannot be evaluated exactly but are needed in the limit of a large parameter \(N\). Standard examples include the Gamma function \(\Gamma(N+1) = \int_0^\infty t^N e^{-t}\,dt\), which yields Stirling's approximation for \(N!\); partition functions in statistical mechanics, where \(N\) is the number of degrees of freedom; quantum propagators in the path integral formulation, where the large parameter is \(1/\hbar\); and asymptotic expansions of special functions such as the Bessel and Airy functions.</p>
+
+  <p>All of these share a common structure: an integral of the form</p>
+
+  $$I(N) = \int_C e^{N f(z)}\,dz, \qquad N \to \infty,$$
+
+  <p>where \(C\) is a contour in the complex plane, \(f(z)\) is an analytic function, and \(N\) is a large real parameter. The saddle point approximation — also called the method of steepest descent — gives the leading asymptotic behavior of \(I(N)\) as \(N \to \infty\), together with a systematic scheme for corrections in powers of \(1/N\).</p>
+
+  <h2>1. The Real Case First: Laplace's Method</h2>
+
+  <p>Before working in the complex plane, we establish the central idea for one-dimensional real integrals. Consider</p>
+
+  $$I(N) = \int_a^b e^{N f(x)}\,dx, \qquad N \to \infty,$$
+
+  <p>where \(f : \mathbb{R} \to \mathbb{R}\) is a smooth real function on the interval \([a, b]\), and \(a &lt; b\) are the (possibly infinite) integration limits.</p>
+
+  <p>The key observation is this: as \(N \to \infty\), the integrand \(e^{Nf(x)}\) is dominated by the neighborhood of the <strong>global maximum</strong> of \(f(x)\). If \(f\) attains its maximum value \(f(x_0)\) at an interior point \(x_0\), then at any other point \(x\) the integrand is smaller by the factor \(e^{-N[f(x_0) - f(x)]}\), which vanishes exponentially fast in \(N\). Contributions from everywhere except a shrinking neighborhood of \(x_0\) are therefore exponentially suppressed.</p>
+
+  <p>Suppose the maximum lies at an interior point \(x_0 \in (a, b)\). Taylor expanding \(f\) around \(x_0\),</p>
+
+  $$f(x) = f(x_0) + f'(x_0)(x - x_0) + \tfrac{1}{2} f''(x_0)(x - x_0)^2 + O\!\big((x - x_0)^3\big),$$
+
+  <p>where \(f'(x_0)\) and \(f''(x_0)\) denote the first and second derivatives of \(f\) evaluated at \(x_0\). Since \(x_0\) is an interior maximum, \(f'(x_0) = 0\) and \(f''(x_0) &lt; 0\); we write \(f''(x_0) = -|f''(x_0)|\) to make the sign explicit. Substituting the expansion into the integral and extending the limits to \(\pm\infty\) — legitimate because the Gaussian factor is exponentially small away from \(x_0\), so the extension changes the result only by exponentially small terms — gives</p>
+
+  $$I(N) \approx e^{N f(x_0)} \int_{-\infty}^{\infty} \exp\!\left(-\tfrac{N}{2}\,|f''(x_0)|\,(x - x_0)^2\right) dx.$$
+
+  <p>The remaining integral is a Gaussian. With \(\alpha = N |f''(x_0)|/2\), the standard result</p>
+
+  $$\int_{-\infty}^{\infty} e^{-\alpha u^2}\,du = \sqrt{\frac{\pi}{\alpha}}, \qquad \alpha &gt; 0,$$
+
+  <p>where \(u = x - x_0\) is the integration variable shifted to the maximum, gives \(\sqrt{\pi / \alpha} = \sqrt{2\pi / (N|f''(x_0)|)}\). Therefore:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Laplace's Method (Interior Maximum)</span>
+    $$I(N) \sim e^{N f(x_0)}\,\sqrt{\frac{2\pi}{N\,|f''(x_0)|}}, \qquad N \to \infty$$
+  </div>
+
+  <p>The symbol \(\sim\) denotes asymptotic equality: the ratio of the two sides tends to \(1\) as \(N \to \infty\).</p>
+
+  <h3>Worked Example: Stirling's Approximation</h3>
+
+  <p>We now apply Laplace's method to derive the asymptotic behavior of the factorial. The starting point is the integral representation \(N! = \Gamma(N+1) = \int_0^\infty t^N e^{-t}\,dt\), where \(\Gamma\) is the Gamma function and \(t\) is a real integration variable.</p>
+
+  <div class="step-box">
+    <span class="step-number">1</span>
+    <h4>Rewrite the Integrand in Exponential Form</h4>
+    <p>Combine the two factors into a single exponential using \(t^N = e^{N \ln t}\):</p>
+    <p>$$N! = \int_0^\infty e^{N \ln t \,-\, t}\,dt.$$</p>
+    <p>The exponent \(N \ln t - t\) is not yet of the form \(N f(t)\) because the second term lacks a factor of \(N\). A substitution fixes this.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">2</span>
+    <h4>Substitute \(t = Nu\)</h4>
+    <p>Let \(t = Nu\), where \(u\) is the new dimensionless variable; then \(dt = N\,du\) and \(\ln t = \ln N + \ln u\). The exponent becomes \(N \ln N + N \ln u - N u\), and the factor \(e^{N \ln N} = N^N\) comes outside the integral:</p>
+    <p>$$N! = N^{N+1} \int_0^\infty e^{N(\ln u - u)}\,du.$$</p>
+    <p>The exponent is now exactly of the form \(N f(u)\).</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">3</span>
+    <h4>Locate and Verify the Maximum</h4>
+    <p>Identify \(f(u) = \ln u - u\). The maximum satisfies \(f'(u) = 1/u - 1 = 0\), which gives \(u_0 = 1\). The second derivative is \(f''(u) = -1/u^2\), so \(f''(u_0) = -1 &lt; 0\), confirming that \(u_0 = 1\) is a maximum. The value at the maximum is \(f(1) = \ln 1 - 1 = -1\).</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">4</span>
+    <h4>Apply Laplace's Method</h4>
+    <p>With \(f(u_0) = -1\) and \(|f''(u_0)| = 1\), the Gaussian parameter is \(\alpha = N\,|f''(1)|/2 = N/2\), and Laplace's formula gives</p>
+    <p>$$N! \approx N^{N+1}\, e^{N(\ln 1 - 1)}\, \sqrt{\frac{2\pi}{N \cdot 1}} = N^{N+1}\, e^{-N}\, \sqrt{\frac{2\pi}{N}}.$$</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">5</span>
+    <h4>Simplify</h4>
+    <p>Combining the powers of \(N\): \(N^{N+1} \cdot N^{-1/2} = N^N \cdot N^{1/2}\), and \(N^{1/2}\sqrt{2\pi} = \sqrt{2\pi N}\). The result is Stirling's approximation.</p>
+  </div>
+
+  <div class="equation-box">
+    <span class="eq-label">Stirling's Approximation</span>
+    $$N! \sim \sqrt{2\pi N}\left(\frac{N}{e}\right)^{N}, \qquad N \to \infty$$
+  </div>
+
+  <p>A numerical check: for \(N = 10\), the exact value is \(10! = 3{,}628{,}800\), while Stirling's formula gives \(\sqrt{20\pi}\,(10/e)^{10} \approx 3{,}598{,}696\) — an error below \(1\%\) already at \(N = 10\). The accuracy improves rapidly with \(N\), and the first correction term (Section 5) reduces the error to below \(0.01\%\).</p>
+
+  <h2>2. Extension to the Complex Plane</h2>
+
+  <p>Now consider the general problem: a contour integral in the complex plane,</p>
+
+  $$I(N) = \int_C e^{N f(z)}\,dz, \qquad f(z) = u(x, y) + i\,v(x, y) \text{ analytic},$$
+
+  <p>where \(z = x + iy\) is the complex variable, \(u(x, y) = \mathrm{Re}[f(z)]\) and \(v(x, y) = \mathrm{Im}[f(z)]\) are the real and imaginary parts of \(f\), and \(C\) is a contour with fixed endpoints (possibly at infinity).</p>
+
+  <p><strong>The fundamental problem.</strong> The integrand \(e^{N f(z)} = e^{N u}\, e^{i N v}\) has both a magnitude \(e^{Nu}\) and a phase factor \(e^{iNv}\). For large \(N\), the phase \(N v(x, y)\) varies extremely rapidly along a generic contour: a change in \(v\) of order \(1/N\) rotates the phase by an angle of order one. Near a maximum of \(u\) along the contour, the phase oscillates wildly and neighboring contributions cancel each other. A naive Taylor expansion around the maximum of \(u\), as in the real case, therefore fails: the Gaussian estimate is destroyed by oscillatory cancellation.</p>
+
+  <p><strong>The key idea: deform the contour.</strong> Since \(f(z)\) is analytic, Cauchy's theorem permits deforming \(C\) into a new contour \(C'\) with the same endpoints — provided no singularities or branch cuts of the integrand are crossed — without changing the value of the integral. We choose \(C'\) so that along it:</p>
+
+  <ol>
+    <li>the magnitude \(e^{Nu}\) is maximized at a single point \(z_0\) (the <strong>saddle point</strong>), and</li>
+    <li>the phase \(v(x, y)\) is <strong>constant</strong> along the contour, so that no oscillatory cancellation occurs.</li>
+  </ol>
+
+  <p>A contour on which \(v = \mathrm{const}\) is called a <strong>steepest descent path</strong>. The name follows from the Cauchy–Riemann equations, \(\partial u/\partial x = \partial v/\partial y\) and \(\partial u/\partial y = -\partial v/\partial x\), which imply that the gradients \(\nabla u\) and \(\nabla v\) are perpendicular at every point: \(\nabla u \cdot \nabla v = u_x v_x + u_y v_y = v_y v_x - v_x v_y = 0\), where subscripts denote partial derivatives. Moving along a curve of constant \(v\) means moving perpendicular to \(\nabla v\), which is precisely the direction of \(\nabla u\) — the direction in which \(u\) changes as steeply as possible.</p>
+
+  <h3>What Is a Saddle Point?</h3>
+
+  <p>The point \(z_0\) is defined by the condition \(f'(z_0) = 0\), where \(f'\) denotes the complex derivative. To understand the local geometry, Taylor expand \(f\) around \(z_0\) and write the second derivative in polar form, \(f''(z_0) = |f''(z_0)|\, e^{i\phi}\), where \(\phi = \arg f''(z_0)\) is its phase; parametrize the displacement as \(z - z_0 = r\, e^{i\theta}\), where \(r \geq 0\) is the distance from \(z_0\) and \(\theta\) is the direction of departure. Then</p>
+
+  $$f(z) - f(z_0) = \tfrac{1}{2} f''(z_0)\,(z - z_0)^2 + O(r^3) = \tfrac{1}{2}\,|f''(z_0)|\, r^2\, e^{i(\phi + 2\theta)} + O(r^3),$$
+
+  <p>and taking the real part:</p>
+
+  $$\mathrm{Re}[f(z)] \approx u(x_0, y_0) + \tfrac{1}{2}\,|f''(z_0)|\, r^2 \cos(\phi + 2\theta),$$
+
+  <p>where \((x_0, y_0)\) are the coordinates of \(z_0\). The cosine factor is positive for some directions \(\theta\) and negative for others: as \(\theta\) sweeps through a full circle, \(\cos(\phi + 2\theta)\) completes two full periods, producing <strong>two directions of ascent and two directions of descent</strong>, alternating every \(90^\circ\). The landscape of \(u\) near \(z_0\) is therefore not a peak or a pit but a <strong>mountain pass</strong>: two ridges rise away from \(z_0\) in opposite directions, and two valleys fall away in the perpendicular directions. This is the topology of a saddle — hence the name. Note that \(u\) is a harmonic function (\(\nabla^2 u = 0\) follows from analyticity), so it can have no local maxima or minima at all in the interior of the domain; saddles are the only critical points available.</p>
+
+  <figure class="article-figure">
+    <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Contour map of Re f(z) near a saddle point">
+      <!-- axes -->
+      <line x1="60" y1="180" x2="500" y2="180" stroke="var(--border)" stroke-width="1"/>
+      <line x1="280" y1="30" x2="280" y2="330" stroke="var(--border)" stroke-width="1"/>
+      <!-- ascending lobes (hyperbolic contours opening left-right): u > u0 -->
+      <path d="M 380 60 Q 305 180 380 300" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity="0.85"/>
+      <path d="M 425 45 Q 330 180 425 315" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity="0.55"/>
+      <path d="M 470 35 Q 355 180 470 325" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity="0.35"/>
+      <path d="M 180 60 Q 255 180 180 300" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity="0.85"/>
+      <path d="M 135 45 Q 230 180 135 315" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity="0.55"/>
+      <path d="M 90 35 Q 205 180 90 325" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity="0.35"/>
+      <!-- descending lobes (hyperbolic contours opening up-down): u < u0 -->
+      <path d="M 195 90 Q 280 155 365 90" fill="none" stroke="var(--sage)" stroke-width="1.6" opacity="0.85"/>
+      <path d="M 175 60 Q 280 135 385 60" fill="none" stroke="var(--sage)" stroke-width="1.6" opacity="0.55"/>
+      <path d="M 195 270 Q 280 205 365 270" fill="none" stroke="var(--sage)" stroke-width="1.6" opacity="0.85"/>
+      <path d="M 175 300 Q 280 225 385 300" fill="none" stroke="var(--sage)" stroke-width="1.6" opacity="0.55"/>
+      <!-- steepest descent path through the saddle -->
+      <line x1="280" y1="52" x2="280" y2="308" stroke="var(--ink)" stroke-width="2" stroke-dasharray="7 5"/>
+      <polygon points="280,44 274,58 286,58" fill="var(--ink)"/>
+      <!-- saddle point -->
+      <circle cx="280" cy="180" r="5" fill="var(--accent)"/>
+      <!-- labels -->
+      <text x="292" y="172" font-family="JetBrains Mono, monospace" font-size="13" fill="var(--ink)">z&#8320;</text>
+      <text x="452" y="185" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--accent)">ridge (u &#8593;)</text>
+      <text x="70" y="185" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--accent)">ridge (u &#8593;)</text>
+      <text x="296" y="70" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--sage)">valley (u &#8595;)</text>
+      <text x="296" y="300" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--sage)">valley (u &#8595;)</text>
+      <text x="296" y="330" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--muted)">steepest descent path (v = const)</text>
+    </svg>
+    <figcaption>Contour map of \(\mathrm{Re}[f(z)]\) near a saddle point \(z_0\). Red contours mark the two ascending ridges; green contours mark the two descending valleys. The dashed line is the steepest descent path, along which the phase \(v\) is constant.</figcaption>
+  </figure>
+
+  <h3>The Steepest Descent Direction</h3>
+
+  <p>The direction of maximum decrease of \(\mathrm{Re}[f]\) is the direction \(\theta\) for which \(\cos(\phi + 2\theta) = -1\), i.e.</p>
+
+  $$\phi + 2\theta = \pi \quad\Longrightarrow\quad \theta = \frac{\pi - \phi}{2} = \frac{\pi - \arg f''(z_0)}{2}.$$
+
+  <p>(The opposite direction, \(\theta + \pi\), satisfies \(\phi + 2(\theta + \pi) = \pi + 2\pi\) and gives the same cosine; the steepest descent path runs through \(z_0\) in both directions.) Along this direction, the imaginary part of the quadratic term is</p>
+
+  $$\mathrm{Im}\!\left[\tfrac{1}{2}|f''(z_0)|\,r^2\, e^{i(\phi + 2\theta)}\right] = \tfrac{1}{2}\,|f''(z_0)|\, r^2 \sin(\pi) = 0,$$
+
+  <p>so \(\mathrm{Im}[f(z)] = \mathrm{Im}[f(z_0)]\) to quadratic order: the phase is exactly constant along the steepest descent direction, which is precisely the second requirement above. The steepest descent path through the saddle simultaneously maximizes the decay of the magnitude and freezes the phase.</p>
+
+  <h2>3. The Saddle Point Approximation: Full Derivation</h2>
+
+  <div class="step-box">
+    <span class="step-number">1</span>
+    <h4>Deform the Contour</h4>
+    <p>Deform the original contour \(C\) into a contour \(C'\) that passes through the saddle point \(z_0\) along the steepest descent path. By Cauchy's theorem, if no singularities or branch cuts of the integrand lie between \(C\) and \(C'\), the integral is unchanged:</p>
+    <p>$$\int_C e^{N f(z)}\,dz = \int_{C'} e^{N f(z)}\,dz.$$</p>
+    <p>Along \(C'\), the modulus \(e^{Nu}\) is peaked at \(z_0\) and decays monotonically away from it, and the phase is constant — the situation is now exactly analogous to the real Laplace case.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">2</span>
+    <h4>Parametrize Near the Saddle</h4>
+    <p>Introduce the real parameter \(t \in \mathbb{R}\) along the steepest descent direction: \(z = z_0 + t\, e^{i\theta}\), with \(\theta = (\pi - \phi)/2\) from Section 2, so that \(dz = e^{i\theta}\, dt\). Taylor expanding \(f\):</p>
+    <p>$$f(z) = f(z_0) + \tfrac{1}{2} f''(z_0)\, t^2 e^{2i\theta} + O(t^3).$$</p>
+    <p>Evaluate the coefficient of \(t^2\) using \(f''(z_0) = |f''(z_0)|\,e^{i\phi}\) and \(2\theta = \pi - \phi\):</p>
+    <p>$$f''(z_0)\, e^{2i\theta} = |f''(z_0)|\, e^{i\phi}\, e^{i(\pi - \phi)} = |f''(z_0)|\, e^{i\pi} = -|f''(z_0)|.$$</p>
+    <p>Therefore, along the steepest descent path,</p>
+    <p>$$f(z) \approx f(z_0) - \tfrac{1}{2}\,|f''(z_0)|\, t^2,$$</p>
+    <p>with zero imaginary part to this order — the phase is constant, as constructed.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">3</span>
+    <h4>Substitute into the Integral</h4>
+    <p>Insert the parametrization and the expansion into the integral, extending the \(t\)-limits to \(\pm\infty\) (the contribution from \(|t|\) large is exponentially suppressed, exactly as in the real case):</p>
+    <p>$$I(N) \approx e^{i\theta} \int_{-\infty}^{\infty} \exp\!\left(N f(z_0) - \tfrac{N}{2}\,|f''(z_0)|\, t^2\right) dt = e^{i\theta}\, e^{N f(z_0)} \int_{-\infty}^{\infty} e^{-\frac{N}{2}|f''(z_0)|\,t^2}\, dt.$$</p>
+    <p>The factor \(e^{i\theta}\) comes from \(dz = e^{i\theta}\,dt\), and \(e^{N f(z_0)}\) is constant and comes outside.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">4</span>
+    <h4>Evaluate the Gaussian</h4>
+    <p>Apply the Gaussian integral with \(\alpha = N\,|f''(z_0)|/2\):</p>
+    <p>$$\int_{-\infty}^{\infty} e^{-\frac{N}{2}|f''(z_0)|\,t^2}\, dt = \sqrt{\frac{2\pi}{N\,|f''(z_0)|}}.$$</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">5</span>
+    <h4>Assemble the Result</h4>
+    <p>Combining Steps 3 and 4:</p>
+    <p>$$I(N) \sim e^{i\theta}\, e^{N f(z_0)}\, \sqrt{\frac{2\pi}{N\,|f''(z_0)|}}.$$</p>
+    <p>The phase factor can be absorbed into the square root. Since \(-f''(z_0) = |f''(z_0)|\, e^{i(\phi - \pi)}\), one has \(\sqrt{-f''(z_0)} = \sqrt{|f''(z_0)|}\; e^{i(\phi - \pi)/2}\), and therefore \(1/\sqrt{-f''(z_0)} = e^{i(\pi - \phi)/2} / \sqrt{|f''(z_0)|} = e^{i\theta}/\sqrt{|f''(z_0)|}\). The factor \(e^{i\theta}\) is thus exactly what converts \(|f''(z_0)|\) into \(-f''(z_0)\) under the square root.</p>
+  </div>
+
+  <div class="equation-box">
+    <span class="eq-label">Saddle Point Approximation — Main Result</span>
+    $$\boxed{\;I(N) \sim e^{N f(z_0)}\,\sqrt{\frac{2\pi}{-N\,f''(z_0)}}\;}, \qquad N \to \infty$$
+  </div>
+
+  <p>with the square root taken so that its argument lies in \((-\pi/2,\, \pi/2]\), consistent with the choice of \(\theta\) above. The symbols appearing in the result:</p>
+
+  <ul>
+    <li>\(z_0\) — the saddle point, defined by \(f'(z_0) = 0\);</li>
+    <li>\(f(z_0)\) — the value of \(f\) at the saddle; its real part controls the exponential growth or decay of \(I(N)\), and its imaginary part fixes the overall phase;</li>
+    <li>\(f''(z_0)\) — the second derivative at the saddle; its magnitude controls the width of the effective Gaussian (larger \(|f''|\) means a narrower peak and a smaller prefactor), and its phase fixes the orientation of the steepest descent path;</li>
+    <li>\(\sqrt{2\pi / (-N f''(z_0))}\) — the prefactor arising from the Gaussian integration over fluctuations around the saddle, including the orientation phase \(e^{i\theta}\).</li>
+  </ul>
+
+  <p>The result is valid when \(f''(z_0) \neq 0\) — a <strong>non-degenerate</strong> saddle. If \(f''(z_0) = 0\), the local expansion begins at cubic or higher order, the width of the dominant region scales differently with \(N\), and the prefactor carries a different power of \(N\) (see the summary table in Section 8).</p>
+
+  <h2>4. Multiple Saddle Points</h2>
+
+  <p>The equation \(f'(z) = 0\) may have several solutions \(z_1, z_2, \ldots\), and the deformed contour may pass through more than one of them. In that case each traversed saddle \(z_k\) contributes a term of the same form, and the full leading-order result is the sum</p>
+
+  $$I(N) \sim \sum_{k} e^{N f(z_k)}\,\sqrt{\frac{2\pi}{-N\, f''(z_k)}},$$
+
+  <p>where the sum runs only over the saddles actually traversed by the deformed contour. Two situations arise in practice. If one saddle has the largest value of \(\mathrm{Re}[f(z_k)]\) among those traversed, it dominates exponentially: to leading order only that saddle matters, since every other term is smaller by a factor \(e^{-N \Delta}\) with \(\Delta = \mathrm{Re}[f(z_\text{dom})] - \mathrm{Re}[f(z_k)] &gt; 0\). If two or more saddles have equal \(\mathrm{Re}[f]\), all of them contribute at the same order, each with its own phase \(e^{i N\, \mathrm{Im}[f(z_k)]}\), and the interference between them produces oscillatory asymptotics — this is exactly how the oscillatory behavior of \(\mathrm{Ai}(x)\) for \(x \to -\infty\) arises from two complex-conjugate saddles.</p>
+
+  <div class="warning-box">
+    <strong>&#9888; Stokes Phenomenon</strong>
+    <p>As the parameters of \(f\) vary, the steepest descent contour may or may not pass through a given saddle point — a saddle can abruptly switch on or off as a parameter crosses a critical line (a Stokes line). Determining which saddles contribute requires careful analysis of the global contour topology, not just the local saddle conditions. This is the Stokes phenomenon, and it is not covered in these notes; see Bender &amp; Orszag, Chapter 6.</p>
+  </div>
+
+  <h2>5. Higher-Order Corrections</h2>
+
+  <p>The main result of Section 3 is the leading, \(O(1)\), term of an asymptotic series in \(1/N\). The first correction, of order \(1/N\), arises from the cubic and quartic terms in the Taylor expansion of \(f\) around the saddle. Working in the rotated coordinate \(t\) of Section 3 (so that \(z = z_0 + t\,e^{i\theta}\)), the expansion reads</p>
+
+  $$f(z_0 + t\,e^{i\theta}) = f(z_0) - \tfrac{1}{2}\, a\, t^2 + \tfrac{1}{6}\, b\, t^3 + \tfrac{1}{24}\, c\, t^4 + O(t^5),$$
+
+  <p>where the coefficients are \(a = |f''_0| = -f''_0\, e^{2i\theta}\), \(b = f'''_0\, e^{3i\theta}\), and \(c = f^{(4)}_0\, e^{4i\theta}\); here \(f''_0\), \(f'''_0\), \(f^{(4)}_0\) denote the second, third, and fourth derivatives of \(f\) evaluated at \(z_0\). Factoring out the Gaussian part and expanding the exponential of the higher terms to the first subleading order (each power of \(t^2\) picks up a factor \(1/(Na)\) after integration, so we keep terms whose total contribution is \(O(1/N)\)):</p>
+
+  $$\exp\!\left(\tfrac{N b}{6} t^3 + \tfrac{N c}{24} t^4\right) \approx 1 + \frac{N b}{6}\, t^3 + \frac{N c}{24}\, t^4 + \frac{N^2 b^2}{72}\, t^6 + \cdots$$
+
+  <p>The \(t^3\) term is kept because its <em>square</em> (from the second-order term of the exponential series) contributes at \(O(1/N)\), even though the \(t^3\) term itself integrates to zero. Integrating term by term against the Gaussian \(e^{-\alpha t^2}\) with \(\alpha = Na/2\) uses the moment formulas</p>
+
+  $$\int_{-\infty}^{\infty} t^{2k+1}\, e^{-\alpha t^2}\, dt = 0, \qquad \int_{-\infty}^{\infty} t^{2k}\, e^{-\alpha t^2}\, dt = \frac{(2k-1)!!}{(2\alpha)^k}\, \sqrt{\frac{\pi}{\alpha}},$$
+
+  <p>where \((2k-1)!! = 1 \cdot 3 \cdot 5 \cdots (2k-1)\) is the double factorial and \(k\) is a non-negative integer. The odd moment kills the \(t^3\) term. For the \(t^4\) term, \(k = 2\) gives \(3/(2\alpha)^2 = 3/(N^2 a^2)\) relative to the Gaussian, so its contribution is \(\frac{Nc}{24} \cdot \frac{3}{N^2 a^2} = \frac{c}{8 N a^2}\). For the \(t^6\) term, \(k = 3\) gives \(15/(2\alpha)^3 = 15/(N^3 a^3)\), so its contribution is \(\frac{N^2 b^2}{72} \cdot \frac{15}{N^3 a^3} = \frac{5 b^2}{24 N a^3}\). The relative correction factor is therefore \(1 + \frac{1}{N}\big(\frac{c}{8a^2} + \frac{5b^2}{24 a^3}\big)\). Substituting back \(a = -f''_0 e^{2i\theta}\), \(b = f'''_0 e^{3i\theta}\), \(c = f^{(4)}_0 e^{4i\theta}\), all factors of \(e^{i\theta}\) cancel: \(c/a^2 = f^{(4)}_0 / (f''_0)^2\) and \(b^2/a^3 = -(f'''_0)^2/(f''_0)^3\). The result is independent of the contour orientation, as it must be:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">First Correction — Asymptotic Series</span>
+    $$I(N) \sim e^{N f(z_0)} \sqrt{\frac{2\pi}{-N f''(z_0)}}\, \left[\, 1 + \frac{1}{N}\left(\frac{f^{(4)}_0}{8\,(f''_0)^2} - \frac{5\,(f'''_0)^2}{24\,(f''_0)^3}\right) + O(N^{-2}) \right]$$
+  </div>
+
+  <p>Consistency check against Stirling: for \(f(u) = \ln u - u\) at \(u_0 = 1\), the derivatives are \(f''_0 = -1\), \(f'''_0 = 2\), \(f^{(4)}_0 = -6\). The bracket evaluates to \(\frac{-6}{8 \cdot 1} - \frac{5 \cdot 4}{24 \cdot (-1)} = -\frac{3}{4} + \frac{5}{6} = \frac{1}{12}\), reproducing the known Stirling series \(N! \sim \sqrt{2\pi N}\,(N/e)^N \big(1 + \frac{1}{12N} + \cdots\big)\).</p>
+
+  <div class="warning-box">
+    <strong>&#9888; Asymptotic, Not Convergent</strong>
+    <p>The full expansion in powers of \(1/N\) is an asymptotic series: for any fixed \(N\), the series diverges if carried to all orders. The practical prescription is optimal truncation — stop at the smallest term of the series. The resulting error is of order \(e^{-cN}\) for some constant \(c &gt; 0\), exponentially small in \(N\) and typically negligible in practice. Adding terms beyond the optimal truncation point makes the approximation worse, not better.</p>
+  </div>
+
+  <h2>6. Worked Example: Airy Function Asymptotics</h2>
+
+  <p>The Airy function \(\mathrm{Ai}(x)\), which governs wave behavior near classical turning points and diffraction near caustics, has the contour integral representation</p>
+
+  $$\mathrm{Ai}(x) = \frac{1}{2\pi i} \int_C \exp\!\left(\frac{t^3}{3} - x t\right) dt,$$
+
+  <p>where \(t\) is the complex integration variable and \(C\) runs from infinity in the sector \(\arg t = -2\pi/3\) to infinity in the sector \(\arg t = +2\pi/3\), so that the integrand decays at both endpoints. We evaluate the asymptotic behavior for large positive \(x\).</p>
+
+  <div class="step-box">
+    <span class="step-number">1</span>
+    <h4>Rescale to the Standard Form</h4>
+    <p>The exponent \(t^3/3 - xt\) does not yet contain a single large parameter multiplying a fixed function. Set \(x = N^{2/3}\) (defining \(N = x^{3/2}\), which is large when \(x\) is large) and substitute \(t = N^{1/3} z\), where \(z\) is the rescaled variable; then \(dt = N^{1/3}\, dz\) and \(t^3/3 - xt = N(z^3/3 - z)\). The integral becomes</p>
+    <p>$$\mathrm{Ai}(N^{2/3}) = \frac{N^{1/3}}{2\pi i} \int_{C'} e^{N\left(z^3/3 - z\right)}\, dz,$$</p>
+    <p>where \(C'\) is the image of \(C\) under the rescaling (the endpoint sectors are unchanged).</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">2</span>
+    <h4>Locate the Saddle Points</h4>
+    <p>Identify \(f(z) = z^3/3 - z\). The saddle condition \(f'(z) = z^2 - 1 = 0\) gives two saddles, \(z = +1\) and \(z = -1\).</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">3</span>
+    <h4>Determine Which Saddle Contributes</h4>
+    <p>Evaluate \(f\) at each saddle. At \(z = +1\): \(f(+1) = 1/3 - 1 = -2/3\), a decaying exponential \(e^{-2N/3}\), and \(f''(z) = 2z\) gives \(f''(+1) = 2\). At \(z = -1\): \(f(-1) = -1/3 + 1 = +2/3\), which would produce a growing exponential \(e^{+2N/3}\) — but \(\mathrm{Ai}(x)\) is known to decay for \(x \to +\infty\), and indeed the contour with endpoints in the sectors \(\arg z = \pm 2\pi/3\) can be deformed through \(z = +1\) alone, avoiding \(z = -1\) entirely. Only the saddle at \(z_0 = +1\) contributes.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">4</span>
+    <h4>Find the Steepest Descent Direction and Apply the Formula</h4>
+    <p>At \(z_0 = +1\), \(f''(z_0) = 2 = |2|\, e^{i \cdot 0}\), so \(\phi = 0\) and the steepest descent angle is \(\theta = (\pi - 0)/2 = \pi/2\): the path crosses the saddle vertically, parallel to the imaginary axis, consistent with a contour running from the lower-right sector to the upper-right sector. The Gaussian prefactor is</p>
+    <p>$$e^{i\theta}\sqrt{\frac{2\pi}{N\,|f''(z_0)|}} = i\,\sqrt{\frac{2\pi}{2N}} = i\,\sqrt{\frac{\pi}{N}},$$</p>
+    <p>so the saddle contribution to the contour integral is</p>
+    <p>$$\int_{C'} e^{N f(z)}\, dz \sim i\, e^{-2N/3}\, \sqrt{\frac{\pi}{N}}.$$</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">5</span>
+    <h4>Assemble</h4>
+    <p>Insert the saddle contribution into the prefactor from Step 1. The factor \(i\) from the contour orientation cancels against the \(i\) in the \(1/(2\pi i)\) prefactor:</p>
+    <p>$$\mathrm{Ai}(N^{2/3}) \sim \frac{N^{1/3}}{2\pi i} \cdot i\, e^{-2N/3}\, \sqrt{\frac{\pi}{N}} = \frac{N^{1/3}}{2\pi}\, \sqrt{\frac{\pi}{N}}\; e^{-2N/3} = \frac{1}{2\sqrt{\pi}\, N^{1/6}}\; e^{-2N/3}.$$</p>
+    <p>The last equality uses \(N^{1/3}/\sqrt{N} = N^{1/3 - 1/2} = N^{-1/6}\) and \(\sqrt{\pi}/(2\pi) = 1/(2\sqrt{\pi})\).</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">6</span>
+    <h4>Restore the Original Variable</h4>
+    <p>Undo the rescaling: \(N = x^{3/2}\), so \(N^{1/6} = x^{1/4}\) and \(2N/3 = \tfrac{2}{3} x^{3/2}\).</p>
+  </div>
+
+  <div class="equation-box">
+    <span class="eq-label">Airy Function Asymptotics (x &rarr; +&infin;)</span>
+    $$\mathrm{Ai}(x) \sim \frac{1}{2\sqrt{\pi}\; x^{1/4}}\; \exp\!\left(-\frac{2}{3}\, x^{3/2}\right), \qquad x \to +\infty$$
+  </div>
+
+  <p>This is the standard result. The exponent \(-\tfrac{2}{3}x^{3/2}\) is the value of \(N f(z_0)\) restored to the original variable, and the algebraic prefactor \(x^{-1/4}\) is the trace of the Gaussian fluctuation integral. For \(x \to -\infty\), the same procedure applies but both saddles (which move onto the imaginary axis) contribute with equal \(\mathrm{Re}[f]\), and their interference produces the oscillatory decaying behavior of the Airy function on the negative axis — the situation described in Section 4.</p>
+
+  <div class="article-separator">&#183; &#183; &#183;</div>
+
+  <h2>7. Connection to Physics</h2>
+
+  <p>Three places where the saddle point approximation is the underlying mathematical engine, stated without derivation. In <strong>mean-field theory</strong>, the partition function of a statistical system can often be written as an integral over an order-parameter field weighted by \(e^{-N \mathcal{F}[\varphi]}\), where \(\mathcal{F}\) is the Landau free energy functional and \(N\) counts degrees of freedom; the saddle point of \(\mathcal{F}\) is exactly the mean-field solution, and the Gaussian fluctuations around the saddle generate the \(1/N\) corrections — the loop expansion. In <strong>semiclassical mechanics</strong>, the Feynman path integral carries the weight \(e^{iS/\hbar}\), where \(S\) is the classical action; the saddle point in the limit \(\hbar \to 0\) is the classical trajectory (\(\delta S = 0\) is precisely the saddle condition), and the Gaussian fluctuations give the one-loop quantum correction — the van Vleck prefactor. In the theory of <strong>special functions</strong>, the asymptotic expansions of the Gamma, Airy, and Bessel functions tabulated in Abramowitz &amp; Stegun are all saddle point expansions of their integral representations, of which Sections 1 and 6 above are the two canonical examples.</p>
+
+  <h2>8. Summary Table</h2>
+
+  <table class="article-table">
+    <tr>
+      <th>Setting</th>
+      <th>Saddle condition</th>
+      <th>Leading result</th>
+      <th>Notes</th>
+    </tr>
+    <tr>
+      <td>Real (Laplace)</td>
+      <td>\(f'(x_0) = 0,\; f''(x_0) &lt; 0\)</td>
+      <td>\(e^{N f_0} \sqrt{\dfrac{2\pi}{N |f''_0|}}\)</td>
+      <td>Interior maximum of \(f\)</td>
+    </tr>
+    <tr>
+      <td>Complex (steepest descent)</td>
+      <td>\(f'(z_0) = 0\)</td>
+      <td>\(e^{N f_0} \sqrt{\dfrac{2\pi}{-N f''_0}}\)</td>
+      <td>Contour deformation required</td>
+    </tr>
+    <tr>
+      <td>Multiple saddles</td>
+      <td>\(f'(z_k) = 0\) for all \(k\)</td>
+      <td>Sum over contributing saddles</td>
+      <td>Check which saddles the contour passes through (Stokes)</td>
+    </tr>
+    <tr>
+      <td>Degenerate saddle</td>
+      <td>\(f'(z_0) = f''(z_0) = 0\)</td>
+      <td>Different power of \(N\) in prefactor</td>
+      <td>See Bender &amp; Orszag &sect;6.6</td>
+    </tr>
+  </table>
+
+  <h2>9. Key Formulas Reference Card</h2>
+
+  <div class="equation-box">
+    <span class="eq-label">Quick Reference</span>
+    $$\text{1. Gaussian:}\qquad \int_{-\infty}^{\infty} e^{-\alpha t^2}\, dt = \sqrt{\frac{\pi}{\alpha}}$$
+    $$\text{2. Stirling:}\qquad N! \sim \sqrt{2\pi N}\left(\frac{N}{e}\right)^{N}$$
+    $$\text{3. Laplace (real):}\qquad I \sim e^{N f_0}\, \sqrt{\frac{2\pi}{N\,|f''_0|}}$$
+    $$\text{4. Saddle point (complex):}\qquad I \sim e^{N f_0}\, \sqrt{\frac{2\pi}{-N f''_0}}$$
+    $$\text{5. Steepest descent angle:}\qquad \theta = \frac{\pi - \arg f''(z_0)}{2}$$
+    $$\text{6. First correction:}\qquad \times \left[\, 1 + \frac{1}{N}\left(\frac{f^{(4)}_0}{8 (f''_0)^2} - \frac{5 (f'''_0)^2}{24 (f''_0)^3}\right) \right]$$
+    $$\text{7. Airy asymptotics:}\qquad \mathrm{Ai}(x) \sim \frac{1}{2\sqrt{\pi}\, x^{1/4}}\, e^{-\frac{2}{3} x^{3/2}}$$
+  </div>
+
+  <h2>10. Further Reading</h2>
+
+  <ul>
+    <li><strong>Bender &amp; Orszag</strong>, <em>Advanced Mathematical Methods for Scientists and Engineers</em> (1978) — Chapters 6&ndash;7: the definitive reference on asymptotic methods, with fully worked derivations of everything in these notes and much more, including the Stokes phenomenon and degenerate saddles.</li>
+    <li><strong>Arfken, Weber &amp; Harris</strong>, <em>Mathematical Methods for Physicists</em>, 7th ed. — Chapter 12: asymptotic series at a more accessible level.</li>
+    <li><strong>Zinn-Justin</strong>, <em>Quantum Field Theory and Critical Phenomena</em> — Chapter 2: the saddle point method in path integrals and the semiclassical expansion.</li>
+    <li><strong>Ablowitz &amp; Fokas</strong>, <em>Complex Variables: Introduction and Applications</em> — Chapter 6: a rigorous treatment of the method of steepest descent with error bounds.</li>
+  </ul>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../images/profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Researcher at VNU-University of Engineering and Technology. Specializing in magnetocaloric materials, critical phenomena, and computational materials science.</p>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="../blog.html">
+      <div class="article-nav-label">&#8592; Previous</div>
+      <div class="article-nav-title">Back to Blog</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=QUdAPR8AAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: July 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>

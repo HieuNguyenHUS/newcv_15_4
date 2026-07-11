@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Single Point Energy Calculations — Minh-Hieu Nguyen</title>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HYB8TEF6MT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HYB8TEF6MT');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- KaTeX for professional math rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });"></script>
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+  --gold: #b8860b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent); transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 4px;
+}
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 140px 40px 0;
+}
+
+.article-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 40px; transition: color 0.25s;
+}
+.article-back:hover { color: var(--accent); }
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08); color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-meta {
+  display: flex; align-items: center; gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--border);
+}
+
+/* ─── COVER ─── */
+.article-cover {
+  max-width: 720px;
+  margin: 48px auto;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #0d2e2e 0%, #1a5c5c 40%, #2a8b8b 100%);
+}
+
+.article-cover-pattern {
+  position: absolute; inset: 0;
+  opacity: 0.08;
+  background-image:
+    radial-gradient(circle at 15% 40%, white 1px, transparent 1px),
+    radial-gradient(circle at 85% 25%, white 1px, transparent 1px),
+    radial-gradient(circle at 50% 75%, white 1px, transparent 1px),
+    radial-gradient(circle at 30% 90%, white 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.article-cover-text {
+  position: absolute;
+  bottom: 36px; left: 36px; right: 36px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 600; font-style: italic;
+  color: rgba(255,255,255,0.7); line-height: 1.3;
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  text-align: justify;
+}
+
+.article-body p {
+  margin-bottom: 24px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem; float: left;
+  line-height: 0.75;
+  margin-right: 10px; margin-top: 8px;
+  color: var(--accent); font-weight: 700;
+}
+
+.article-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  margin: 48px 0 20px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.article-body h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  margin: 36px 0 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: left;
+}
+
+.article-body em { color: var(--muted); font-style: italic; }
+.article-body strong { color: var(--ink); font-weight: 700; }
+
+.article-body ul, .article-body ol {
+  margin: 0 0 24px 24px;
+  text-align: left;
+}
+
+.article-body li {
+  margin-bottom: 8px;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.article-body li::marker {
+  color: var(--accent);
+}
+
+/* Figure */
+.article-figure {
+  margin: 36px 0;
+}
+
+/* Highlight box */
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 36px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Separator */
+.article-separator {
+  text-align: center;
+  margin: 44px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+/* Pull quote */
+.article-pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  padding: 36px 20px;
+  margin: 44px 0;
+  line-height: 1.4;
+  position: relative;
+}
+
+.article-pullquote::before,
+.article-pullquote::after {
+  content: ''; display: block;
+  width: 60px; height: 1.5px;
+  background: var(--accent);
+  margin: 0 auto 20px; opacity: 0.4;
+}
+.article-pullquote::after { margin: 20px auto 0; }
+
+/* Code block */
+.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.code-block pre {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+
+.code-block .comment { color: #6c7086; }
+.code-block .keyword { color: #cba6f7; }
+.code-block .string { color: #a6e3a1; }
+.code-block .function { color: #89b4fa; }
+.code-block .number { color: #fab387; }
+.code-block .operator { color: #89dceb; }
+
+.code-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Equation box — KaTeX aware */
+.equation-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 28px 0;
+  text-align: center;
+}
+
+.equation-box .eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+/* KaTeX display output inside equation-box */
+.equation-box .katex-display {
+  margin: 0;
+}
+
+/* Inline KaTeX — ensure it doesn't disrupt line-height */
+.katex { font-size: 1.05em; }
+
+/* Table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 0.95rem;
+}
+
+.article-table th {
+  background: var(--cream);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+}
+
+.article-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  text-align: center;
+}
+
+.article-table td:first-child {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.article-table tr:hover td {
+  background: rgba(243,240,232,0.4);
+}
+
+/* Step box */
+.step-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  position: relative;
+}
+
+.step-number {
+  position: absolute;
+  top: -14px; left: 24px;
+  background: var(--accent);
+  color: white;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; font-weight: 700;
+}
+
+.step-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  margin-bottom: 10px;
+  padding-top: 4px;
+}
+
+.step-box p {
+  margin-bottom: 12px !important;
+  font-size: 0.98rem;
+}
+
+/* Warning box */
+.warning-box {
+  background: #fff8f0;
+  border-left: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.warning-box strong {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.warning-box p {
+  margin-bottom: 0 !important;
+  font-size: 0.98rem;
+}
+
+/* ─── ARTICLE FOOTER ─── */
+.article-end {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px; background: var(--border);
+  margin-bottom: 40px;
+}
+
+.article-author {
+  display: flex; align-items: center;
+  gap: 20px; margin-bottom: 40px;
+}
+
+.article-author-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--accent); flex-shrink: 0;
+  overflow: hidden;
+}
+
+.article-author-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 700;
+}
+
+.article-author-info p {
+  font-size: 0.88rem; color: var(--muted);
+}
+
+.article-nav {
+  display: flex; justify-content: space-between;
+  gap: 20px;
+}
+
+.article-nav a {
+  padding: 16px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none; color: var(--ink);
+  transition: all 0.25s; flex: 1;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.02);
+}
+
+.article-nav-label {
+  font-size: 0.78rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; margin-bottom: 4px;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+}
+
+.article-nav .next { text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 48px 40px; text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+
+.footer-social {
+  display: flex; justify-content: center;
+  gap: 24px; margin-bottom: 24px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none; transition: all 0.3s; font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent-light); color: white;
+  background: rgba(139,37,0,0.3);
+}
+
+footer p { font-size: 0.85rem; line-height: 1.6; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer a:hover { color: white; }
+
+/* Animations */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+}
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .article-header h1 { font-size: 2.2rem; }
+  .article-cover { height: 220px; margin: 36px 20px; }
+  .article-cover-text { font-size: 1.2rem; bottom: 24px; left: 24px; right: 24px; }
+}
+
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 1.9rem; }
+  .article-cover { height: 180px; }
+  .article-cover-text { font-size: 1rem; bottom: 20px; left: 20px; right: 20px; }
+  .article-body p { font-size: 1rem; }
+  .article-body h2 { font-size: 1.5rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex; flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+  .code-block { padding: 16px; font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to all posts
+  </a>
+  <span class="article-tag">Tutorial</span>
+  <h1>Single Point Energy Calculations: What They Are and Why You Run Them First</h1>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">July 2026</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">15 min read</span>
+  </div>
+</header>
+
+<!-- ─── COVER ─── -->
+<div class="article-cover fade-in fade-in-delay">
+  <div class="article-cover-pattern"></div>
+  <div class="article-cover-text">"Before you can optimize a geometry, simulate dynamics, or train a neural network potential, you need one thing: a single point energy. Everything else is built on top of this."</div>
+</div>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay-2">
+
+  <p>In my first week at Prof. Jer-Lai Kuo's lab at Academia Sinica in Taipei, someone handed me a coordinate file — a short tripeptide, atoms and positions, nothing else — and told me to run a single point energy calculation on it. I opened an example Gaussian input file on the HPC cluster and stared at a route line packed with cryptic keywords, followed by a molecule specification I barely recognized. I understood exactly none of it. I did not know which keywords mattered, which were safe to leave at their defaults, or what would break if I guessed wrong.</p>
+
+  <p>When I admitted this, my supervisor's advice was disarmingly practical: "Just run it, then we'll talk about what the number means." So I submitted the job to the queue. It converged, a number came out — some large negative energy in Hartree — and only afterwards, working backwards from that number, did I begin to understand what I had actually asked the computer to do.</p>
+
+  <p>That experience — running SPE before understanding it — is exactly why this post exists. Over the following months I ran thousands of these calculations as reference data for neural network potentials, and each time I understood a little more of what was happening inside the SCF loop. This article is the document I wish someone had handed me alongside that coordinate file: rigorous enough to serve as my own future reference, but written by someone who remembers what it feels like to not know what a single keyword on that route line means.</p>
+
+  <h2>1. Definition: What SPE Actually Calculates</h2>
+
+  <p>A Single Point Energy (SPE) calculation computes the <strong>total electronic energy</strong> \(E\) of a molecule or crystal at a <strong>fixed atomic geometry</strong>. The nuclear positions are held constant throughout — there is no geometry optimization, no molecular dynamics, no relaxation of any kind. The calculation solves the electronic Schrödinger equation under the Born-Oppenheimer approximation:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Electronic Schrödinger Equation (Fixed Nuclei)</span>
+    $$\hat{H}_\text{el}\,\Psi(\mathbf{r};\,\mathbf{R}) = E(\mathbf{R})\,\Psi(\mathbf{r};\,\mathbf{R})$$
+  </div>
+
+  <p>where \(\hat{H}_\text{el}\) is the electronic Hamiltonian — the kinetic energy of the electrons, the electron-nuclear attraction, and the electron-electron repulsion — \(\mathbf{r}\) denotes all electron coordinates, and \(\mathbf{R}\) denotes the fixed nuclear coordinates. The semicolon in \(\Psi(\mathbf{r};\,\mathbf{R})\) is doing important work: the nuclear positions enter as <em>parameters</em>, not variables. The output \(E(\mathbf{R})\) is the total electronic energy at this particular arrangement of nuclei.</p>
+
+  <p>The justification for freezing the nuclei is the <strong>Born-Oppenheimer approximation</strong>, and it deserves a physical explanation rather than a bare statement. A proton is roughly 1836 times heavier than an electron. When a nucleus moves, the electrons — being that much lighter and faster — rearrange themselves essentially instantaneously into the ground state appropriate for the new nuclear positions. From the electrons' point of view, the nuclei are effectively standing still; from the nuclei's point of view, the electrons are a blur whose average effect defines a potential landscape. This separation of timescales lets us decouple the two problems: solve for the electrons with the nuclei clamped in place, and treat nuclear motion separately on the resulting energy surface.</p>
+
+  <p>This is the key conceptual picture: the SPE is the electronic energy at <strong>one point</strong> on the potential energy surface (PES) — the multidimensional landscape \(E(\mathbf{R})\) defined over all possible nuclear configurations. A geometry optimization walks downhill on this surface; molecular dynamics rolls across it; a frequency calculation measures its curvature. An SPE simply reads off the altitude at a single spot.</p>
+
+  <p>It is equally important to state what an SPE is <em>not</em>. It is not a geometry optimization — no forces are used to move atoms, no ionic relaxation occurs. It is not a molecular dynamics step — there is no time evolution. And it is not a frequency calculation — no second derivatives of the energy are computed. If you request an SPE, the atoms you put in are exactly the atoms you get out.</p>
+
+  <div class="article-highlight">
+    <p>A single point energy calculation answers exactly one question: if the atoms are here, what is the energy? Everything else in computational chemistry is built on top of this.</p>
+  </div>
+
+  <figure class="article-figure">
+    <img src="../images/spe-infographic.png"
+         alt="Single Point Energy Method — overview infographic showing definition,
+              SCF workflow, accuracy factors, key outputs, and common abbreviations"
+         style="width: 100%; border-radius: 8px; border: 1px solid var(--border);
+                box-shadow: 0 4px 20px var(--shadow);">
+    <figcaption style="font-family: 'JetBrains Mono', monospace; font-size: 13px;
+                       color: var(--muted); text-align: center; margin-top: 12px;
+                       line-height: 1.5;">
+      Figure 1. Overview of the Single Point Energy (SPE) method: definition,
+      methodology comparison (HF / DFT / post-HF), SCF workflow, accuracy controls,
+      key output quantities, and standard abbreviations.
+    </figcaption>
+  </figure>
+
+  <p>The infographic above summarizes the full SPE ecosystem. The rest of this post unpacks each component — what it means, why it matters, and what I wish I had understood before running my first calculation in Taipei.</p>
+
+  <h2>2. The Three Levels of Theory</h2>
+
+  <p>The infographic lists three families of electronic structure methods: Hartree-Fock, density functional theory, and post-Hartree-Fock. All of them solve the same problem — the electronic energy at fixed \(\mathbf{R}\) — but they make different compromises between accuracy and cost. Understanding those compromises is what lets you choose a method instead of copying one from a tutorial.</p>
+
+  <h3>2.1 Hartree-Fock (HF) — The Mean-Field Approximation</h3>
+
+  <p>The exact many-electron problem is intractable because every electron's motion depends on every other electron's instantaneous position. Hartree-Fock cuts this knot by replacing the true electron-electron interaction with an effective <strong>mean field</strong>: each electron moves in the <em>average</em> field generated by all the others. Mathematically, the many-body wavefunction is approximated as a single Slater determinant of one-electron orbitals \(\{\psi_i\}\), a construction that builds in the antisymmetry required by the Pauli principle:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Hartree-Fock Slater Determinant</span>
+    $$\Psi_\text{HF} = \frac{1}{\sqrt{N!}}
+      \begin{vmatrix} \psi_1(\mathbf{r}_1) & \cdots & \psi_N(\mathbf{r}_1) \\
+      \vdots & \ddots & \vdots \\
+      \psi_1(\mathbf{r}_N) & \cdots & \psi_N(\mathbf{r}_N) \end{vmatrix}$$
+  </div>
+
+  <p>Expanding the orbitals in a finite basis set turns the HF problem into a generalized matrix eigenvalue problem — the Roothaan equations:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Roothaan Equations</span>
+    $$\mathbf{F}\,\mathbf{C} = \mathbf{S}\,\mathbf{C}\,\boldsymbol{\epsilon}$$
+  </div>
+
+  <p>where \(\mathbf{F}\) is the Fock matrix (the one-electron effective Hamiltonian in the basis), \(\mathbf{C}\) the matrix of orbital expansion coefficients, \(\mathbf{S}\) the basis overlap matrix, and \(\boldsymbol{\epsilon}\) the diagonal matrix of orbital eigenvalues. Because \(\mathbf{F}\) itself depends on the orbitals through the mean field, the equations must be solved self-consistently — the origin of the SCF loop we will dissect in Section 3.</p>
+
+  <p>The price of the mean-field simplification is that HF ignores <strong>electron correlation</strong>: real electrons actively dodge each other beyond what the average field describes. The missing piece is called the correlation energy, \(E_\text{corr} = E_\text{exact} - E_\text{HF} < 0\). It is a small fraction of the total energy — typically under one percent — but chemical bond energies live precisely in that fraction, which is why bare HF is rarely the endpoint of a modern calculation.</p>
+
+  <h3>2.2 Density Functional Theory (DFT) — The Workhorse</h3>
+
+  <p>DFT takes a conceptually radical shortcut. Instead of the many-body wavefunction \(\Psi(\mathbf{r}_1, \ldots, \mathbf{r}_N)\) — a function of \(3N\) coordinates — it uses the electron density \(n(\mathbf{r})\), a function of just three, as the fundamental variable. The Hohenberg-Kohn theorems (1964) prove this is legitimate: the ground-state energy is a unique functional of the density,</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Kohn-Sham Energy Functional</span>
+    $$E[n] = T_s[n] + \int v_\text{ext}(\mathbf{r})\,n(\mathbf{r})\,d\mathbf{r}
+           + E_H[n] + E_\text{xc}[n]$$
+  </div>
+
+  <p>where \(T_s\) is the kinetic energy of a fictitious non-interacting system, \(v_\text{ext}\) is the external (nuclear) potential, \(E_H\) is the Hartree (classical electrostatic) energy, and \(E_\text{xc}\) is the <strong>exchange-correlation functional</strong> — the honest bookkeeping term that gathers everything we do not know how to write exactly. All the many-body complexity of the problem is compressed into \(E_\text{xc}\), and the entire zoo of DFT functionals (LDA, PBE, B3LYP, HSE06, …) is a taxonomy of approximations to it.</p>
+
+  <p>The Kohn-Sham equations (1965) make this practical by mapping the interacting system onto a fictitious system of non-interacting electrons constrained to have the same density:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Kohn-Sham Equations</span>
+    $$\left[-\frac{\hbar^2}{2m}\nabla^2 + v_\text{KS}(\mathbf{r})\right]\phi_i(\mathbf{r})
+      = \epsilon_i\,\phi_i(\mathbf{r})$$
+  </div>
+
+  <p>where \(v_\text{KS} = v_\text{ext} + v_H + v_\text{xc}\) is the Kohn-Sham potential. Each equation looks like a one-electron Schrödinger equation, which is exactly why DFT is computationally tractable: it scales roughly as O(N³) versus O(N⁴) for HF, while <em>including</em> correlation through \(E_\text{xc}\). For structural and energetic properties of most materials, this combination of cost and accuracy is unbeatable — which is why DFT dominates computational materials science.</p>
+
+  <p>In my own work at Academia Sinica, the workhorse was M06-2X — a hybrid meta-GGA functional from the Minnesota family — run in Gaussian on the HPC cluster. M06-2X is specifically parametrized to handle main-group thermochemistry and non-covalent interactions well, which is exactly what a conformational study of peptides demands: the energy ordering of conformers is governed by hydrogen bonds and dispersion, not by anything a cheap functional captures. It was the reference method against which every neural network potential I trained was ultimately judged.</p>
+
+  <h3>2.3 Post-HF Methods (MP2, CCSD) — When Accuracy Matters More Than Speed</h3>
+
+  <p>Post-Hartree-Fock methods restore the correlation that HF discards, systematically. Møller-Plesset perturbation theory (MP2) treats correlation as a second-order perturbation. The coupled-cluster approach goes further by applying an exponential excitation operator to the HF reference:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Coupled-Cluster Ansatz (CCSD)</span>
+    $$|\Psi_\text{CCSD}\rangle = e^{\hat{T}_1 + \hat{T}_2}\,|\Phi_\text{HF}\rangle$$
+  </div>
+
+  <p>where \(\hat{T}_1\) and \(\hat{T}_2\) generate single and double excitations out of the reference determinant. CCSD(T), which adds a perturbative treatment of triple excitations, is often called the "gold standard" of quantum chemistry — but it scales as O(N⁷), which makes it impractical beyond a few dozen atoms. Its role in practice is to provide benchmark energies against which cheaper methods are validated.</p>
+
+  <p>This cost hierarchy is not an academic footnote — it shaped my daily work in Taiwan. Prof. Kuo's group needed energies for enormous numbers of tripeptide conformations (side chains built from alanine, valine, and glycine), far too many for coupled-cluster and too many even for exhaustive M06-2X sampling on their own. The solution was a multi-stage workflow: pre-screen candidate structures with a fast semi-empirical method (DFTB3), compute M06-2X single point energies and optimizations on the survivors, then train a SchNet neural network potential on those reference energies and forces. The trained NNP then evaluated energies far faster than Gaussian, at close to M06-2X accuracy — our test-set errors sat around 1.5–2.5 kJ/mol — which made extensive structure searches feasible. Every single training point in that pipeline was, at its core, a single point energy calculation. SPE is not just the first calculation you learn — it is the raw material of modern machine-learning potentials.</p>
+
+  <h2>3. The SCF Workflow — Step by Step</h2>
+
+  <p>Both the HF and Kohn-Sham equations share a chicken-and-egg structure: the Hamiltonian depends on the orbitals (through the density), but the orbitals come from diagonalizing the Hamiltonian. The resolution is the <strong>self-consistent field (SCF)</strong> procedure — iterate until the density that goes in matches the density that comes out. The infographic shows the loop as six steps; here is the mathematical content behind each one, with the corresponding Gaussian machinery noted along the way, since that is the code I learned it on.</p>
+
+  <div class="step-box">
+    <span class="step-number">1</span>
+    <h4>Initial Guess</h4>
+    <p>Choose a starting wavefunction or density. In Gaussian this is the <code style="font-family:'JetBrains Mono',monospace;">Guess</code> keyword: the default is a Harris-functional guess, but you can also read orbitals from a checkpoint file (<code style="font-family:'JetBrains Mono',monospace;">Guess=Read</code>) to restart or continue a related calculation — invaluable when you are running the same molecule at many geometries.</p>
+    <p>A reassuring fact I did not appreciate at first: for well-behaved systems, the quality of the initial guess affects only the convergence <em>speed</em>, not the final answer. A bad guess costs iterations, not correctness.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">2</span>
+    <h4>Build the Hamiltonian</h4>
+    <p>Construct the Fock matrix (HF) or Kohn-Sham Hamiltonian \(\hat{H}_\text{KS}\) (DFT) from the current density: compute the Hartree potential \(v_H[n]\) by solving the Poisson equation, and evaluate \(v_\text{xc}[n]\) from the chosen exchange-correlation functional.</p>
+    <p>In a Gaussian-basis code, this step is dominated by evaluating the two-electron repulsion integrals over the atomic basis functions, and by numerically integrating the exchange-correlation term on a molecular grid (the <code style="font-family:'JetBrains Mono',monospace;">Integral</code> keyword controls that grid). For larger molecules these integrals are the main computational bottleneck.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">3</span>
+    <h4>Diagonalize</h4>
+    <p>Solve the eigenvalue problem \(\hat{H}_\text{KS}\,\phi_i = \epsilon_i\,\phi_i\) to obtain a new set of Kohn-Sham orbitals \(\{\phi_i^{(k)}\}\) and eigenvalues \(\{\epsilon_i^{(k)}\}\).</p>
+    <p>With a localized Gaussian basis the Fock/KS matrix is small enough to diagonalize directly at each cycle (the Roothaan equations of Section 2.1). The dimension is the number of basis functions, so a modest tripeptide in a triple-zeta basis already means matrices of a few hundred to a few thousand — routine to diagonalize, but built anew every iteration.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">4</span>
+    <h4>Update the Density</h4>
+    <p>Compute the new electron density from the occupied orbitals: $$n^{(k+1)}(\mathbf{r}) = \sum_{i=1}^{N_\text{occ}} |\phi_i^{(k)}(\mathbf{r})|^2$$</p>
+    <p>Feeding this density straight back into Step 2 often causes the energy to oscillate, so <strong>convergence acceleration</strong> is applied — conceptually a smart blend of information from previous cycles, \(n_\text{input}^{(k+1)} = (1-\alpha)\,n^{(k)} + \alpha\,n^{(k+1)}\) in its simplest form. Gaussian uses Pulay's DIIS (direct inversion in the iterative subspace) by default, which extrapolates from a history of Fock matrices to guess a better next density.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">5</span>
+    <h4>Check Convergence</h4>
+    <p>Compare \(n^{(k+1)}\) to \(n^{(k)}\) — in practice, monitor both the density change and the energy change between cycles against a threshold. Gaussian's default criteria are already tight; <code style="font-family:'JetBrains Mono',monospace;">SCF=Tight</code> tightens them further, which is worth using whenever you will compare small energy differences between conformers.</p>
+    <p>For well-behaved closed-shell molecules the SCF usually converges in well under 20 cycles. Systems with small HOMO-LUMO gaps or difficult electronic structure can take many more, or stall entirely.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">6</span>
+    <h4>Output — or Loop</h4>
+    <p>If converged: compute the total energy \(E_\text{tot} = E_\text{electronic} + E_\text{nuclear}\), write the output files, and stop. If not converged: take \(n^{(k+1)}\) as the new input density and return to Step 2.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong>&#9888; Convergence Failure</strong>
+    <p>If the SCF does not converge within the maximum number of cycles (Gaussian's <code style="font-family:'JetBrains Mono',monospace;">SCF=MaxCycle</code>), the calculation stops without a reliable energy. Common causes: a bad initial geometry, a difficult open-shell or near-degenerate electronic state, or a poor initial guess. Gaussian offers fallbacks like <code style="font-family:'JetBrains Mono',monospace;">SCF=QC</code> (a slower but more robust quadratically convergent algorithm) for stubborn cases. Never use a non-converged SPE energy — it is not "approximately right," it is meaningless.</p>
+  </div>
+
+  <h2>4. Key Output Quantities</h2>
+
+  <h3>4.1 Total Energy \(E_\text{tot}\)</h3>
+
+  <p>The primary SPE output is the total energy. In a Gaussian output file it appears on the <code style="font-family:'JetBrains Mono',monospace;">SCF Done</code> line, reported in atomic units (Hartree); plane-wave codes like VASP instead report eV. Formally,</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Total Energy Decomposition</span>
+    $$E_\text{tot} = E_\text{electronic} + E_\text{nuclear-nuclear}$$
+  </div>
+
+  <p>Here is the single most important conceptual point in this entire post: <strong>absolute energies are meaningless in isolation</strong>. The value of \(E_\text{tot}\) depends on arbitrary reference choices — basis set, functional, code conventions — and no physical measurement corresponds to it. Only <strong>energy differences</strong> carry physical meaning. Every quantity I ever extracted from those peptide calculations was a difference: the relative energy of two conformers \(\Delta E = E_\text{conf,2} - E_\text{conf,1}\), the binding energy of a complex \(E_\text{bind} = E_\text{complex} - E_A - E_B\), the reaction energy \(\Delta E = E_\text{products} - E_\text{reactants}\).</p>
+
+  <p>The corollary is a strict rule: always compute the energies entering a difference at the <em>same</em> level of theory, with the <em>same</em> basis set, and ideally the same code version. Systematic errors in DFT are large but remarkably consistent — they cancel in differences only if you give them the chance to. This is exactly why, in our workflow, every conformer in a comparison was re-optimized and re-evaluated at the identical M06-2X level before its energy was trusted.</p>
+
+  <h3>4.2 Kohn-Sham Orbital Energies \(\{\epsilon_i\}\)</h3>
+
+  <p>The eigenvalues from Step 3 come along for free, and they are tempting to over-interpret. A necessary caveat: Kohn-Sham orbital energies are <em>not</em>, in general, equal to ionization energies. Koopmans' theorem — which identifies orbital energies with ionization potentials — holds for Hartree-Fock, not exactly for DFT. That said, the HOMO-LUMO gap (the difference between the highest occupied and lowest unoccupied orbital energies) is widely used as a practical approximation to the fundamental gap, with the standing warning that pure semilocal functionals systematically underestimate it — one reason hybrids like M06-2X, which include exact exchange, tend to give more reasonable gaps.</p>
+
+  <h3>4.3 Electron Density \(n(\mathbf{r})\) and Derived Quantities</h3>
+
+  <p>The converged density itself is a rich output. Gaussian stores the wavefunction in a checkpoint file (<code style="font-family:'JetBrains Mono',monospace;">.chk</code>, converted to formatted <code style="font-family:'JetBrains Mono',monospace;">.fchk</code>), from which you can generate cube files and visualize orbital or density isosurfaces in GaussView or VMD — often the most physically illuminating picture of bonding you can produce. From the density and orbitals follow the dipole moment \(\boldsymbol{\mu} = \int \rho(\mathbf{r})\,\mathbf{r}\,d\mathbf{r}\) and atomic charges by various partitioning schemes (Mulliken, or the more robust NBO and Hirshfeld analyses). One caveat worth stating clearly: a pure SPE gives you the energy and these static properties, but it does <em>not</em> give you an IR spectrum. Vibrational frequencies require second derivatives of the energy — a separate frequency calculation on an optimized geometry — which is why, in the peptide work, the SPE was always the foundation a later step built on, never the whole story.</p>
+
+  <h2>5. Accuracy Controls in Practice</h2>
+
+  <p>The infographic lists three factors governing SPE accuracy: basis set size, level of theory, and numerical precision. Each maps onto concrete settings you must choose before pressing enter.</p>
+
+  <h3>5.1 Basis Set — Localized Functions in Gaussian</h3>
+
+  <p>In a molecular code like Gaussian, the basis set is a finite collection of atom-centered Gaussian functions, and choosing it is choosing how much flexibility the orbitals have. The Pople notation encodes this compactly: in the <code style="font-family:'JetBrains Mono',monospace;">6-311++G(d,p)</code> basis I used for the peptide work, the "6-311" is a triple-zeta split of the valence shell, the two plus signs add diffuse functions on both heavy atoms and hydrogens (essential for describing hydrogen bonds and any slightly anionic character), and the "(d,p)" adds polarization functions that let the electron cloud distort away from spherical symmetry. Every one of those additions costs computer time and buys accuracy.</p>
+
+  <p>The professional habit is the same as in the plane-wave world — a <strong>convergence test</strong>: step up the basis (say from double- to triple-zeta) until the energy <em>differences</em> you care about stop changing meaningfully. For a conformational study governed by non-covalent interactions, diffuse and polarization functions are not optional; a bare 6-31G would give you numbers that look fine and rank the conformers wrong. Larger correlation-consistent sets (cc-pVTZ and beyond) become necessary if you move to post-HF methods, where the correlation energy converges frustratingly slowly with basis size.</p>
+
+  <h3>5.2 Level of Theory — Choosing the XC Functional</h3>
+
+  <p>For DFT, the level of theory means the exchange-correlation functional, and the hierarchy runs roughly in order of increasing accuracy and cost. The local density approximation (LDA) uses only the local density — too crude for most modern work. The GGA family (PBE, PW91) adds density gradients. Hybrid functionals (B3LYP, and the Minnesota functionals like M06-2X) mix in a fraction of exact Hartree-Fock exchange, which markedly improves molecular energetics and reaction barriers at several times the cost. For the peptide conformers, M06-2X was the natural choice precisely because it was designed and calibrated for main-group thermochemistry and the dispersion-plus-hydrogen-bond regime that decides which conformer sits lowest.</p>
+
+  <p>The important lesson here is that <strong>the right functional depends on the system</strong>, and there is no universal winner. That point comes home when I compare that molecular work to the solid-state manganites I now study experimentally. For a strongly correlated oxide like \(\text{Nd}_{0.7}\text{Sr}_{0.3}\text{MnO}_3\), the molecular hybrid recipe is not what you reach for at all — a plane-wave calculation with a DFT+U correction (a Hubbard \(U\) of roughly 4–6 eV on the Mn 3d orbitals) is needed to describe the electronic structure correctly, because pure GGA fails to open the right gap and misrepresents the Mn 3d states behind the double-exchange physics. Same underlying theory, entirely different practical machinery. Choosing a functional is never a formality; it is a physics decision about what your system actually needs.</p>
+
+  <h3>5.3 Numerical Precision — the Integration Grid</h3>
+
+  <p>The exchange-correlation energy in DFT has no closed form and must be integrated numerically on a grid of points around each atom. In Gaussian this grid is set by the <code style="font-family:'JetBrains Mono',monospace;">Integral(Grid=...)</code> keyword. The default is usually adequate, but <code style="font-family:'JetBrains Mono',monospace;">Int=UltraFine</code> is worth insisting on whenever you compare small energy differences between similar geometries — a coarse grid introduces tiny, geometry-dependent numerical noise that can swamp a genuine few-kJ/mol conformer gap. This matters especially for the Minnesota functionals, which are known to be grid-sensitive. Combined with <code style="font-family:'JetBrains Mono',monospace;">SCF=Tight</code>, it is the difference between a clean conformer ranking and a noisy one.</p>
+
+  <table class="article-table">
+    <tr>
+      <th>Setting</th>
+      <th>Gaussian keyword</th>
+      <th>Typical choice</th>
+      <th>Why it matters</th>
+    </tr>
+    <tr>
+      <td>Functional</td>
+      <td>route line</td>
+      <td>M06-2X (peptides)</td>
+      <td>Sets systematic accuracy of \(E_\text{tot}\)</td>
+    </tr>
+    <tr>
+      <td>Basis set</td>
+      <td>route line</td>
+      <td>6-311++G(d,p)</td>
+      <td>Diffuse/polarization needed for H-bonds</td>
+    </tr>
+    <tr>
+      <td>Integration grid</td>
+      <td>Int=UltraFine</td>
+      <td>UltraFine</td>
+      <td>Removes grid noise in small \(\Delta E\)</td>
+    </tr>
+    <tr>
+      <td>SCF convergence</td>
+      <td>SCF=Tight</td>
+      <td>Tight</td>
+      <td>Reliable energies for conformer ranking</td>
+    </tr>
+    <tr>
+      <td>Initial guess</td>
+      <td>Guess=Read</td>
+      <td>Read (restarts)</td>
+      <td>Faster convergence from a checkpoint</td>
+    </tr>
+  </table>
+
+  <h2>6. When to Run SPE — and When Not To</h2>
+
+  <p>SPE is the cheapest calculation in the electronic structure toolbox, which makes it both the most frequently run and the most frequently misapplied. The deciding question is always the same: <em>do I trust the geometry I am about to feed in?</em></p>
+
+  <p><strong>Run an SPE when:</strong></p>
+
+  <ul>
+    <li>You have a trusted geometry — from experiment, or from an optimization at the same level — and want the energy at exactly that structure.</li>
+    <li>You want to compare energies of different configurations (conformers, protonation states, binding poses) at fixed geometries on equal footing.</li>
+    <li>You are training a neural network potential and need reference energies and forces on a database of configurations — exactly the workflow I ran at Academia Sinica.</li>
+    <li>You need a quick sanity-check energy before committing to an expensive geometry optimization or frequency job.</li>
+    <li>You want charge distribution, dipole, or orbital analysis at a known, trusted structure.</li>
+  </ul>
+
+  <p><strong>Do <em>not</em> run an SPE when:</strong></p>
+
+  <ul>
+    <li>You need the equilibrium geometry — that is a geometry optimization (the <code style="font-family:'JetBrains Mono',monospace;">Opt</code> keyword in Gaussian), not an SPE.</li>
+    <li>Your starting geometry is far from equilibrium: the SPE energy will be artificially high, and comparisons against it will be unreliable.</li>
+    <li>You want an IR spectrum, thermochemistry, or vibrational frequencies — those require second derivatives of the energy (a <code style="font-family:'JetBrains Mono',monospace;">Freq</code> job on an optimized structure), a different calculation entirely.</li>
+    <li>The geometry came from a very different level of theory — the resulting energy sits on the wrong point of the wrong surface and is essentially meaningless. Always re-optimize at your target level before trusting a comparison.</li>
+  </ul>
+
+  <div class="article-pullquote">
+    SPE is the fastest calculation in your toolbox — and the most frequently misused. The energy it gives you is real only if the geometry you gave it is reasonable.
+  </div>
+
+  <h2>7. A Minimal Gaussian Input for SPE</h2>
+
+  <p>Theory is necessary but not sufficient — at some point you have to write the input file. Below is a minimal, annotated Gaussian input for the kind of SPE I actually ran in Taipei: a single point energy on a tripeptide conformer at the M06-2X/6-311++G(d,p) level. Every line is commented. The beauty of a molecular code is how compact this is — the whole method lives on one route line.</p>
+
+  <span class="code-label">Gaussian — input (.gjf) for Single Point Energy</span>
+  <div class="code-block">
+<pre><code><span class="comment">%chk=tripeptide_sp.chk       ! checkpoint file (wavefunction, restart)</span>
+<span class="comment">%mem=16GB                    ! memory — match your HPC node request</span>
+<span class="comment">%nprocshared=16              ! CPU cores for the parallel run</span>
+
+<span class="comment">! Route line: SP = single point, M06-2X hybrid functional,</span>
+<span class="comment">! 6-311++G(d,p) basis, UltraFine grid, tight SCF</span>
+#P M06-2X/6-311++G(d,p) SP Int=UltraFine SCF=Tight
+
+Tripeptide (A@G@V) conformer — single point energy
+
+<span class="comment">! charge  spin-multiplicity (neutral singlet here)</span>
+<span class="number">0</span> <span class="number">1</span>
+<span class="comment">! Cartesian geometry: element  x  y  z  (Angstrom)</span>
+N     <span class="number">-1.234</span>    <span class="number">0.512</span>   <span class="number">-0.087</span>
+C     <span class="number">-0.021</span>    <span class="number">1.203</span>    <span class="number">0.334</span>
+C      <span class="number">1.198</span>    <span class="number">0.298</span>    <span class="number">0.201</span>
+O      <span class="number">1.164</span>   <span class="number">-0.887</span>    <span class="number">0.456</span>
+<span class="comment">! ... remaining atoms of the tripeptide ...</span>
+
+<span class="comment">! (blank line terminates the molecule specification)</span></code></pre>
+  </div>
+
+  <p>That single route line — <code style="font-family:'JetBrains Mono',monospace;">#P M06-2X/6-311++G(d,p) SP</code> — is the entire method specification. Swap <code style="font-family:'JetBrains Mono',monospace;">SP</code> for <code style="font-family:'JetBrains Mono',monospace;">Opt</code> and you have a geometry optimization; add <code style="font-family:'JetBrains Mono',monospace;">Freq</code> and you get vibrational frequencies and thermochemistry. The compactness is deceptive, though: every keyword hides a decision you are responsible for.</p>
+
+  <div class="warning-box">
+    <strong>&#9888; Charge and Multiplicity</strong>
+    <p>The two integers before the geometry — charge and spin multiplicity — are the single most common source of silent errors I saw. Get the charge wrong and you have computed a different molecule; get the multiplicity wrong (singlet vs. triplet) and the SCF may converge to a physically wrong state without complaint. For a neutral closed-shell peptide it is <code style="font-family:'JetBrains Mono',monospace;">0 1</code>, but for a protonated or radical species you must set these deliberately — the code will not catch the mistake for you.</p>
+  </div>
+
+  <div class="article-separator">&#183; &#183; &#183;</div>
+
+  <h2>8. What I Learned Running SPE at Academia Sinica</h2>
+
+  <p>By the end of my time in Prof. Kuo's lab, I had run thousands of single point energy calculations in Gaussian on the HPC cluster — each one a reference data point for training SchNet neural network potentials on tripeptide conformations. Each M06-2X job ran for a while on many cores, and the training databases grew into the tens of thousands of structures. The trained NNP then evaluated energies far faster than Gaussian ever could, at test-set errors around 1.5–2.5 kJ/mol, which is what made exhaustive structure searches feasible. It was a beautiful pipeline, and it taught me three things that no tutorial ever mentioned.</p>
+
+  <p>First: <strong>the geometry matters more than the method.</strong> An M06-2X single point energy on a good geometry beats a coupled-cluster energy on a bad one, every time. The energy at an unreasonable structure is just a large number with no physical meaning, regardless of how expensively it was computed. I learned this the humiliating way — I once spent an entire day debugging an SCF convergence failure, second-guessing the guess, the grid, and the algorithm, before finally opening the structure in GaussView and finding an O–H bond stretched to 2.5 Å in the input geometry. The calculation was not broken. My geometry was.</p>
+
+  <p>Second: <strong>absolute energies are useless.</strong> I keep repeating this because it took me embarrassingly long to internalize. In all those months, the only time I ever needed an absolute SPE value was to check it against a known reference for validation. Every actual scientific result — every binding energy, every conformational ranking, every training label — was an energy difference. The mantra worth memorizing: SPE is subtracted from SPE.</p>
+
+  <p>Third: <strong>the SCF convergence monitor is diagnostic, not decorative.</strong> Tailing the Gaussian output file while a job runs tells you far more than the final exit status. A smoothly converging calculation shows the energy change per cycle shrinking monotonically toward the threshold. An energy that oscillates — refusing to settle cycle after cycle — usually means the electronic structure is difficult and you should switch to a more robust algorithm (<code style="font-family:'JetBrains Mono',monospace;">SCF=QC</code>) or fix the guess, rather than waiting for the maximum number of cycles to expire and burning queue time. Learning to read that convergence table saved me more compute hours than any other single habit.</p>
+
+  <h2>9. Further Reading</h2>
+
+  <p>If this post did its job, you now want the primary sources. These are the ones I keep returning to:</p>
+
+  <ul>
+    <li><strong>Kohn &amp; Sham (1965)</strong>, Phys. Rev. 140, A1133 — the original Kohn-Sham DFT paper; remarkably short and readable.</li>
+    <li><strong>Zhao &amp; Truhlar (2008)</strong>, Theor. Chem. Acc. 120, 215 — the M06 suite of functionals, including M06-2X; the reference for why it works so well on main-group thermochemistry and non-covalent interactions.</li>
+    <li><strong>Gaussian User's Reference</strong> (gaussian.com) — the authoritative keyword documentation; look up every route-line keyword before trusting it for your own system.</li>
+    <li><strong>Sch&uuml;tt et al. (2018)</strong>, J. Chem. Phys. 148, 241722 — the SchNet architecture; the neural network potential the whole peptide pipeline was built to train.</li>
+    <li><strong>Szabo &amp; Ostlund</strong>, <em>Modern Quantum Chemistry</em> — Chapters 2–3 for Hartree-Fock theory in real depth.</li>
+    <li><strong>Koch &amp; Holthausen</strong>, <em>A Chemist's Guide to Density Functional Theory</em> — an accessible DFT introduction with a chemistry focus.</li>
+  </ul>
+
+  <p>The next time someone hands you a coordinate file and says "just run it" — you will know exactly what the number means.</p>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../images/profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Researcher at VNU-University of Engineering and Technology. Specializing in magnetocaloric materials, critical phenomena, and computational materials science.</p>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="../blog.html">
+      <div class="article-nav-label">&#8592; Previous</div>
+      <div class="article-nav-title">Back to Blog</div>
+    </a>
+    <a href="../blog.html" class="next">
+      <div class="article-nav-label">Next &#8594;</div>
+      <div class="article-nav-title">All Posts</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=QUdAPR8AAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: July 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>

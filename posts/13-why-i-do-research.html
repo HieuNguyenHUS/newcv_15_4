@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Báo cho Google / công cụ tìm kiếm: ĐỪNG index trang này -->
+<meta name="robots" content="noindex, nofollow">
+
+<!-- Tự động chuyển về trang Blog sau 2 giây (không cần JS) -->
+<!-- Lưu ý: file này nằm trong thư mục posts/ nên dùng ../blog.html -->
+<meta http-equiv="refresh" content="2; url=../blog.html">
+
+<title>Post unavailable — Minh-Hieu Nguyen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --accent: #8b2500;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+.box { max-width: 440px; }
+.mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 16px;
+}
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+p {
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+a.btn {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 26px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.25s;
+}
+a.btn:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.03);
+}
+</style>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HYB8TEF6MT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HYB8TEF6MT');
+</script>
+</head>
+<body>
+  <div class="box">
+    <div class="mark">—</div>
+    <h1>This post isn't available</h1>
+    <p>It may have been moved or taken down. You'll be redirected to the blog in a moment.</p>
+    <a class="btn" href="../blog.html">Go to Blog &rarr;</a>
+  </div>
+
+  <!-- Dự phòng: nếu meta refresh không chạy, JS sẽ chuyển hướng -->
+  <script>
+    setTimeout(function () {
+      window.location.replace('../blog.html');
+    }, 2000);
+  </script>
+</body>
+</html>

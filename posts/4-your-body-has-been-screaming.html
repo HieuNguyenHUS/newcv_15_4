@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Motivation for Scientific Research — Minh-Hieu Nguyen</title>
+<title>Your Body Has Been Screaming — Minh-Hieu Nguyen</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -30,6 +30,8 @@ body {
   font-size: 17px;
   -webkit-font-smoothing: antialiased;
 }
+
+p { text-align: justify; }
 
 /* ─── NAVIGATION ─── */
 nav {
@@ -178,33 +180,19 @@ nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
   border-radius: 12px;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(135deg, #1a1a2e 0%, #2e1a2e 30%, #1a2e3d 60%, #2e3d1a 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #2e1a1a 30%, #3d1810 60%, #8b2500 100%);
 }
 
 .article-cover-pattern {
   position: absolute;
   inset: 0;
-  opacity: 0.06;
+  opacity: 0.08;
   background-image: 
-    radial-gradient(circle at 20% 30%, white 1.5px, transparent 1.5px),
-    radial-gradient(circle at 70% 60%, white 1px, transparent 1px),
-    radial-gradient(circle at 40% 80%, white 0.8px, transparent 0.8px),
-    radial-gradient(circle at 90% 20%, white 1.2px, transparent 1.2px),
-    radial-gradient(circle at 55% 45%, white 0.6px, transparent 0.6px);
-  background-size: 80px 80px;
-}
-
-.article-cover-overlay {
-  position: absolute;
-  inset: 0;
-  opacity: 0.04;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(255,255,255,0.03) 2px,
-    rgba(255,255,255,0.03) 4px
-  );
+    radial-gradient(circle at 15% 40%, white 1px, transparent 1px),
+    radial-gradient(circle at 85% 25%, white 1px, transparent 1px),
+    radial-gradient(circle at 50% 75%, white 1px, transparent 1px),
+    radial-gradient(circle at 30% 90%, white 1px, transparent 1px);
+  background-size: 60px 60px;
 }
 
 .article-cover-text {
@@ -225,7 +213,6 @@ nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
   max-width: 680px;
   margin: 0 auto;
   padding: 0 40px 80px;
-  text-align: justify;
 }
 
 .article-body p {
@@ -524,92 +511,73 @@ footer a:hover { color: white; }
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
     Back to all posts
   </a>
-  <!-- EDIT: Change tag if needed -->
   <span class="article-tag">Personal</span>
-  <h1>My Motivation for Scientific Research</h1>
+  <h1>Your Body Has Been Screaming. But Are You Listening?</h1>
   <div class="article-meta">
     <span class="article-meta-item">Minh-Hieu Nguyen</span>
     <span class="article-meta-divider"></span>
-    <!-- EDIT: Update date -->
-    <span class="article-meta-item">May 2026</span>
+    <span class="article-meta-item">April 2026</span>
     <span class="article-meta-divider"></span>
-    <span class="article-meta-item">7 min read</span>
+    <span class="article-meta-item">6 min read</span>
   </div>
 </header>
 
 <!-- ─── COVER IMAGE ─── -->
 <div class="article-cover fade-in fade-in-delay">
   <div class="article-cover-pattern"></div>
-  <div class="article-cover-overlay"></div>
-  <div class="article-cover-text">"The detour is not wasted if it teaches you what the shortcut never could."</div>
+  <div class="article-cover-text">"You are not a machine. And even machines need maintenance."</div>
 </div>
 
 <!-- ─── ARTICLE BODY ─── -->
 <article class="article-body fade-in fade-in-delay-2">
 
-  <p>Someone once asked me: <em>"Why do you do research?"</em> — and I realized I had never really sat down to answer that question properly. Not for a grant application, not for a thesis introduction, but for myself. So here I am, trying to figure it out in writing.</p>
+  <p>Have you ever sat in front of a screen at 2 AM, eyes burning, head buzzing, yet still told yourself <em>"just a little more"</em>? I have. And I paid the price.</p>
 
-  <p>The honest answer is that I don't fully know. What I do know is that I've always been drawn to the process of <strong>understanding</strong> — not just getting results, but understanding <em>why</em> things work the way they do. That feeling when a concept suddenly clicks, when a messy equation collapses into something elegant, when a graph starts to make sense — that's what keeps me going. Not the publications, not the credentials. The click.</p>
+  <p>Not long ago, I fell into a phase that, honestly, looking back, I still don't understand how I let myself get to that point. Deadlines piled on top of deadlines. I opened my eyes in the morning thinking about work. I closed my eyes at night still thinking about work. I ate in front of my screen, drank coffee instead of water, and called it <strong>"discipline."</strong></p>
 
-  <div class="article-separator">· · ·</div>
-
-  <p>I fell in love with computational physics early on. The idea that you could model reality inside a computer, predict how atoms move, simulate how materials behave — it felt like the closest thing to magic I'd ever encountered. So when I got the chance to work at Academia Sinica in Taiwan, doing DFT calculations and neural network potentials under Prof. Jer-Lai Kuo, I thought I'd found my path.</p>
-
-  <p>I was wrong. Or rather — I was right about the destination but wrong about how ready I was for it.</p>
-
-  <p>The truth is, I struggled. The gap between what I knew and what the work demanded was enormous. The codebase was complex, the theory was deep, and everyone around me seemed to move at a speed I couldn't match. I didn't fail spectacularly — I just felt like I was constantly drowning in shallow water. Close enough to the surface to breathe, but never able to stand.</p>
+  <p>Then one morning, I woke up with blood on my pillow. A nosebleed. I wiped it off, figured it was just the weather. A few days later, my eyes were bloodshot — tiny burst capillaries when I looked closely. My body at that point was like a machine forced to run beyond its capacity — it didn't break down immediately, but it was cracking from the inside.</p>
 
   <div class="article-highlight">
-    <p>There's a particular kind of exhaustion that comes not from working too hard, but from feeling like you're not good enough for the work you love. That's what I carried back to Vietnam.</p>
+    <p>I used to think I was strong. Who doesn't, when you're young?</p>
   </div>
 
-  <p>So I came home. Not as a retreat, but as a reset. I told myself I needed to build a stronger foundation — to fill the gaps that had left me gasping at Sinica. I needed to understand the experimental side of the physics I wanted to compute.</p>
+  <p>The biggest trap of overwork is that it doesn't hurt right away. It's not like breaking your arm — you know immediately. It's more like a crack in the wall — small, unnoticed, until the entire surface peels off.</p>
+
+  <p>You lose sleep for a few nights — seems normal. You get constant headaches — pop a paracetamol and forget about it. You snap at your loved ones — blame it on pressure. You stop feeling joy in anything — tell yourself you're just <em>"growing up."</em> No. You're depleted. And you're lying to yourself that it's fine.</p>
+
+  <p>I lied to myself in exactly the same way.</p>
 
   <div class="article-separator">· · ·</div>
 
-  <p>That's how I ended up in Assoc. Prof. Phan Thế Long's group at VNU-UET, working on magnetocaloric effects in manganite nanoparticles. A completely different world from computational chemistry. Instead of writing code, I was weighing powders on a precision balance. Instead of debugging simulations, I was grinding samples in an agate mortar — by hand, for hours, until my arms ached and the powder was fine enough.</p>
+  <p>There's something I call <strong>"the productivity illusion."</strong> It's when you sit for 14 hours a day but only work effectively for 4. The other 10 hours, you sit there exhausted, scrolling your phone, reading the same email over and over without processing it, then blaming yourself for being lazy. You're not lazy. <strong>You're empty.</strong></p>
 
-  <p>The solid-state reaction process became my daily life: weigh the precursors in the right molar ratios, grind them, calcine, grind again, press into pellets, sinter at high temperature, then characterize with XRD. Each step takes time. Each mistake costs days, not seconds. There's no <em>"undo"</em> button in a lab.</p>
-
-  <p>And I'll be honest — I felt lost again. Not because the work was bad. Prof. Long is an excellent researcher, and the science is fascinating. Tricritical behavior, the boundary between first-order and second-order phase transitions, Arrott plot analysis — these are beautiful problems. But every day, I was working in a field I hadn't trained for, using techniques I was still learning, and the old familiar feeling crept back in: <strong>I'm not enough for this.</strong></p>
+  <p>But this society praises the overworked. <em>"Oh, I'm so busy"</em> has become a flex. Everyone wants to prove they're busy, they're important, they're irreplaceable. I used to feel proud telling my friends I worked until 3 AM. Looking back now, that wasn't pride. That was self-destruction.</p>
 
   <div class="article-pullquote">
-    The fear wasn't about breaking a sample. It was about spending years on a detour that leads nowhere.
+    No one pays you for your health.
   </div>
 
-  <p>When you're in a lab and you don't yet have intuition — when you don't know by feel how long to grind, what a good XRD pattern looks like at a glance, whether the sintering temperature needs adjusting — every step feels like walking on thin ice. You follow the protocol, but you can't <em>feel</em> it yet. And that gap between knowing the steps and owning them? That's where the anxiety lives.</p>
+  <p>Then I realized something very simple that I had deliberately been ignoring: <strong>no one pays you for your health.</strong></p>
+
+  <p>The company will find your replacement in two weeks. The project will be picked up by someone else. The deadline will be pushed back. But your body, your eyes, your sleep, your mental state — only you live with those for the rest of your life.</p>
 
   <div class="article-separator">· · ·</div>
 
-  <p>Here's what I've started to realize, though. And I want to write this down before I forget it, because on bad days I will need to read it again.</p>
+  <p>I started changing with small things. Setting an alarm to go to sleep, not just to wake up. Shutting my laptop at 9 PM, even if emails kept coming. Learning to say <em>"no"</em> to tasks that weren't mine. It was hard at first — I was afraid of being judged, afraid of losing opportunities, afraid of falling behind others.</p>
 
-  <p>I didn't leave computational physics. <strong>I'm building the foundation to come back to it stronger.</strong></p>
+  <p>But you know what? <strong>Nobody noticed.</strong> Everyone was busy worrying about their own lives. I was the only one who had been placing that invisible weight on my own shoulders.</p>
 
-  <p>Every scientist dreams of bridging theory and experiment. I knew this even as an undergraduate — that the best computational work is grounded in experimental reality. The people who write the most impactful simulations are the ones who have held the materials in their hands, who know what the data looks like before the computer touches it, who can smell when a result is physically unreasonable.</p>
+  <p>I'm not writing this to tell you to quit your job or romanticize the idea of "slowing down." I know life comes with bills, responsibilities, and moments where you just have to grit your teeth and push through. But there is a line between effort and self-destruction. And that line is thinner than you think.</p>
 
   <div class="article-highlight">
-    <p>The agate mortar isn't a detour. It's tuition. Every hour I spend grinding Nd₀.₇Sr₀.₃MnO₃ powder is an hour that future-me will be grateful for — the version of me who writes Monte Carlo simulations of phase transitions and actually knows what the experimental curves are supposed to look like.</p>
+    <p>If your body is bleeding, if it's exhausted, if it's sending you hundreds of signals every day — please, stop. Not stop completely. Just stop long enough to hear what it's saying.</p>
   </div>
 
-  <p>The magnetocaloric effect sits right at the intersection I've always been drawn to: condensed matter physics, statistical mechanics, materials science, and real-world applications like magnetic refrigeration. The tricritical point — where the phase transition changes its fundamental nature — is the kind of problem that doesn't yield to simple formulas. You have to really <em>understand</em> it. And understanding it from both sides, experiment and computation, is rare. That's the researcher I want to become.</p>
-
-  <div class="article-separator">· · ·</div>
-
-  <p>So why do I do research?</p>
-
-  <p>Not because I'm good at it. Most days, I feel like I'm not. Not because it's easy — it's the hardest thing I've ever done. Not because I have a clear five-year plan — I barely have a clear five-month plan.</p>
-
-  <p>I do research because I can't stop wanting to understand things. Because when I read a paper about critical exponents and something shifts in my brain, that feeling is worth all the hours of grinding powder and debugging code and staring at XRD patterns I can't yet interpret. Because I believe — maybe naively, maybe stubbornly — that the detour I'm on right now is not wasted. That every experiment teaches me something no textbook could. That one day, I'll sit in front of a simulation and know, in my bones, whether the result makes physical sense.</p>
+  <p>Because no success is worth it if you're no longer healthy enough to enjoy it.</p>
 
   <div class="article-pullquote">
-    I do research because I can't stop wanting to understand. That's the whole answer. Everything else is just logistics.
+    "You are not a machine. And even machines need maintenance."
   </div>
-
-  <p>If you're reading this and you're in a similar place — feeling lost in your own field, wondering if you chose wrong, scared that you're not enough — I don't have a solution for you. I'm still looking for mine. But I think the fact that we're still here, still showing up to the lab or the desk or the terminal, still asking <em>"why?"</em> when we could have stopped — that has to count for something.</p>
-
-  <p>The mortar and pestle is heavy. But my hands are getting stronger.</p>
-
-  <p>Like swinging a badminton racket, every motion makes me stronger.</p>
 
 </article>
 
@@ -629,13 +597,13 @@ footer a:hover { color: white; }
   </div>
 
   <div class="article-nav">
-    <a href="../blog.html">
-      <div class="article-nav-label">&#8592; All Posts</div>
-      <div class="article-nav-title">Back to Blog</div>
+    <a href="5-wave-diffraction-reciprocal-lattice.html">
+      <div class="article-nav-label">← Previous</div>
+      <div class="article-nav-title">Wave Diffraction and the Reciprocal Lattice: The Natural Language of Crystallography</div>
     </a>
-    <a href="xrd-peak-finding.html" class="next">
+    <a href="3-arrott-plots-guide.html" class="next">
       <div class="article-nav-label">Next →</div>
-      <div class="article-nav-title">XRD Peak Finding: From Raw .xy Data to Bragg Reflections</div>
+      <div class="article-nav-title">Understanding Arrott Plots: A Practical Guide</div>
     </a>
   </div>
 </div>
@@ -651,7 +619,7 @@ footer a:hover { color: white; }
       <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
     </div>
     <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
-    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: May 2026</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: April 2026</p>
   </div>
 </footer>
 

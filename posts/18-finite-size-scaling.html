@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Happens to a Phase Transition When You Make Everything Smaller? — Minh-Hieu Nguyen</title>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HYB8TEF6MT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HYB8TEF6MT');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- KaTeX for professional math rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });"></script>
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+  --gold: #b8860b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent); transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 4px;
+}
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 140px 40px 0;
+}
+
+.article-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 40px; transition: color 0.25s;
+}
+.article-back:hover { color: var(--accent); }
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08); color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-meta {
+  display: flex; align-items: center; gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--border);
+}
+
+/* ─── COVER ─── */
+.article-cover {
+  max-width: 720px;
+  margin: 48px auto;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #0d2e2e 0%, #1a5c5c 50%, #2a8b8b 100%);
+}
+
+.article-cover-pattern {
+  position: absolute; inset: 0;
+  opacity: 0.08;
+  background-image:
+    radial-gradient(circle at 15% 40%, white 1px, transparent 1px),
+    radial-gradient(circle at 85% 25%, white 1px, transparent 1px),
+    radial-gradient(circle at 50% 75%, white 1px, transparent 1px),
+    radial-gradient(circle at 30% 90%, white 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.article-cover-text {
+  position: absolute;
+  bottom: 36px; left: 36px; right: 36px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 600; font-style: italic;
+  color: rgba(255,255,255,0.7); line-height: 1.3;
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  text-align: justify;
+}
+
+.article-body p {
+  margin-bottom: 24px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem; float: left;
+  line-height: 0.75;
+  margin-right: 10px; margin-top: 8px;
+  color: var(--accent); font-weight: 700;
+}
+
+.article-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  margin: 48px 0 20px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.article-body h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  margin: 36px 0 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: left;
+}
+
+.article-body em { color: var(--muted); font-style: italic; }
+.article-body strong { color: var(--ink); font-weight: 700; }
+
+.article-body ul, .article-body ol {
+  margin: 0 0 24px 24px;
+  text-align: left;
+}
+
+.article-body li {
+  margin-bottom: 8px;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.article-body li::marker {
+  color: var(--accent);
+}
+
+/* Highlight box */
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 36px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Separator */
+.article-separator {
+  text-align: center;
+  margin: 44px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+/* Pull quote */
+.article-pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  padding: 36px 20px;
+  margin: 44px 0;
+  line-height: 1.4;
+  position: relative;
+}
+
+.article-pullquote::before,
+.article-pullquote::after {
+  content: ''; display: block;
+  width: 60px; height: 1.5px;
+  background: var(--accent);
+  margin: 0 auto 20px; opacity: 0.4;
+}
+.article-pullquote::after { margin: 20px auto 0; }
+
+/* Code block */
+.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.code-block .comment { color: #6c7086; }
+.code-block .keyword { color: #cba6f7; }
+.code-block .string { color: #a6e3a1; }
+.code-block .function { color: #89b4fa; }
+.code-block .number { color: #fab387; }
+.code-block .operator { color: #89dceb; }
+
+.code-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Equation box — KaTeX aware */
+.equation-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 28px 0;
+  text-align: center;
+}
+
+.equation-box .eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+/* KaTeX display output inside equation-box */
+.equation-box .katex-display {
+  margin: 0;
+}
+
+/* Inline KaTeX — ensure it doesn't disrupt line-height */
+.katex { font-size: 1.05em; }
+
+/* Table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 0.95rem;
+}
+
+.article-table th {
+  background: var(--cream);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+}
+
+.article-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  text-align: center;
+}
+
+.article-table td:first-child {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.article-table tr:hover td {
+  background: rgba(243,240,232,0.4);
+}
+
+/* Step box */
+.step-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  margin: 28px 0;
+  position: relative;
+}
+
+.step-number {
+  position: absolute;
+  top: -14px; left: 24px;
+  background: var(--accent);
+  color: white;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; font-weight: 700;
+}
+
+.step-box h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  margin-bottom: 10px;
+  padding-top: 4px;
+}
+
+.step-box p {
+  margin-bottom: 12px !important;
+  font-size: 0.98rem;
+}
+
+/* Warning box */
+.warning-box {
+  background: #fff8f0;
+  border-left: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.warning-box strong {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.warning-box p {
+  margin-bottom: 0 !important;
+  font-size: 0.98rem;
+}
+
+/* ─── ARTICLE FOOTER ─── */
+.article-end {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px; background: var(--border);
+  margin-bottom: 40px;
+}
+
+.article-author {
+  display: flex; align-items: center;
+  gap: 20px; margin-bottom: 40px;
+}
+
+.article-author-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--accent); flex-shrink: 0;
+  overflow: hidden;
+}
+
+.article-author-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 700;
+}
+
+.article-author-info p {
+  font-size: 0.88rem; color: var(--muted);
+}
+
+.article-nav {
+  display: flex; justify-content: space-between;
+  gap: 20px;
+}
+
+.article-nav a {
+  padding: 16px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none; color: var(--ink);
+  transition: all 0.25s; flex: 1;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  background: rgba(139,37,0,0.02);
+}
+
+.article-nav-label {
+  font-size: 0.78rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; margin-bottom: 4px;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+}
+
+.article-nav .next { text-align: right; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 48px 40px; text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+
+.footer-social {
+  display: flex; justify-content: center;
+  gap: 24px; margin-bottom: 24px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none; transition: all 0.3s; font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent-light); color: white;
+  background: rgba(139,37,0,0.3);
+}
+
+footer p { font-size: 0.85rem; line-height: 1.6; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+footer a:hover { color: white; }
+
+/* Animations */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+}
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .article-header h1 { font-size: 2.2rem; }
+  .article-cover { height: 220px; margin: 36px 20px; }
+  .article-cover-text { font-size: 1.2rem; bottom: 24px; left: 24px; right: 24px; }
+}
+
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 1.9rem; }
+  .article-cover { height: 180px; }
+  .article-cover-text { font-size: 1rem; bottom: 20px; left: 20px; right: 20px; }
+  .article-body p { font-size: 1rem; }
+  .article-body h2 { font-size: 1.5rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex; flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+  .code-block { padding: 16px; font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Back to all posts
+  </a>
+  <span class="article-tag">Research</span>
+  <h1>What Happens to a Phase Transition When You Make Everything Smaller?</h1>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">July 2026</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">14 min read</span>
+  </div>
+</header>
+
+<!-- ─── COVER ─── -->
+<div class="article-cover fade-in fade-in-delay">
+  <div class="article-cover-pattern"></div>
+  <div class="article-cover-text">"A nanoparticle is not a tiny version of the bulk. It is a different object."</div>
+</div>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay-2">
+
+  <p>I have four bottles of the same powder on my desk. Chemically, they are identical — \(\text{Nd}_{0.7}\text{Sr}_{0.3}\text{MnO}_3\), synthesized in the same sol-gel batch. The only difference is the annealing temperature: 600°C, 800°C, 1000°C, and 1200°C. The XRD tells me the grain size grows from roughly 20 nm in the coolest anneal to around 80 nm in the hottest one. That is the entire experiment: same compound, four sizes.</p>
+
+  <p>And yet, when I run each sample through the VSM and compute the magnetic entropy change \(\Delta S_M\), the curves refuse to agree. The peak position shifts. The peak height changes. The transition looks visibly sharper in the bigger grains and smeared out in the smaller ones. Every time I plot these four curves together, the same uncomfortable question surfaces: is this a real change in the physics, or an artifact of finite size? Is my smallest sample even undergoing a phase transition in the thermodynamic sense — or just something that resembles one? This is exactly the question that finite-size scaling was built to answer, and this post is my attempt to work through it — partly for you, partly for myself.</p>
+
+  <h2>1. Phase Transitions Require Infinite Systems — and We Never Have Them</h2>
+
+  <p>Here is the fundamental tension. In thermodynamics, a phase transition is defined by a <strong>singularity</strong> in the free energy or its derivatives. At a second-order ferromagnetic transition, the susceptibility diverges. The specific heat diverges. At a first-order transition, the magnetization jumps discontinuously. Sharp, non-analytic behavior — that is what "phase transition" formally means.</p>
+
+  <p>But there is a catch that we usually skip past in undergraduate courses: singularities only exist in the <strong>thermodynamic limit</strong>, where the number of particles \(N \to \infty\) and the volume \(V \to \infty\) with \(N/V\) held constant. For any finite system, the partition function is a finite sum of analytic terms, and a finite sum of analytic functions is analytic. The free energy of a finite system is perfectly smooth. No true singularity is mathematically possible.</p>
+
+  <p>So what does "phase transition" even mean for a 20 nm nanoparticle containing perhaps \(10^4\)–\(10^5\) unit cells? Strictly speaking, nothing — and that "strictly speaking" is doing a lot of work.</p>
+
+  <div class="article-highlight">
+    <p>Strictly speaking, a 20 nm particle cannot have a phase transition. And yet, something very much like one is clearly happening — the question is how much the finite size matters.</p>
+  </div>
+
+  <p>An analogy that helps me: imagine trying to measure the average height of "all humans" using only 10 people. You get a number, but the fluctuations are large and the result depends on which 10 people you happened to pick. Finite systems near a critical point are like that. The would-be sharp transition is smeared out over a range of temperatures, and the width of that smearing is set by the finite size of the sample. The physics of the infinite system is still there underneath — but it is being viewed through a blurry, sample-dependent lens.</p>
+
+  <h2>2. The Correlation Length Is the Key</h2>
+
+  <p>To make this quantitative, we need one concept above all others: the correlation length, \(\xi\).</p>
+
+  <h3>What is \(\xi\)?</h3>
+
+  <p>Near a magnetic phase transition, spins do not fluctuate independently. If one spin flips, its neighbors are more likely to flip with it, and their neighbors after that — the system organizes into <strong>correlated clusters</strong> of aligned spins. The correlation length measures the typical size of these clusters, and near \(T_C\) it grows as a power law:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Correlation Length</span>
+    $$\xi(T) \sim \xi_0 \left|\frac{T - T_C}{T_C}\right|^{-\nu}$$
+  </div>
+
+  <p>where \(\nu\) is the correlation length exponent — \(\nu = 1/2\) in mean-field theory, \(\nu \approx 0.69\) for the 3D Heisenberg model — and \(\xi_0\) is a microscopic length of order the lattice spacing.</p>
+
+  <h3>The divergence at \(T_C\)</h3>
+
+  <p>As \(T \to T_C\), the correlation length diverges: \(\xi \to \infty\). This single divergence is the origin of essentially every anomaly at the critical point. The susceptibility diverges because arbitrarily large regions of the sample respond coherently to the field. The specific heat diverges because fluctuations exist on all length scales. Even critical slowing down — the sluggish dynamics near \(T_C\) — follows from the fact that huge correlated clusters take a long time to reorganize. All of critical phenomena is, in some sense, the story of \(\xi \to \infty\).</p>
+
+  <h3>The finite-size cutoff</h3>
+
+  <p>Now the crucial point. If the system has a finite linear dimension \(L\) — say, \(L\) is the grain diameter of a nanoparticle — then a correlated cluster obviously cannot be bigger than the particle itself. The correlation length cannot exceed \(L\). The divergence is <strong>cut off</strong> at \(\xi \sim L\), and this cutoff happens at a temperature displaced from the true \(T_C\) by:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Finite-Size Shift of the Apparent \(T_C\)</span>
+    $$\left|\frac{T_C(L) - T_C(\infty)}{T_C(\infty)}\right| \sim \left(\frac{\xi_0}{L}\right)^{1/\nu}$$
+  </div>
+
+  <p>In words: a finite sample stops "noticing" the approach to criticality once the correlations fill the whole particle, and from that point on the transition is rounded rather than sharp. The apparent critical temperature shifts, and the shift is a specific, predictable power of the size. This shift in the apparent \(T_C\) is one of the most important predictions of finite-size scaling — and, for someone like me sitting on a series of samples with different grain sizes, one of the most directly measurable.</p>
+
+  <h2>3. The Finite-Size Scaling Ansatz</h2>
+
+  <p>Here is the technical heart of the matter, due originally to Michael Fisher (1971). The core idea is an assertion of remarkable economy: near \(T_C\), the only relevant length scale in the problem is \(\xi\). If the system size \(L\) is finite, then the only dimensionless combination of lengths that can appear in any thermodynamic quantity is the ratio \(L/\xi\). Everything about finite-size effects must be expressible through this single ratio.</p>
+
+  <p>Take any quantity \(Q\) that diverges in the bulk as \(|t|^{-\kappa}\), where \(t = (T - T_C)/T_C\) is the reduced temperature. Since \(\xi \sim |t|^{-\nu}\), the ratio \(L/\xi\) can be traded for the combination \(t\,L^{1/\nu}\), and the finite-size scaling ansatz states:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Finite-Size Scaling Ansatz (Fisher, 1971)</span>
+    $$Q(t, L) = L^{\kappa/\nu}\,\tilde{Q}\!\left(t\,L^{1/\nu}\right)$$
+  </div>
+
+  <p>where \(\tilde{Q}\) is a <strong>universal scaling function</strong> — depending only on the universality class, not on the material — and \(L^{\kappa/\nu}\) sets the finite-size amplitude. Written down, it looks almost too simple. Unpacked, it says four remarkable things:</p>
+
+  <ol>
+    <li>At fixed \(L\), the quantity \(Q\) is no longer singular anywhere — the bulk divergence is replaced by a <strong>rounded peak</strong> of finite height.</li>
+    <li>The peak height scales as \(L^{\kappa/\nu}\) — larger samples show sharper, taller peaks. This is exactly the trend I see going from my 600°C to my 1200°C anneal.</li>
+    <li>The peak position — the apparent \(T_C\) — shifts toward the bulk \(T_C(\infty)\) as \(L \to \infty\).</li>
+    <li>Samples of <em>all</em> sizes, when replotted as \(Q/L^{\kappa/\nu}\) versus \(t\,L^{1/\nu}\), should collapse onto a <strong>single universal curve</strong>.</li>
+  </ol>
+
+  <p>That last point — the data collapse — is the experimental test of finite-size scaling. If four samples of four different sizes fall onto one master curve after rescaling, you have not just corrected for finite size; you have demonstrated that the underlying critical physics is shared, and you have measured the exponents in the process.</p>
+
+  <h3>Key FSS predictions for a ferromagnet</h3>
+
+  <p>The general ansatz specializes to the quantities an experimentalist actually measures. For the magnetization, which carries both a temperature and a field argument:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">FSS Form of the Magnetization</span>
+    $$M(t, L) = L^{-\beta/\nu}\,\tilde{M}\!\left(t\,L^{1/\nu},\; H\,L^{\Delta/\nu}\right)$$
+  </div>
+
+  <p>The negative exponent \(-\beta/\nu\) reflects the fact that magnetization is not divergent but vanishing at \(T_C\); the second scaling variable \(H L^{\Delta/\nu}\), with \(\Delta = \beta + \gamma\) the gap exponent, tells you that even the applied field must be rescaled by size — a small field applied to a small particle is "effectively larger" in the scaling sense.</p>
+
+  <p>For the susceptibility — or, in the magnetocaloric context, for the peak of \(\Delta S_M\), which is governed by the same singular part of the free energy:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Peak Height Scaling</span>
+    $$\chi_\text{max}(L) \propto L^{\gamma/\nu}$$
+  </div>
+
+  <p>The peak of the susceptibility grows as a power of the size — and this power, \(\gamma/\nu\), is close to 2 for essentially all 3D universality classes, which makes it a strong effect: doubling the grain size roughly quadruples the peak.</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Shift of the Apparent Curie Temperature</span>
+    $$T_C(L) - T_C(\infty) \propto L^{-1/\nu}$$
+  </div>
+
+  <p>This is the equation I keep coming back to, because it converts my annoying sample-to-sample \(T_C\) variation into a measurement: if the shift follows this power law, the exponent \(\nu\) and the true bulk \(T_C(\infty)\) both come out of a single fit.</p>
+
+  <p>For orientation, here are the FSS exponent combinations for the standard universality classes:</p>
+
+  <table class="article-table">
+    <thead>
+      <tr><th>Model</th><th>\(\nu\)</th><th>\(\beta/\nu\)</th><th>\(\gamma/\nu\)</th><th>\(1/\nu\)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Mean-field</td><td>0.500</td><td>1.000</td><td>2.000</td><td>2.000</td></tr>
+      <tr><td>Tricritical MF</td><td>0.500</td><td>0.500</td><td>2.000</td><td>2.000</td></tr>
+      <tr><td>3D Heisenberg</td><td>0.698</td><td>0.524</td><td>1.985</td><td>1.433</td></tr>
+      <tr><td>3D Ising</td><td>0.630</td><td>0.516</td><td>1.970</td><td>1.587</td></tr>
+    </tbody>
+  </table>
+
+  <p>Notice how close \(\gamma/\nu\) is across all classes — the peak-height scaling barely distinguishes them. The discriminating power lives in \(1/\nu\) and \(\beta/\nu\), which is worth remembering when designing an analysis.</p>
+
+  <div class="article-separator">&#183; &#183; &#183;</div>
+
+  <h2>4. What Finite-Size Effects Look Like in a Real Magnetic System</h2>
+
+  <p>Theory is one thing. What do these effects actually look like in data you would measure on a VSM? Four signatures, in roughly the order you will notice them.</p>
+
+  <h3>Effect 1 — Rounding of the transition</h3>
+
+  <p>The sharp peak in \(\Delta S_M\) that a bulk sample shows becomes broader, lower, and shifted in nanoparticles. My first instinct, when I saw this in my 600°C sample, was to blame sample quality — impurity phases, chemical inhomogeneity, a bad background subtraction. Those things can contribute. But even in a perfectly clean, perfectly stoichiometric nanoparticle, the rounding would be there. It is fundamental finite-size rounding: a smooth free energy simply cannot produce a sharp peak.</p>
+
+  <h3>Effect 2 — Shift in the apparent \(T_C\)</h3>
+
+  <p>The temperature at which the \(\Delta S_M\) peak is maximum — or where the Arrott plot isotherm passes through the origin — shifts downward with decreasing grain size, following \(T_C(L) - T_C(\infty) \propto L^{-1/\nu}\). This is measurable, provided you have samples at multiple grain sizes. If you have only one sample, the shift is invisible: you would simply report a \(T_C\) that is slightly wrong for the bulk material without knowing it.</p>
+
+  <h3>Effect 3 — Surface and interface effects</h3>
+
+  <p>For a nanoparticle, a significant fraction of atoms sits on or near the surface — for a 20 nm perovskite grain, easily 10–20% of the unit cells are within a nanometer or two of the boundary. Surface Mn ions have fewer neighbors, hence weaker exchange coupling, hence a tendency to disorder at lower temperature than the interior. The common picture is a <strong>magnetically dead layer</strong>, or more realistically a disordered surface shell wrapped around an ordered core. The observable consequence: the low-temperature saturation magnetization comes out lower than the bulk stoichiometric value — sometimes dramatically so. Note that this is a physically distinct effect from FSS rounding: FSS is about statistics in a finite volume, while the dead layer is about modified interactions at the boundary. In real nanoparticle data, both are present and entangled.</p>
+
+  <div class="article-pullquote">
+    A 20 nm particle is not a tiny version of the bulk. It is a different object, with different physics at its surface, different statistics in its interior, and a phase transition that has been fundamentally altered by its own finite size.
+  </div>
+
+  <h3>Effect 4 — Broadened Arrott plots</h3>
+
+  <p>The Arrott plot isotherms of nanoparticle samples often look less linear than their bulk counterparts, especially at low fields. Part of this is the finite-size rounding of the equation of state itself. But part of it may be something else entirely: a <em>distribution</em> of grain sizes, each grain with its own slightly different effective \(T_C\), superimposed in the same measurement. Which brings me to the complication that most papers — including, so far, my own drafts — prefer not to dwell on.</p>
+
+  <h3>The direct connection to my NSMO series</h3>
+
+  <p>For my annealing series (600°C through 1200°C), the grain size grows monotonically with annealing temperature. That means I have, essentially for free, a finite-size scaling experiment: if I plot the \(\Delta S_M\) peak temperature against \(L^{-1/\nu}\) and obtain a straight line for some trial \(\nu\), the intercept gives me \(T_C(\infty)\) — the true bulk Curie temperature of my composition — and the successful \(\nu\) is itself a measured critical exponent. This would be a quantitative test of finite-size scaling in my own system. I have not done it yet. It is worth attempting, and writing this post is partly a way of committing myself to it.</p>
+
+  <h2>5. The Grain Size Distribution Problem</h2>
+
+  <p>Here is the complication that often goes unacknowledged in nanoparticle MCE papers. Real nanoparticle samples are not monodisperse. Grain sizes follow a distribution — often approximately log-normal — with some width \(\sigma\). What the magnetometer measures is not \(M(H,T,L)\) for a single size, but an <strong>ensemble average</strong> over all grains in the sample:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Ensemble-Averaged Magnetization</span>
+    $$\langle M(H, T) \rangle = \int M(H, T, L)\,p(L)\,dL$$
+  </div>
+
+  <p>where \(p(L)\) is the grain size distribution. The consequences are uncomfortable. The apparent \(T_C\) shift is really an average over a spread of effective \(T_C\) values. The bending of Arrott plot isotherms may reflect the distribution as much as the intrinsic critical behavior — a superposition of straight lines with different intercepts is not a straight line. A finite-size scaling analysis on a polydisperse sample only makes sense under one of two conditions: either (a) the distribution is narrow, confirmed independently by TEM, or (b) you explicitly model the convolution above, which is far harder and requires knowing \(p(L)\) rather well.</p>
+
+  <p>For my own thesis, the honest path is (a): TEM and SEM images of each annealed sample give an estimate of the distribution width, and if \(\sigma/\langle L \rangle \lesssim 0.1\)–\(0.2\), the monodisperse approximation is defensible. I should say plainly: I have not yet done this analysis carefully for my own samples. It is on the list. But at minimum, knowing the problem exists changes how much I trust exponents extracted from any single nanoparticle sample — mine or anyone else's.</p>
+
+  <h2>6. How to Extract Critical Exponents from Finite-Size Scaling</h2>
+
+  <p>Suppose you have what I have: magnetization data on a series of samples with different, known grain sizes. Here is the practical workflow for turning size dependence into critical exponents.</p>
+
+  <div class="step-box">
+    <span class="step-number">1</span>
+    <h4>Measure \(M(H, T)\) on Samples of Different Grain Sizes</h4>
+    <p>You need at least three, preferably more, samples with grain sizes \(L_1 &lt; L_2 &lt; L_3 &lt; \dots\), characterized independently (XRD via Williamson–Hall or Scherrer, cross-checked with TEM). An annealing series of a single sol-gel batch — like my 600°C, 800°C, 1000°C, 1200°C set — is the natural way to get this while keeping the chemistry fixed.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">2</span>
+    <h4>Identify the Apparent \(T_C(L)\) for Each Sample</h4>
+    <p>For each sample, determine the apparent Curie temperature — from the Arrott plot isotherm that passes through the origin, or from the inflection point of \(M(T)\), or from the \(\Delta S_M\) peak position. Use the same criterion consistently across all samples, because the different criteria have slightly different finite-size shifts and mixing them contaminates the analysis.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">3</span>
+    <h4>Plot \(T_C(L)\) vs. \(L^{-1/\nu}\) for Trial Values of \(\nu\)</h4>
+    <p>Scan over a range of trial \(\nu\) values (say 0.4 to 0.8). For each trial, plot \(T_C(L)\) against \(L^{-1/\nu}\) and assess linearity. The correct \(\nu\) is the one that produces a straight line, and its \(y\)-intercept is \(T_C(\infty)\) — the bulk Curie temperature, extrapolated from purely finite samples.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">4</span>
+    <h4>Use the Peak-Height Scaling for \(\gamma/\nu\)</h4>
+    <p>Plot the susceptibility maximum (or the \(\Delta S_M\) peak height at fixed field) against \(L^{\gamma/\nu}\) for trial values of \(\gamma/\nu\). The correct combination gives a straight line through the origin. Remember from the table that \(\gamma/\nu \approx 2\) for all common classes, so treat this as a consistency check more than a discriminator.</p>
+  </div>
+
+  <div class="step-box">
+    <span class="step-number">5</span>
+    <h4>Confirm by Data Collapse</h4>
+    <p>The decisive test: plot \(M \cdot L^{\beta/\nu}\) versus \(t \cdot L^{1/\nu}\) for all samples simultaneously. If the exponents are right, every sample — every size — falls onto a single universal curve. A good collapse is hard to fake and immediately visible; a bad collapse tells you either the exponents are wrong or something beyond simple FSS (a dead layer, a broad size distribution) is at work.</p>
+  </div>
+
+  <h2>7. Finite-Size Scaling at the Tricritical Point</h2>
+
+  <p>Now the part that connects to the core finding of my own research. Our critical-behavior analysis of \(\text{Nd}_{0.7}\text{Sr}_{0.3}\text{MnO}_3\) nanoparticles points to <strong>tricritical mean-field exponents</strong>: \(\beta = 1/4\), \(\gamma = 1\), \(\delta = 5\) — the signature of a system sitting near the boundary between second-order and first-order behavior. In mean-field theory the tricritical correlation length exponent is \(\nu = 1/2\), and plugging this into the FSS machinery gives:</p>
+
+  <div class="equation-box">
+    <span class="eq-label">Tricritical FSS Predictions</span>
+    $$\chi_\text{max}(L) \propto L^{\gamma/\nu} = L^{2}, \qquad T_C(L) - T_C(\infty) \propto L^{-1/\nu} = L^{-2}$$
+  </div>
+
+  <p>Compare the \(T_C\) shift to the standard 3D classes: with \(\nu \approx 0.63\)–\(0.70\), an ordinary critical point predicts a shift going as \(L^{-1.4}\) to \(L^{-1.6}\). The tricritical prediction of \(L^{-2}\) is a distinctly <strong>faster size dependence</strong>. Halve the grain size and the \(T_C\) shift quadruples, rather than roughly tripling. The peak-height scaling \(\gamma/\nu\), by contrast, barely changes between classes — which again says the \(T_C(L)\) shift is where the discriminating information lives.</p>
+
+  <p>The practical implication is almost embarrassingly direct. If my NSMO nanoparticles are truly tricritical, the finite-size corrections across my four-sample annealing series should be systematic, pronounced, and follow \(L^{-2}\). That is a falsifiable prediction sitting inside data I already have.</p>
+
+  <div class="article-highlight">
+    <p>If the tricritical interpretation of our NSMO data is correct, finite-size effects should be more pronounced than in ordinary ferromagnets — and they should follow a specific, predictable pattern. We haven't tested this yet. We probably should.</p>
+  </div>
+
+  <h2>8. What I Still Don't Fully Understand</h2>
+
+  <p>In the spirit of learning in public, here is what genuinely remains unclear to me — not rhetorical modesty, but the actual open items in my notebook.</p>
+
+  <p><strong>The distribution convolution.</strong> I do not yet know how to properly account for a grain size distribution when doing FSS analysis. I have seen the problem treated in the spin glass nanoparticle literature, where the ensemble average over \(p(L)\) is carried out explicitly, but I have not worked out the convolution for a ferromagnetic \(\Delta S_M\) analysis — whether it merely broadens the collapse or systematically biases the extracted exponents, and by how much for a log-normal of a given width. Until I do, my Step 3–5 workflow above carries an unquantified systematic error.</p>
+
+  <p><strong>Dead layer vs. reduced surface exchange.</strong> Two models compete to describe the nanoparticle surface: a sharply "dead" non-magnetic shell of fixed thickness, and a gradual reduction of the exchange coupling near the boundary. They predict different size dependences of the saturation magnetization and different finite-size behavior near \(T_C\). For perovskite manganites specifically, the literature is inconsistent — some papers fit dead layers of 1–2 nm, others argue the shell is magnetically active but disordered. I do not know which picture is more appropriate for my system, and I suspect the answer matters for interpreting my smallest sample.</p>
+
+  <p><strong>FSS at first-order transitions.</strong> Everything above assumes a continuous transition, where \(\xi\) diverges. At a first-order transition, \(\xi\) stays finite and the finite-size scaling takes a different form — the rounding is governed by the volume \(L^d\) rather than by \(L^{1/\nu}\). Tricriticality means my system sits precisely at the border between these regimes. If any of my samples has genuinely first-order character — which the Banerjee criterion should reveal, but near a tricritical point the signatures are subtle — then the analysis in Sections 3–7 does not apply to it, and I would need the first-order FSS formalism that I have, honestly, only skimmed.</p>
+
+  <h2>9. Further Reading</h2>
+
+  <p>If you want to go deeper, these are the references I keep returning to:</p>
+
+  <ul>
+    <li><strong>Fisher (1971)</strong>, "The Theory of Critical Point Singularities," in <em>Critical Phenomena</em>, Proc. Int. School of Physics "Enrico Fermi" — the foundational FSS paper. Hard to read, but worth knowing it exists and where the ansatz actually comes from.</li>
+    <li><strong>Barber (1983)</strong>, "Finite-Size Scaling," in <em>Phase Transitions and Critical Phenomena</em>, Vol. 8, eds. Domb &amp; Lebowitz — the most complete review of FSS theory; the place to go when the simple ansatz is not enough.</li>
+    <li><strong>Binder &amp; Heermann</strong>, <em>Monte Carlo Simulation in Statistical Physics</em> — Chapter 3 gives practical FSS for simulations, and it is useful even for experimentalists, because it shows concretely what a "data collapse" looks like when it works and when it fails.</li>
+    <li><strong>Kodama (1999)</strong>, J. Magn. Magn. Mater. <strong>200</strong>, 359 — a review of surface and interface effects in magnetic nanoparticles; directly relevant to the dead-layer question in my system.</li>
+    <li><strong>Franco et al. (2018)</strong>, Prog. Mater. Sci. <strong>93</strong>, 112 — the modern magnetocaloric review, which discusses finite-size effects in nanoparticle MCE materials and how they interact with the universal-curve construction.</li>
+  </ul>
+
+  <p>Four bottles of powder, one compound, four sizes. When I started this post, they looked like a nuisance — four slightly disagreeing datasets I had to reconcile in a thesis chapter. Now they look like an experiment I had not realized I was already running. That reframing is, I think, the real gift of finite-size scaling: the size dependence is not noise on top of the physics. It <em>is</em> the physics.</p>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Researcher at VNU-University of Engineering and Technology. Specializing in magnetocaloric materials, critical phenomena, and computational materials science.</p>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="17-mean-field-rg.html">
+      <div class="article-nav-label">&#8592; Previous</div>
+      <div class="article-nav-title">Mean-Field Theory &amp; the Renormalization Group</div>
+    </a>
+    <a href="../blog.html" class="next">
+      <div class="article-nav-label">Next &#8594;</div>
+      <div class="article-nav-title">Back to Blog</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=QUdAPR8AAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: August 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>

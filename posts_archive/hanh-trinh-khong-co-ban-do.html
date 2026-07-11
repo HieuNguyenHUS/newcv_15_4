@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hành Trình Không Có Bản Đồ — Minh-Hieu Nguyen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #faf9f6;
+  --cream: #f3f0e8;
+  --accent: #8b2500;
+  --accent-light: #c4560a;
+  --muted: #6b6b7b;
+  --border: #d4d0c8;
+  --shadow: rgba(26, 26, 46, 0.08);
+  --sage: #4a6741;
+  --gold: #b8860b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(250, 249, 246, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+
+.nav-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent); transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; background: none; border: none; padding: 4px;
+}
+.hamburger span { width: 24px; height: 2px; background: var(--ink); transition: 0.3s; }
+
+/* ─── ARTICLE HEADER ─── */
+.article-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 140px 40px 0;
+}
+
+.article-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 40px; transition: color 0.25s;
+}
+.article-back:hover { color: var(--accent); }
+.article-back svg { transition: transform 0.25s; }
+.article-back:hover svg { transform: translateX(-4px); }
+
+.article-tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: rgba(139,37,0,0.08); color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.article-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.article-meta {
+  display: flex; align-items: center; gap: 20px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+}
+
+.article-meta-divider {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--border);
+}
+
+/* ─── COVER ─── */
+.article-cover {
+  max-width: 720px;
+  margin: 48px auto;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #0d1b2a 0%, #1b2d3e 40%, #2c3e50 70%, #3d5068 100%);
+}
+
+.article-cover-pattern {
+  position: absolute; inset: 0;
+  opacity: 0.12;
+  background-image:
+    radial-gradient(circle at 20% 30%, white 1px, transparent 1px),
+    radial-gradient(circle at 75% 20%, white 1px, transparent 1px),
+    radial-gradient(circle at 45% 65%, white 0.5px, transparent 0.5px),
+    radial-gradient(circle at 10% 80%, white 1px, transparent 1px),
+    radial-gradient(circle at 90% 70%, white 0.5px, transparent 0.5px),
+    radial-gradient(circle at 60% 90%, white 1px, transparent 1px);
+  background-size: 80px 80px, 120px 90px, 60px 70px, 100px 110px, 70px 60px, 90px 80px;
+}
+
+.article-cover-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, rgba(13,27,42,0.3) 0%, transparent 60%);
+}
+
+.article-cover-text {
+  position: absolute;
+  bottom: 36px; left: 36px; right: 36px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; font-style: italic;
+  color: rgba(255,255,255,0.72); line-height: 1.35;
+}
+
+/* ─── ARTICLE BODY ─── */
+.article-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+  text-align: justify;
+}
+
+.article-body p {
+  margin-bottom: 24px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem; float: left;
+  line-height: 0.75;
+  margin-right: 10px; margin-top: 8px;
+  color: var(--accent); font-weight: 700;
+}
+
+.article-body h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  margin: 48px 0 20px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.article-body h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  margin: 36px 0 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: left;
+}
+
+.article-body em { color: var(--muted); font-style: italic; }
+.article-body strong { color: var(--ink); font-weight: 700; }
+
+/* Highlight box */
+.article-highlight {
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin: 36px 0;
+  background: var(--cream);
+  border-radius: 0 8px 8px 0;
+}
+
+.article-highlight p {
+  margin-bottom: 0 !important;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Separator */
+.article-separator {
+  text-align: center;
+  margin: 44px 0;
+  color: var(--border);
+  font-size: 1.4rem;
+  letter-spacing: 12px;
+}
+
+/* Pull quote */
+.article-pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  padding: 36px 20px;
+  margin: 44px 0;
+  line-height: 1.4;
+  position: relative;
+}
+
+.article-pullquote::before,
+.article-pullquote::after {
+  content: ''; display: block;
+  width: 60px; height: 1.5px;
+  background: var(--accent);
+  margin: 0 auto 20px; opacity: 0.4;
+}
+.article-pullquote::after { margin: 20px auto 0; }
+
+/* ─── ARTICLE END ─── */
+.article-end {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.article-end-divider {
+  height: 1px; background: var(--border); margin-bottom: 48px;
+}
+
+.article-author {
+  display: flex; align-items: center; gap: 20px;
+  margin-bottom: 48px;
+}
+
+.article-author-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-weight: 700;
+  color: var(--accent); font-size: 1.1rem;
+  border: 1px solid var(--border);
+}
+
+.article-author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.article-author-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 700; margin-bottom: 4px;
+}
+
+.article-author-info p {
+  font-size: 0.9rem; color: var(--muted); line-height: 1.5;
+}
+
+.article-nav {
+  display: flex; justify-content: space-between; gap: 24px;
+}
+
+.article-nav a {
+  text-decoration: none; color: var(--ink);
+  flex: 1; padding: 20px 24px;
+  border: 1px solid var(--border); border-radius: 10px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.article-nav a:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px var(--shadow);
+}
+
+.article-nav .next { text-align: right; }
+
+.article-nav-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--muted);
+  margin-bottom: 6px; letter-spacing: 0.05em;
+}
+
+.article-nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 600;
+  line-height: 1.35;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 0;
+  text-align: center;
+}
+
+.footer-inner { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+.footer-social {
+  display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;
+}
+
+.footer-social a {
+  text-decoration: none; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; font-weight: 500;
+  transition: color 0.25s;
+}
+.footer-social a:hover { color: var(--accent); }
+
+footer p {
+  font-size: 0.85rem; color: var(--muted);
+}
+
+/* ─── FADE IN ─── */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeIn 0.7s ease forwards;
+}
+.fade-in-delay { animation-delay: 0.15s; }
+.fade-in-delay-2 { animation-delay: 0.3s; }
+
+@keyframes fadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 640px) {
+  .article-header { padding: 100px 20px 0; }
+  .article-body { padding: 0 20px 60px; }
+  .article-end { padding: 0 20px 60px; }
+  .article-header h1 { font-size: 1.9rem; }
+  .article-cover { height: 200px; }
+  .article-cover-text { font-size: 1rem; bottom: 20px; left: 20px; right: 20px; }
+  .article-body p { font-size: 1rem; }
+  .article-body h2 { font-size: 1.5rem; }
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  nav.menu-open .nav-links {
+    display: flex; flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--paper);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .article-nav { flex-direction: column; }
+  .article-nav .next { text-align: left; }
+  .article-meta { flex-wrap: wrap; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Minh<span>-</span>Hieu</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../publications.html">Publications</a></li>
+      <li><a href="../cv.html">CV</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── ARTICLE HEADER ─── -->
+<header class="article-header fade-in">
+  <a href="../blog.html" class="article-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    Quay lại tất cả bài viết
+  </a>
+  <span class="article-tag">Cuộc sống</span>
+  <h1>Hành Trình Không Có Bản Đồ</h1>
+  <div class="article-meta">
+    <span class="article-meta-item">Minh-Hieu Nguyen</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">Tháng 6, 2026</span>
+    <span class="article-meta-divider"></span>
+    <span class="article-meta-item">8 phút đọc</span>
+  </div>
+</header>
+
+<!-- ─── COVER ─── -->
+<div class="article-cover fade-in fade-in-delay">
+  <div class="article-cover-pattern"></div>
+  <div class="article-cover-overlay"></div>
+  <div class="article-cover-text">"Không ai biết mình đang đi đến đâu — và đó có lẽ là điều tốt nhất có thể xảy ra."</div>
+</div>
+
+<!-- ─── ARTICLE BODY ─── -->
+<article class="article-body fade-in fade-in-delay-2">
+
+  <p>Có một câu hỏi tôi hay tự hỏi vào những buổi chiều đi bộ về nhà sau giờ dạy: <em>Bao giờ thì một người thật sự trưởng thành?</em> Không phải trưởng thành theo nghĩa có công việc ổn định, có tài khoản ngân hàng đủ để không lo lắng, hay có gia đình riêng. Tôi muốn hỏi theo nghĩa khác hơn — cái cảm giác bên trong, khi bạn biết mình là ai và mình đang đi về đâu. Tôi 24 tuổi và tôi vẫn chưa có câu trả lời.</p>
+
+  <p>Điều buồn cười là trước đây tôi từng nghĩ người lớn thì phải biết. Phải có kế hoạch. Phải tự tin. Hồi nhỏ nhìn lên người lớn, tôi thấy họ hành động như thể mọi thứ đã được tính toán trước. Cha mẹ biết nên mua gì, nên chi tiêu bao nhiêu, nên quyết định như thế nào. Thầy cô biết phải dạy gì và tại sao. Người lớn trong mắt tôi lúc đó là những người có bản đồ — trong khi tôi chỉ là đứa trẻ đang tìm đường.</p>
+
+  <p>Rồi tôi lớn lên và nhận ra: họ cũng không có bản đồ. Không ai có cả.</p>
+
+  <h2>Cái ảo tưởng về người lớn "biết việc"</h2>
+
+  <p>Lần đầu tiên tôi đứng trước một lớp sinh viên để giảng bài, tôi đã rất lo. Không phải lo vì không biết vật lý — mà lo vì tôi cảm giác mình chưa đủ tư cách để đứng ở vị trí đó. Tôi 23 tuổi, một số em trong lớp chỉ kém tôi hai, ba năm. Ai cho phép tôi đứng đây và nói "đây là cách hoạt động của thế giới"?</p>
+
+  <p>Nhưng điều thú vị là, khi buổi học bắt đầu và tôi phải giải thích một khái niệm, tôi nhận ra mình biết. Không phải biết tất cả, nhưng biết đủ để chia sẻ. Và trong quá trình chia sẻ, tôi học thêm. Có những câu hỏi từ sinh viên khiến tôi phải dừng lại, suy nghĩ, đôi khi thú nhận thẳng: <em>"Câu này hay đấy. Để tôi tìm hiểu thêm và trả lời vào buổi sau."</em></p>
+
+  <div class="article-highlight">
+    <p>Tôi không chắc đây là định nghĩa đúng của trưởng thành — nhưng có lẽ nó gần với sự thật hơn cái hình ảnh người lớn toàn năng mà tôi đã tưởng tượng: trưởng thành là học cách hành động dù chưa có đủ thông tin, và không sợ thú nhận những điều mình chưa biết.</p>
+  </div>
+
+  <p>Có một lần sau giờ học, một sinh viên ở lại hỏi tôi: "Thầy có thấy giảng dạy có ý nghĩa không?" Tôi ngập ngừng. Câu hỏi đó khiến tôi nhớ lại lý do mình bắt đầu con đường này. Không phải vì muốn được gọi là "thầy". Mà vì tôi từng được ai đó truyền cho ngọn lửa, và tôi muốn làm điều tương tự.</p>
+
+  <div class="article-separator">· · ·</div>
+
+  <h2>Những buổi chiều không đi đến đâu</h2>
+
+  <p>Tuần trước tôi ngồi ở một quán cà phê nhỏ gần trường, đọc sách nhưng thực ra không đọc. Mắt dán vào trang giấy, đầu thì đang ở chỗ khác — nghĩ về luận văn chưa xong, về bài báo đang bế tắc ở phần phân tích dữ liệu, về một cuộc trò chuyện với người bạn hôm trước mà tôi không biết mình có nói đúng không.</p>
+
+  <p>Một người bạn tôi hay nói: <em>"Mày suy nghĩ nhiều quá."</em> Có lẽ đúng. Tôi không giỏi buông bỏ. Khi một vấn đề bám vào đầu, tôi không thể giả vờ như nó không tồn tại. Tôi phải hiểu nó, phân tích nó, tìm cách giải quyết — dù đôi khi vấn đề đó không có lời giải hoặc không cần lời giải ngay bây giờ.</p>
+
+  <p>Nhưng ngồi ở quán cà phê hôm đó, nhìn ra phố, tôi bỗng nghĩ: <em>biết đâu không phải mọi khoảnh khắc đều cần có mục đích.</em> Không phải mọi buổi chiều đều phải productive. Đôi khi ngồi yên và để đầu óc lang thang cũng là một cách tồn tại — và nó không kém giá trị hơn những giờ làm việc hiệu quả.</p>
+
+  <div class="article-pullquote">
+    Chúng ta không phải lúc nào cũng cần biết mình đang đi đến đâu. Đôi khi chỉ cần tiếp tục đặt chân lên con đường.
+  </div>
+
+  <h2>Về việc học và việc không biết</h2>
+
+  <p>Khi tôi mới bắt đầu nghiên cứu về hiệu ứng từ nhiệt trong vật liệu nano perovskite, tôi nghĩ mình hiểu cơ bản. Tôi đọc lý thuyết, tôi biết các công thức, tôi hiểu cơ chế trao đổi kép. Nhưng khi bắt tay vào phân tích dữ liệu thực nghiệm, mọi thứ phức tạp hơn nhiều. Các giản đồ Arrott không thẳng như sách giáo khoa. Các đỉnh nhiễu xạ rộng theo những cách mà lý thuyết không mô tả đơn giản. Mỗi câu trả lời lại mở ra ba câu hỏi mới.</p>
+
+  <p>Lúc đầu tôi thấy bực bội. Tại sao thực tế không giống lý thuyết? Tại sao cái máy đo lại cho ra kết quả như thế này? Có phải tôi đang làm sai không?</p>
+
+  <p>Sau một thời gian, tôi hiểu rằng đó chính là bản chất của nghiên cứu. Sự khác biệt giữa lý thuyết và thực nghiệm không phải là lỗi lầm — đó là nơi có thể có khoa học thật sự. Những điểm bất thường là tín hiệu, không phải nhiễu. Và việc học cách đọc những tín hiệu đó mới là kỹ năng quan trọng nhất.</p>
+
+  <div class="article-highlight">
+    <p>Có lẽ mọi lĩnh vực đều như vậy. Bạn học lý thuyết, bạn ra ngoài thực hành, bạn thấy mọi thứ phức tạp hơn. Bạn bối rối. Bạn đặt câu hỏi. Bạn học thêm. Và vòng lặp đó không bao giờ kết thúc — nó chỉ chuyển lên một vòng xoắn ốc khác, rộng hơn và sâu hơn.</p>
+  </div>
+
+  <div class="article-separator">· · ·</div>
+
+  <h2>Thành công có khiến người ta hạnh phúc hơn không?</h2>
+
+  <p>Câu hỏi này tôi thực sự không biết trả lời. Tôi chưa đủ thành công để kiểm chứng. Nhưng tôi đã quan sát đủ nhiều người để có một vài suy nghĩ.</p>
+
+  <p>Những người tôi thấy hạnh phúc nhất không nhất thiết là những người thành công nhất theo tiêu chuẩn thông thường. Họ là những người biết mình đang làm gì và tại sao. Họ có một cái gì đó để theo đuổi — không phải vì người khác bảo phải làm, mà vì nó thật sự có ý nghĩa với họ. Và họ có những mối quan hệ thật, không phải mạng lưới kết nối.</p>
+
+  <p>Tôi từng nghĩ rằng nếu mình có đủ publications, đủ bằng cấp, đủ uy tín học thuật, thì mọi thứ sẽ ổn. Nhưng càng đi sâu vào con đường nghiên cứu, tôi càng thấy rằng những thứ đó chỉ là phương tiện, không phải đích đến. Điều thật sự tạo ra ý nghĩa là quá trình — khoảnh khắc một khái niệm trở nên rõ ràng, khoảnh khắc dữ liệu cuối cùng cũng nói lên điều gì đó, khoảnh khắc một sinh viên hiểu ra và mắt sáng lên.</p>
+
+  <p>Và những khoảnh khắc đó không cần phải đợi đến khi bạn "thành công". Chúng xảy ra ngay bây giờ, trong cuộc sống thường ngày.</p>
+
+  <div class="article-separator">· · ·</div>
+
+  <h2>Điều tôi đang học</h2>
+
+  <p>Tôi đang học cách sống với sự không chắc chắn. Không phải chấp nhận nó một cách thụ động, mà học cách hành động dù không biết kết quả. Viết luận văn trong khi không chắc nó có đủ tốt không. Giảng bài trong khi không chắc mình đang truyền đạt hiệu quả không. Nghiên cứu một vấn đề trong khi không biết mình có tìm ra câu trả lời không.</p>
+
+  <p>Tôi đang học cách phân biệt giữa những điều quan trọng và những điều chỉ có vẻ quan trọng. Có rất nhiều thứ tạo ra áp lực — deadline, kỳ vọng, sự so sánh. Nhưng khi nhìn lại sau một năm, một tháng, thậm chí một tuần, nhiều thứ trong số đó không còn quan trọng nữa. Trong khi những thứ thật sự quan trọng — sức khỏe, mối quan hệ, sự trung thực với bản thân — lại thường không tạo ra áp lực tức thì.</p>
+
+  <p>Và tôi đang học rằng hành trình không có bản đồ không phải là điều đáng sợ. Không có bản đồ nghĩa là không ai đã đi con đường này trước bạn theo cách hoàn toàn giống bạn. Và đó là điều đáng trân trọng, không phải đáng lo ngại.</p>
+
+  <div class="article-pullquote">
+    Tri thức, sự tử tế, tính kỷ luật và lòng tò mò — bốn thứ đó không cần bản đồ. Chúng chính là la bàn.
+  </div>
+
+  <p>Tôi không biết bao giờ mình sẽ "trưởng thành" theo nghĩa tôi từng hình dung. Có lẽ không bao giờ. Có lẽ đó không phải câu hỏi đúng. Câu hỏi đúng hơn, có lẽ, là: <em>hôm nay mình có sống thật với những gì mình tin tưởng không?</em></p>
+
+  <p>Và với câu hỏi đó, tôi có thể trả lời từng ngày một.</p>
+
+</article>
+
+<!-- ─── ARTICLE FOOTER ─── -->
+<div class="article-end">
+  <div class="article-end-divider"></div>
+
+  <div class="article-author">
+    <div class="article-author-avatar">
+      <img src="../images/profile.jpg" alt="Minh-Hieu Nguyen"
+           onerror="this.style.display='none'; this.parentElement.textContent='MH';">
+    </div>
+    <div class="article-author-info">
+      <h4>Minh-Hieu Nguyen</h4>
+      <p>Nhà nghiên cứu tại VNU-UET. Viết về vật lý, nghiên cứu, giảng dạy và những suy nghĩ thường ngày trên hành trình không ngừng học hỏi.</p>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="building-a-nest.html">
+      <div class="article-nav-label">← Bài trước</div>
+      <div class="article-nav-title">Building a Nest: My Desire for Marriage and Babies</div>
+    </a>
+    <a href="../blog.html" class="next">
+      <div class="article-nav-label">Tất cả bài viết →</div>
+      <div class="article-nav-title">Quay lại Blog</div>
+    </a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="https://scholar.google.com/citations?user=bewbBNgAAAAJ&hl=vi" title="Google Scholar">GS</a>
+      <a href="https://orcid.org/my-orcid?orcid=0009-0009-7243-8101" title="ORCID">ID</a>
+      <a href="https://www.researchgate.net/profile/Hieu-Nguyen-298" title="ResearchGate">RG</a>
+      <a href="https://www.linkedin.com/in/minh-hi%E1%BA%BFu-nguy%E1%BB%85n-29b676158/" title="LinkedIn">in</a>
+      <a href="https://github.com/HieuNguyenHUS" title="GitHub">GH</a>
+    </div>
+    <p>&copy; 2026 Minh-Hieu Nguyen. VNU-University of Engineering and Technology.</p>
+    <p style="margin-top:8px; font-size: 0.8rem;">Last updated: June 2026</p>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', () => {
+  nav.classList.toggle('menu-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => nav.classList.remove('menu-open'));
+});
+</script>
+</body>
+</html>
